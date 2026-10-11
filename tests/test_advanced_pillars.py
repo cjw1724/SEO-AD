@@ -23,13 +23,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from engine.indexing.instant_indexer import InstantIndexer
+from unittest import mock
+from engine.indexing.instant_indexer import (
+    InstantIndexer,
+    submit_to_google_indexing_api,
+    submit_batch_to_google_indexing_api,
+)
 from engine.analytics.feedback_loop import FeedbackLoop
-from engine.distribution.multi_channel_distributor import MultiChannelDistributor
+from engine.distribution.multi_channel_distributor import (
+    MultiChannelDistributor,
+    distribute_post,
+)
 from engine.maintenance.content_refresher import ContentRefresher
 from engine.qa.gstack_auditor import GStackAuditor
 from engine.matcher.demand_matcher import DemandMatcher
 from engine.pipeline.pipeline_flow import SequentialMediaPipeline
+
 
 
 class TestAdvancedPillars(unittest.TestCase):
@@ -79,6 +88,56 @@ class TestAdvancedPillars(unittest.TestCase):
         bad_res = indexer.submit_google_indexing("invalid_url", dry_run=False)
         self.assertEqual(bad_res["status"], "INVALID_URL")
         self.assertEqual(bad_res["status_code"], 400)
+
+        # 6. Service Account Primary Authentication Mock
+        with mock.patch("engine.indexing.instant_indexer._get_indexing_service") as mock_builder:
+            mock_service = mock.MagicMock()
+            mock_publish = mock.MagicMock()
+            mock_publish.execute.return_value = {
+                "urlNotificationMetadata": {"url": test_url, "type": "URL_UPDATED"}
+            }
+            mock_service.urlNotifications.return_value.publish.return_value = mock_publish
+            mock_builder.return_value = mock_service
+
+            sa_res = submit_to_google_indexing_api(test_url)
+            self.assertEqual(sa_res["status"], "SUBMITTED")
+            self.assertEqual(sa_res["auth_type"], "service_account")
+            self.assertEqual(sa_res["status_code"], 200)
+
+            # Batch submission test
+            batch_urls = [
+                "https://blogin365ai.blogspot.com/post1.html",
+                "https://blogin365ai.blogspot.com/post2.html"
+            ]
+            batch_res = submit_batch_to_google_indexing_api(batch_urls)
+            self.assertEqual(batch_res["total_urls"], 2)
+            self.assertEqual(batch_res["submitted_count"], 2)
+
+        # 7. Fallback Queue test when credentials missing
+        with mock.patch("engine.indexing.instant_indexer._get_indexing_service", return_value=None):
+            with mock.patch.object(indexer, "_get_google_token", return_value=None):
+                fallback_res = indexer.submit_google_indexing(test_url, dry_run=False)
+                self.assertEqual(fallback_res["status"], "FALLBACK_QUEUED")
+                self.assertEqual(fallback_res["status_code"], 202)
+
+        # 8. Service Account API Error handling (e.g. 403 Permission Denied)
+        with mock.patch("engine.indexing.instant_indexer._get_indexing_service") as mock_builder:
+            mock_service = mock.MagicMock()
+            mock_publish = mock.MagicMock()
+            mock_publish.execute.side_effect = Exception("403 Forbidden: Caller does not have required permission")
+            mock_service.urlNotifications.return_value.publish.return_value = mock_publish
+            mock_builder.return_value = mock_service
+
+            err_res = indexer.submit_google_indexing(test_url, dry_run=False)
+            self.assertEqual(err_res["status"], "ERROR")
+            self.assertEqual(err_res["status_code"], 403)
+            self.assertIn("403 Forbidden", err_res["error"])
+
+        # 9. Batch submission with submit_all accepting a list
+        batch_all_res = indexer.submit_all([test_url, "https://blogin365ai.blogspot.com/post2.html"], dry_run=True)
+        self.assertEqual(batch_all_res["url_count"], 2)
+        self.assertIn("google_indexing", batch_all_res["results"])
+
 
     # --------------------------------------------------------------------------
     # Pillar 2 Tests: Closed-Loop Feedback & Weight Tuner
@@ -176,6 +235,83 @@ class TestAdvancedPillars(unittest.TestCase):
         queue = dist.get_queue()
         self.assertGreaterEqual(len(queue), 1)
         self.assertEqual(queue[0]["keyword"], "2026 근로장려금")
+
+        # 4. Live dispatch without configured webhooks -> all channels QUEUED
+        clean_env = {
+            "THREADS_WEBHOOK_URL": "",
+            "X_WEBHOOK_URL": "",
+            "MANYCHAT_WEBHOOK_URL": "",
+            "KAKAO_VIEW_WEBHOOK_URL": "",
+            "DISTRIBUTION_WEBHOOK_URL": ""
+        }
+        with mock.patch.dict(os.environ, clean_env, clear=False):
+            live_res = dist.dispatch_to_channels(sample_growth, dry_run=False)
+            self.assertEqual(live_res["status"], "QUEUED")
+            for ch, ch_res in live_res["channels"].items():
+                self.assertEqual(ch_res["status"], "QUEUED")
+
+        # 5. Live dispatch with configured Webhook URLs -> SENT
+        webhook_env = {
+            "THREADS_WEBHOOK_URL": "https://api.threads.net/mock-webhook",
+            "X_WEBHOOK_URL": "https://api.x.com/mock-webhook",
+            "MANYCHAT_WEBHOOK_URL": "https://api.manychat.com/mock-webhook",
+            "KAKAO_VIEW_WEBHOOK_URL": "https://api.kakao.com/mock-webhook"
+        }
+        with mock.patch.dict(os.environ, webhook_env, clear=False):
+            with mock.patch("requests.post") as mock_req:
+                mock_resp = mock.MagicMock()
+                mock_resp.status_code = 200
+                mock_resp.text = '{"ok": true}'
+                mock_req.return_value = mock_resp
+
+                sent_res = dist.dispatch_to_channels(sample_growth, dry_run=False)
+                self.assertEqual(sent_res["status"], "SENT")
+                for ch, ch_res in sent_res["channels"].items():
+                    self.assertEqual(ch_res["status"], "SENT")
+                    self.assertEqual(ch_res["code"], 200)
+
+        # 6. Functional interface: distribute_post
+        func_res = distribute_post(
+            title="2026 청년도약계좌",
+            url="https://blogin365ai.blogspot.com/post-sample.html",
+            hook="놓치면 후회하는 혜택",
+            dry_run=True,
+            data_dir=self.data_dir
+        )
+        self.assertEqual(func_res["status"], "SIMULATED_SUCCESS")
+        self.assertIn("channels", func_res)
+        self.assertEqual(len(func_res["channels"]), 4)
+
+        # 6b. Functional interface with single channel selection
+        single_res = distribute_post(
+            title="2026 청년도약계좌",
+            url="https://blogin365ai.blogspot.com/post-sample.html",
+            hook="놓치면 후회하는 혜택",
+            channels=["threads"],
+            dry_run=True,
+            data_dir=self.data_dir
+        )
+        self.assertEqual(len(single_res["channels"]), 1)
+        self.assertIn("threads", single_res["channels"])
+
+        # 7. Resilient error handling when Webhook fails -> QUEUED_RETRY
+        with mock.patch.dict(os.environ, {"THREADS_WEBHOOK_URL": "https://api.threads.net/fail"}, clear=False):
+            with mock.patch("requests.post", side_effect=Exception("HTTP 500 Server Error")):
+                err_res = dist.dispatch_to_channels(sample_growth, channels=["threads"], dry_run=False)
+                self.assertEqual(err_res["status"], "QUEUED_RETRY")
+                self.assertEqual(err_res["channels"]["threads"]["status"], "QUEUED_RETRY")
+
+        # 8. Urllib fallback when requests is not installed (ImportError)
+        with mock.patch.dict(os.environ, {"THREADS_WEBHOOK_URL": "https://api.threads.net/urllib-fallback"}, clear=False):
+            with mock.patch.dict("sys.modules", {"requests": None}):
+                with mock.patch("urllib.request.urlopen") as mock_url:
+                    mock_resp = mock.MagicMock()
+                    mock_resp.getcode.return_value = 200
+                    mock_url.return_value.__enter__.return_value = mock_resp
+                    urllib_res = dist.dispatch_single_payload("threads", {"test": 1}, "DIST-TEST", dry_run=False)
+                    self.assertEqual(urllib_res["status"], "SENT")
+                    self.assertEqual(urllib_res["code"], 200)
+
 
     # --------------------------------------------------------------------------
     # Pillar 4 Tests: Self-Healing & Content Refresher
