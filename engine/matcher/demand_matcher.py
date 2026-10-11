@@ -361,7 +361,7 @@ def match_trends_with_demand(trends: List[Dict[str, Any]]) -> Dict[str, Any]:
         # 직접 매칭 시 3배 가중치 (Intent Priority)
         intent_multiplier = 3.0 if is_direct_match else 1.0
 
-        # PVS v2.0 계산 공식
+        # PVS v2.0 계산 공식 + Closed-loop Feedback 동적 가중치 튜닝 (Pillar 2)
         expected_ctr_affiliate = 0.035
         expected_cvr_affiliate = 0.020
         expected_affiliate_revenue = vol * expected_ctr_affiliate * expected_cvr_affiliate * avg_payout
@@ -369,7 +369,13 @@ def match_trends_with_demand(trends: List[Dict[str, Any]]) -> Dict[str, Any]:
         expected_adsense_rpm = (base_cpc / 100) * 1.5
         expected_adsense_revenue = (vol / 1000) * expected_adsense_rpm * 1350
 
-        total_pvs = round((expected_affiliate_revenue + expected_adsense_revenue) * intent_multiplier * tier_multiplier, 2)
+        try:
+            from engine.analytics.feedback_loop import FeedbackLoop
+            category_feedback_weight = FeedbackLoop().get_category_weight(cat_code)
+        except Exception:
+            category_feedback_weight = 1.0
+
+        total_pvs = round((expected_affiliate_revenue + expected_adsense_revenue) * intent_multiplier * tier_multiplier * category_feedback_weight, 2)
         title = generate_optimized_title(kw, cat_code)
 
         scored_candidates.append({

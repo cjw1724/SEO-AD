@@ -28,8 +28,8 @@ htmlcov/
 # ==========================================
 # 📊 Runtime Dynamic Data & Logs
 # ==========================================
-data/company_logs.json
-data/viral_growth_queue.json
+data/*.json
+!data/high_cpc_keywords.json
 
 # ==========================================
 # 💻 IDE & OS Specific Files

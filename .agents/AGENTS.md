@@ -44,27 +44,37 @@ d:\SEO AD\
 │   └── company_logs.json        # 기업 운영 KPI 및 자율 실행 이력 DB
 ├── engine/
 │   ├── radar/
-│   │   └── trend_scout.py       # 실시간 구글 트렌드 RSS 스카우터
+│   │   └── trend_scout.py       # 실시간 구글 트렌드 RSS 스카우터 (Phase 1)
 │   ├── matcher/
-│   │   ├── demand_matcher.py    # PVS v2.0 수익 속도 점수 산출기
+│   │   ├── demand_matcher.py    # PVS v2.0 수익 속도 점수 산출기 (Phase 1)
 │   │   └── coupang_link_builder.py # 제휴 CTA 및 딥링크 생성기
+│   ├── agents/
+│   │   ├── prompts_chat_pack.py # prompts.chat 기반 저널리스트 프롬프트팩
+│   │   ├── agency_stack.py      # AI 직원 협업 스택 (Phase 2)
+│   │   └── cro_monetizer.py     # HTML 최종 조립 및 광고 슬롯 배치 (Phase 3)
 │   ├── visuals/
 │   │   ├── canvas_renderer.py   # 제로 비용 인라인 SVG 비교 차트/스텝퍼
 │   │   └── saas_calculator.py   # 카테고리별 인터랙티브 JS 계산기 위젯
-│   ├── agents/
-│   │   ├── prompts_chat_pack.py # prompts.chat 기반 저널리스트 프롬프트팩
-│   │   ├── agency_stack.py      # AI 직원 협업 스택
-│   │   └── cro_monetizer.py     # HTML 최종 조립 및 광고 슬롯 배치
-│   ├── design/
-│   │   └── design_tokens.md     # awesome-design-md 토큰 명세
-│   ├── growth/
-│   │   └── viral_hook_maker.py  # 15초 릴스 대본 및 자동 DM 카피 생성
 │   ├── qa/
-│   │   └── gstack_auditor.py    # 57개 게이트 무인 검수기 (통과 못하면 발행 중단)
+│   │   └── gstack_auditor.py    # 57개 Slop-Test + Google HCU 안티스팸 무인 검수기 (Phase 4)
 │   ├── publisher/
-│   │   └── blogger_gateway.py   # Blogger API v3 안전 발행 게이트웨이
+│   │   └── blogger_gateway.py   # Blogger API v3 안전 발행 게이트웨이 (Phase 5)
+│   ├── indexing/
+│   │   └── instant_indexer.py   # Google Indexing API + IndexNow 즉각 색인기 (Phase 5 Pillar 1)
+│   ├── growth/
+│   │   └── viral_hook_maker.py  # 15초 릴스 대본 및 자동 DM 카피 생성 (Phase 6)
+│   ├── distribution/
+│   │   └── multi_channel_distributor.py # Threads, X, ManyChat 웹훅 배포기 (Phase 6 Pillar 3)
+│   ├── analytics/
+│   │   └── feedback_loop.py     # GA4/GSC 폐쇄 루프 피드백 & 가중치 튜너 (Phase 7 Pillar 2)
+│   ├── maintenance/
+│   │   └── content_refresher.py # 404 깨진 링크 치유 & 연도/시즌 콘텐츠 갱신 (Phase 7 Pillar 4)
+│   ├── pipeline/
+│   │   └── pipeline_flow.py     # 강타입 7단계 순차 파이프라인 오케스트레이터
 │   ├── company_runtime.py       # AI 기업 런타임 & 8인 AI 직원 데몬 매니저 (v6.0)
 │   └── main.py                  # 일일 정기 자동화 오케스트레이터
+├── legacy/
+│   └── blogs/                   # 구버전 레거시 시스템 아카이브 (GitDiagram 노드 정돈)
 ├── setup_scheduler.ps1          # 윈도우 작업 스케줄러 365일 무인 등록 (PowerShell)
 ├── setup_scheduler.bat          # 윈도우 작업 스케줄러 등록 (배치 파일 원클릭)
 ├── unregister_scheduler.bat     # 윈도우 작업 스케줄러 제거 배치 파일
@@ -72,7 +82,8 @@ d:\SEO AD\
 └── tests/
     ├── test_phase1.py           # 페이즈 1 단위 테스트
     ├── test_company_runtime.py  # 기업 런타임 & 자가치유 단위 테스트
-    └── test_end_to_end.py       # 전체 파이프라인 E2E 검증 테스트
+    ├── test_end_to_end.py       # 전체 파이프라인 E2E 검증 테스트
+    └── test_advanced_pillars.py # 5대 코어 확장 필러 통합 검증 테스트
 ```
 
 ---

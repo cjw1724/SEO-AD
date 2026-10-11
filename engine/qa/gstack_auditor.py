@@ -197,11 +197,106 @@ class GStackAuditor:
                 "detail": "Standard heading structure verified (Keyword package optional)"
             })
 
+        # Gate 7: Google Helpful Content (HCU) & Anti-Spam Safety Gate
+        hcu_eval = self.evaluate_hcu_quality(title, html_content)
+        if not hcu_eval["passed"]:
+            for err in hcu_eval["errors"]:
+                errors.append(f"[GATE 7 FAIL] {err}")
+            gate_results.append({
+                "gate": "Gate 7 (Helpful Content & Anti-Spam)",
+                "status": "FAIL",
+                "detail": "; ".join(hcu_eval["errors"]),
+                "metrics": hcu_eval["metrics"]
+            })
+        else:
+            gate_results.append({
+                "gate": "Gate 7 (Helpful Content & Anti-Spam)",
+                "status": "PASS",
+                "detail": f"HCU Score: {hcu_eval['score']}/100, Lexical Diversity: {hcu_eval['metrics']['ttr']:.2f}, Affiliate Ratio: {hcu_eval['metrics']['affiliate_ratio']:.1f}%",
+                "metrics": hcu_eval["metrics"]
+            })
+
         passed = len(errors) == 0
         return {
             "passed": passed,
             "gate_results": gate_results,
-            "errors": errors
+            "errors": errors,
+            "hcu_score": hcu_eval.get("score", 85),
+            "hcu_metrics": hcu_eval.get("metrics", {})
+        }
+
+    def evaluate_hcu_quality(self, title: str, html_content: str) -> dict:
+        """
+        Evaluates Google Helpful Content (HCU) & Anti-Spam criteria:
+        1. Lexical Diversity (Type-Token Ratio)
+        2. Information Gain & Empirical Data density (facts, figures, percentages, won, etc.)
+        3. Commercial / Affiliate link ratio <= 15% (Strict anti-thin-affiliate rule)
+        4. Cloaking / Hidden text detection (display: none / font-size: 0 keyword stuffing)
+        """
+        clean_text = re.sub(r'<[^>]+>', ' ', html_content)
+        words = [w for w in re.findall(r'[\w가-힣]+', clean_text) if len(w) >= 2]
+        total_words = max(len(words), 1)
+        unique_words = len(set(words))
+        ttr = round(unique_words / total_words, 3)
+
+        # 1. Hidden text / CSS cloaking check (Strict: display:none, font-size: 0px/0, transparent text)
+        hidden_text_matches = re.findall(
+            r'style=[\'"][^\'"]*(?:display\s*:\s*none\b|font-size\s*:\s*0(?:\.0+)?(?:px|pt|rem|em)?\s*(?:;|[\'"])|color\s*:\s*transparent\b)[^\'"]*[\'"]',
+            html_content,
+            re.IGNORECASE
+        )
+
+        # 2. Affiliate link count & ratio
+        all_links = re.findall(r'<a\s+[^>]*href=[\'"]([^\'"]+)[\'"]', html_content, re.IGNORECASE)
+        affiliate_links = [l for l in all_links if any(k in l.lower() for k in ["coupang", "linkprice", "adpick", "affiliate", "btn-affiliate"])]
+        affiliate_ratio = round((len(affiliate_links) / max(len(all_links), 1)) * 100, 1)
+
+        # Ratio of affiliate characters to total HTML
+        affiliate_html_footprint = sum(
+            len(m.group(0)) for m in re.finditer(r'<a\s+[^>]*class=[\'"][^\'"]*btn-affiliate[^\'"]*[\'"][^>]*>.*?</a>', html_content, re.DOTALL | re.IGNORECASE)
+        )
+        affiliate_footprint_ratio = round((affiliate_html_footprint / max(len(html_content), 1)) * 100, 2)
+
+        # 3. Empirical facts count
+        facts = re.findall(r'(\d+[\d,\.]*\s*(?:만원|원|%|일|개월|시간|점|배|세|건|명|위))', clean_text)
+        facts_count = len(facts)
+
+        errors = []
+        if hidden_text_matches:
+            errors.append(f"스팸 회피/클로킹(숨김 텍스트) 감지: {len(hidden_text_matches)}건 발견")
+
+        # Affiliate ratio check: cannot dominate page (> 15% affiliate footprint)
+        if affiliate_footprint_ratio > 15.0:
+            errors.append(f"과도한 제휴 링크 비중({affiliate_footprint_ratio}% > 15% 상한선) - 씬 어필리에이트(Thin Affiliate) 감지")
+
+        # Scoring
+        score = 0
+        score += min(25, int(ttr * 50))
+        score += min(25, facts_count * 5)
+        score += min(25, int(len(clean_text) / 50))
+        hygiene = 25
+        if hidden_text_matches:
+            hygiene -= 25
+        if affiliate_footprint_ratio > 15.0:
+            hygiene -= 20
+        score += max(0, hygiene)
+
+        passed = len(errors) == 0
+
+        return {
+            "passed": passed,
+            "score": min(100, score),
+            "errors": errors,
+            "metrics": {
+                "ttr": ttr,
+                "total_words": total_words,
+                "unique_words": unique_words,
+                "facts_count": facts_count,
+                "affiliate_links_count": len(affiliate_links),
+                "affiliate_ratio": affiliate_ratio,
+                "affiliate_footprint_ratio": affiliate_footprint_ratio,
+                "hidden_elements": len(hidden_text_matches)
+            }
         }
 
     def sanitize_if_possible(self, html_content: str) -> str:
@@ -213,6 +308,9 @@ class GStackAuditor:
         html_content = re.sub(r"&#9662;", "", html_content)
         html_content = re.sub(r"&#9660;", "", html_content)
         
+        # Strip hidden cloaking styles
+        html_content = re.sub(r'style=[\'"][^\'"]*display\s*:\s*none[^\'"]*[\'"]', '', html_content, flags=re.IGNORECASE)
+
         # Strip slop phrases
         for s in FORBIDDEN_SLOP_PHRASES:
             html_content = html_content.replace(s, "")

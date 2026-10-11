@@ -51,7 +51,11 @@ from engine.agents.agency_stack import AgencyStack
 from engine.agents.cro_monetizer import assemble_world_class_article
 from engine.qa.gstack_auditor import GStackAuditor
 from engine.publisher.blogger_gateway import BloggerGateway
+from engine.indexing.instant_indexer import InstantIndexer
 from engine.growth.viral_hook_maker import ViralHookMaker
+from engine.distribution.multi_channel_distributor import MultiChannelDistributor
+from engine.analytics.feedback_loop import FeedbackLoop
+from engine.maintenance.content_refresher import ContentRefresher
 
 
 class CompanyLogger:
@@ -236,7 +240,11 @@ class SelfHealingPipeline:
         self.agency = AgencyStack()
         self.auditor = GStackAuditor()
         self.gateway = BloggerGateway()
+        self.indexer = InstantIndexer()
         self.growth = ViralHookMaker()
+        self.distributor = MultiChannelDistributor()
+        self.feedback = FeedbackLoop()
+        self.refresher = ContentRefresher()
         self.staff = AICompanyStaff()
 
     def run_cycle(self, dry_run: bool = False, keyword_override: Optional[str] = None, max_retries: int = 3) -> Dict[str, Any]:
@@ -391,12 +399,40 @@ class SelfHealingPipeline:
             print(f" 🎉 블로그 발행 완료! URL: {pub_result['url']}")
 
         # -----------------------------------------------------------------
-        # Step 6: Viral Growth Loop (15s Reel & ManyChat DM)
+        # Step 5-B: Instant Indexing (Google Indexing API + IndexNow + Sitemap Ping)
+        # -----------------------------------------------------------------
+        print("\n[AI 직원 08] 검색엔진 즉각 색인(Instant Indexing) 전송...")
+        indexing_res = self.indexer.submit_all(pub_result.get("url", ""), dry_run=dry_run)
+        print(f" -> Google Indexing API & IndexNow 제출 완료 (상태: {indexing_res['results']['google_indexing']['status']})")
+
+        # -----------------------------------------------------------------
+        # Step 6: Viral Growth Loop & Multi-Channel Distribution
         # -----------------------------------------------------------------
         print("\n[AI 직원 07] Lazyowen 바이럴 그로스 패키지(15초 릴스 + 자동 DM 트리거) 생성...")
         growth_pkg = self.growth.generate_hooks(matched_topic, pub_result.get("url", ""))
         print(f" -> 릴스 후킹 대본: \"{growth_pkg['reel_script']['0-3초_후킹'][:40]}...\"")
         print(f" -> 그로스 큐 저장 완료: data/viral_growth_queue.json")
+
+        print("\n[AI 직원 07] 멀티 채널 소셜 배포(Multi-Channel Distribution) 큐 전송...")
+        dist_res = self.distributor.dispatch_to_channels(growth_pkg, dry_run=dry_run)
+        print(f" -> 소셜 배포 채널({list(dist_res['channels'].keys())}) 큐 적재 완료 [Batch: {dist_res['batch_id']}]")
+
+        # -----------------------------------------------------------------
+        # Step 7: Closed-Loop Feedback & Self-Healing Maintenance
+        # -----------------------------------------------------------------
+        print("\n[AI 직원 02 & 06] 폐쇄 루프 피드백(Closed-loop Feedback) & 링크 헬스 점검...")
+        perf_metric = self.feedback.simulate_performance_sync(
+            post_id=pub_result.get("id", "dry-run"),
+            keyword=matched_topic["keyword"],
+            category=matched_topic["category"],
+            est_pvs=matched_topic["pvs"]
+        )
+        tuned_weights = self.feedback.tune_niche_weights()
+        link_audit = self.refresher.audit_html_links(assembled_html, dry_run=dry_run)
+        refresh_cands = self.refresher.scan_for_refresh_candidates(max_age_days=30)
+        print(f" -> 성과 데이터 기록 완료 (CTR: {perf_metric['ctr_percent']}%) | 니치 가중치 자동 튜닝 완료")
+        if link_audit.get("has_dead_links"):
+            print(f" ⚠️ 링크 헬스 경고: 깨진 링크 {link_audit['dead_count']}개 감지")
 
         elapsed_time = round(time.time() - start_time, 2)
         final_status = "HEALED" if is_healed else "SUCCESS"
@@ -420,13 +456,21 @@ class SelfHealingPipeline:
             "post_id": pub_result.get("id"),
             "execution_time_sec": elapsed_time,
             "growth_package": growth_pkg,
+            "indexing": indexing_res,
+            "distribution": dist_res,
+            "feedback": {
+                "performance": perf_metric,
+                "weights": tuned_weights
+            },
+            "link_audit": link_audit,
+            "refresh_candidates": refresh_cands,
             "healing_events": healing_events
         }
 
         self.logger.record_cycle(cycle_record)
 
         print(f"\n══════════════════════════════════════════════════════════════════════════")
-        print(f"✨ [{cycle_id}] 6단계 파이프라인 완주! [상태: {final_status} | 소요시간: {elapsed_time}s]")
+        print(f"✨ [{cycle_id}] 7단계 완전자율 파이프라인 완주! [상태: {final_status} | 소요시간: {elapsed_time}s]")
         print(f"🔗 포스트 URL: {pub_result.get('url')}")
         print(f"══════════════════════════════════════════════════════════════════════════\n")
 
@@ -481,6 +525,10 @@ class CompanyRuntime:
                 dur = item.get("execution_time_sec", 0)
                 url = item.get("url", "")
                 print(f"    [{dt}] [{st:<7}] {kw:<18} | PVS: {pvs:>10,.0f} pt | {dur:>4.1f}s | {url}")
+        print("─" * 76)
+        print("  🌐 7단계 순차 파이프라인 (Horizontal Flow):")
+        print("    [1. 레이더&PVS] → [2. 에디토리얼] → [3. CRO&Micro-SaaS] → [4. QA&HCU검수]")
+        print("    → [5. Blogger&즉각색인] → [6. 멀티채널 배포] → [7. 피드백루프&자가치유]")
         print("═" * 76 + "\n")
 
     def run_once(self, dry_run: bool = False, keyword_override: Optional[str] = None) -> Dict[str, Any]:
