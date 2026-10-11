@@ -1,0 +1,43 @@
+# ==========================================
+# 🔒 Security & Secrets (Zero Leak Guarantee)
+# ==========================================
+*.env
+.env*
+!.env.example
+SEO.env
+credentials.json
+token.json
+client_secret*.json
+*.pem
+*.key
+
+# ==========================================
+# 🐍 Python Virtual Environment & Cache
+# ==========================================
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# 📊 Runtime Dynamic Data & Logs
+# ==========================================
+data/company_logs.json
+data/viral_growth_queue.json
+
+# ==========================================
+# 💻 IDE & OS Specific Files
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini

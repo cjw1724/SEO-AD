@@ -1,0 +1,79 @@
+{
+  "niches": {
+    "tech_gadgets": {
+      "name": "스마트 가전 & 테크 종결 비교",
+      "category_code": "TECH",
+      "base_cpc": 2800,
+      "cpa_type": "CPS_COUPANG",
+      "avg_payout": 45000,
+      "keywords": [
+        "맥북", "아이폰", "갤럭시", "로봇청소기", "식기세척기", "공기청정기", 
+        "무선청소기", "가성비 모니터", "태블릿", "스마트워치", "블루투스 이어폰"
+      ],
+      "title_templates": [
+        "[2026] {keyword} 실체감 비교 및 최저가 종결 가이드: 장단점 솔직 분석 & 구매 전 필수 체크",
+        "[2026] {keyword} 실사용 벤치마크 TOP 3: 가성비 모델 추천 및 스펙 매트릭스 총정리"
+      ]
+    },
+    "government_subsidy": {
+      "name": "숨은 돈 환급 & 정부 혜택 계산기",
+      "category_code": "SUBSIDY",
+      "base_cpc": 3200,
+      "cpa_type": "CPA_REFUND",
+      "avg_payout": 12000,
+      "keywords": [
+        "근로장려금", "종합소득세 환급", "건강보험 피부양자", "청년도약계좌", 
+        "국민연금 조기수령", "신생아 특례대출", "버팀목 전세자금", "숨은 보험금 찾기"
+      ],
+      "title_templates": [
+        "[2026] {keyword} 실수령액 모의계산 및 자격 조건 총정리: 탈락 사유 3가지와 즉시 신청법",
+        "[2026] {keyword} 지급일 및 최대 수령액 확인 가이드: 홈택스 1분 간편 신청 절차"
+      ]
+    },
+    "cashflow_hacks": {
+      "name": "고정비 절감 & 알뜰폰·카드 최적화",
+      "category_code": "SAVINGS",
+      "base_cpc": 4500,
+      "cpa_type": "CPA_TELECOM",
+      "avg_payout": 35000,
+      "keywords": [
+        "알뜰폰 요금제", "0원 요금제", "트래블로그", "트래블월렛", "해외결제 카드", 
+        "자동차보험 다이렉트", "실비보험 갱신", "인터넷 가입 사은품"
+      ],
+      "title_templates": [
+        "[2026] {keyword} 무제한 요금제 종결 비교: 통신 3사 대비 연간 60만원 아끼는 법",
+        "[2026] {keyword} 수수료 및 혜택 완벽 비교: 최저가 가입 팁 & 실시간 시뮬레이터"
+      ]
+    },
+    "medical_wellness": {
+      "name": "비급여 의료 & 웰니스 리얼 견적",
+      "category_code": "MEDICAL",
+      "base_cpc": 5500,
+      "cpa_type": "CPA_CLINIC",
+      "avg_payout": 50000,
+      "keywords": [
+        "라식 라섹", "스마일라식", "임플란트 비용", "도수치료 실비", 
+        "치아보험 임플란트", "모발이식 가격", "피부과 레이저"
+      ],
+      "title_templates": [
+        "[2026] {keyword} 실제 가격 및 건강보험 지원 기준: 지역별 실평균 견적과 부작용 주의사항",
+        "[2026] {keyword} 실부담금 계산기: 실손보험 청구 팁 및 병원 선택 체크리스트"
+      ]
+    },
+    "career_cert": {
+      "name": "직장인 국비지원 & 자격증 생산성",
+      "category_code": "CAREER",
+      "base_cpc": 3800,
+      "cpa_type": "CPA_EDUCATION",
+      "avg_payout": 40000,
+      "keywords": [
+        "내일배움카드", "국비지원 무료교육", "손해평가사", "공인중개사", 
+        "전기기사", "데이터분석 준전문가", "사회복지사 2급"
+      ],
+      "title_templates": [
+        "[2026] {keyword} 현실 연봉 및 국비지원 100% 활용법: 인강 비용 비교 & 단기 합격 전략",
+        "[2026] {keyword} 신청 자격 및 지원 한도 총정리: 직장인 환급 과정 추천 TOP 5"
+      ]
+    }
+  }
+}
