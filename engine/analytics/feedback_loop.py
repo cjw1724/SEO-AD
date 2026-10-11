@@ -116,10 +116,11 @@ class FeedbackLoop:
         cvr = round((conversions / max(clicks, 1)) * 100, 2)
         accuracy = round(actual_rev / max(est_pvs, 1.0), 3)
 
+        cat_clean = str(category or "LIFESTYLE").upper()
         post_record = {
             "post_id": post_id,
             "keyword": keyword,
-            "category": category.upper(),
+            "category": cat_clean,
             "updated_at": datetime.now().isoformat(),
             "impressions": impressions,
             "clicks": clicks,
@@ -179,16 +180,17 @@ class FeedbackLoop:
     def tune_niche_weights(self) -> Dict[str, Any]:
         """
         Analyzes historical performance across niches and dynamically updates category weights.
-        - High CTR / High conversion categories receive up to +35% boost.
-        - Low engagement categories receive up to -20% penalty.
+        - High CTR / High conversion categories receive boost.
+        - Low engagement categories receive penalty.
+        - Bases updates relative to baseline DEFAULT_WEIGHTS to prevent runaway compounding.
         """
         metrics_data = self.load_metrics()
         posts = metrics_data.get("posts", {})
-        current_weights = self.load_weights()
+        baseline_weights = self.DEFAULT_WEIGHTS.copy()
 
         if not posts:
             return {
-                "tuned_weights": current_weights,
+                "tuned_weights": baseline_weights,
                 "message": "No historical posts found, using default weights."
             }
 
@@ -204,7 +206,7 @@ class FeedbackLoop:
             cat_stats[cat]["rev"] += p.get("actual_revenue", 0.0)
             cat_stats[cat]["count"] += 1
 
-        tuned = current_weights.copy()
+        tuned = baseline_weights.copy()
         adjustments = {}
 
         for cat, stats in cat_stats.items():
@@ -213,7 +215,8 @@ class FeedbackLoop:
             avg_ctr = (tot_clicks / max(tot_imp, 1)) * 100.0
             avg_rev = stats["rev"] / max(stats["count"], 1)
 
-            base_w = current_weights.get(cat, 1.0)
+            # Base weight is taken from DEFAULT_WEIGHTS baseline to prevent exponential runaway
+            base_w = self.DEFAULT_WEIGHTS.get(cat, 1.0)
             multiplier = 1.0
 
             # Boost conditions
@@ -228,8 +231,8 @@ class FeedbackLoop:
             new_w = round(max(0.4, min(2.5, base_w * multiplier)), 3)
             tuned[cat] = new_w
             adjustments[cat] = {
-                "old_weight": base_w,
-                "new_weight": new_w,
+                "baseline_weight": base_w,
+                "tuned_weight": new_w,
                 "factor": multiplier,
                 "avg_ctr": round(avg_ctr, 2),
                 "avg_revenue": round(avg_rev, 2)

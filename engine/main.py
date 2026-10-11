@@ -39,13 +39,19 @@ from engine.analytics.feedback_loop import FeedbackLoop
 from engine.maintenance.content_refresher import ContentRefresher
 from engine.company_runtime import CompanyLogger
 from engine.pipeline.pipeline_flow import SequentialMediaPipeline
+from engine.radar.community_sentiment_scout import CommunitySentimentScout
+from engine.matcher.experiential_verifier import ExperientialVerifier
+from engine.agents.human_voice_engine import HumanVoiceEngine
 
 
 class BloginMasterHarness:
     def __init__(self):
         self.scout = TrendScout()
         self.matcher = DemandMatcher()
+        self.community_scout = CommunitySentimentScout()
+        self.exp_verifier = ExperientialVerifier()
         self.agency = AgencyStack()
+        self.human_voice = HumanVoiceEngine()
         self.auditor = GStackAuditor()
         self.gateway = BloggerGateway()
         self.indexer = InstantIndexer()
@@ -75,18 +81,36 @@ class BloginMasterHarness:
             expanded_subs = self.scout.expand_autocomplete(top_kw, limit=6)
 
         matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
+
+        # Humanization Phase 1: Community Sentiment & Experiential Factset
+        sentiment_data = self.community_scout.scout_community_sentiment(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        factset_data = self.exp_verifier.build_experiential_factset(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        matched_topic["sentiment"] = sentiment_data
+        matched_topic["factset"] = factset_data
+
         print(f" -> 선정 메인 키워드: [{matched_topic['keyword']}]")
         print(f" -> 7티어 경쟁 판정: [{matched_topic.get('tier', '최적')}] (골든 비율: {matched_topic.get('ratio', 0):.2f})")
         print(f" -> 서브 키워드(1:1 H2 매핑): {matched_topic.get('subs', [])}")
         print(f" -> 카테고리: {matched_topic['category']} | 검색의도: {matched_topic['intent']}")
         print(f" -> PVS v2.0 수익 속도 점수: {matched_topic['pvs']:,.0f} pt (예상 CPC: {matched_topic['cpc']}원)")
+        print(f" -> 커뮤니티 여론 및 내돈내산 팩트셋 수집 완료 (출처: {len(sentiment_data.get('community_sources', []))}개 커뮤니티)")
 
         # ----------------------------------------------------
         # Phase 2: AI Investigative Writer
         # ----------------------------------------------------
         print("\n[Phase 2/7] 저널리즘 에디토리얼 본문 및 FAQ 생성 (1:1 서브키워드 소제목 할당)...")
         editorial = self.agency.write_editorial_content(matched_topic)
-        print(f" -> 섹션 {len(editorial.get('sections', []))}개 및 FAQ {len(editorial.get('faq', []))}개 집필 완료")
+        editorial = self.human_voice.humanize_editorial_content(
+            editorial_data=editorial,
+            sentiment_data=matched_topic.get("sentiment"),
+            factset_data=matched_topic.get("factset"),
+            sub_keywords=matched_topic.get("subs", [])
+        )
+        print(f" -> 섹션 {len(editorial.get('sections', []))}개 및 FAQ {len(editorial.get('faq', []))}개 집필 완료 (인간화 음성 적용)")
 
         # ----------------------------------------------------
         # Phase 3: World-Class CRO & Visual Assembly
@@ -101,13 +125,18 @@ class BloginMasterHarness:
         # Phase 4: gstack & hallmark 57-Gate QA Audit + HCU Gate
         # ----------------------------------------------------
         print("\n[Phase 4/7] gstack & hallmark 7대 무인 검수 게이트 가동 (+ Google HCU 안티스팸)...")
+        # Pre-audit link healing: ensure outbound links are evergreen
+        assembled_html, healed_links = self.refresher.heal_broken_links(
+            assembled_html, keyword=matched_topic.get("keyword", "추천"), dry_run=dry_run
+        )
+
         audit_result = self.auditor.audit_post(title, assembled_html, keyword_package=matched_topic.get("keyword_package"))
         if not audit_result["passed"]:
             print(" ⚠️ QA 게이트 경고 발생:")
             for err in audit_result["errors"]:
                 print(f"   - {err}")
             print(" -> 자동 살균(Sanitize) 적용 후 재검수...")
-            assembled_html = self.auditor.sanitize_if_possible(assembled_html)
+            assembled_html = self.auditor.sanitize_if_possible(assembled_html, main_keyword=matched_topic.get("keyword"))
             re_audit = self.auditor.audit_post(title, assembled_html, keyword_package=matched_topic.get("keyword_package"))
             if not re_audit["passed"]:
                 raise RuntimeError(f"치명적 QA 검수 실패로 발행을 중단합니다: {re_audit['errors']}")
@@ -125,11 +154,12 @@ class BloginMasterHarness:
         labels = [l for l in raw_labels if l and not (l in seen_labels or seen_labels.add(l))]
 
         if dry_run:
+            now_ts = int(time.time())
             print(" -> [DRY RUN 모드] 실제 Blogger 발행을 건너뜁니다.")
             pub_result = {
                 "success": True,
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run.html",
-                "id": "dry-run-post-id"
+                "url": f"https://blogin365ai.blogspot.com/preview-dry-run-{now_ts}.html",
+                "id": f"dry-run-{now_ts}"
             }
         else:
             pub_result = self.gateway.publish(title, assembled_html, labels=labels, is_draft=False, category=matched_topic["category"])

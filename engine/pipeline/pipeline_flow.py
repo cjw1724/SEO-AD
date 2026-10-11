@@ -43,6 +43,9 @@ from engine.distribution.multi_channel_distributor import MultiChannelDistributo
 from engine.analytics.feedback_loop import FeedbackLoop
 from engine.maintenance.content_refresher import ContentRefresher
 from engine.company_runtime import CompanyLogger
+from engine.radar.community_sentiment_scout import CommunitySentimentScout
+from engine.matcher.experiential_verifier import ExperientialVerifier
+from engine.agents.human_voice_engine import HumanVoiceEngine
 
 
 # ==============================================================================
@@ -65,6 +68,8 @@ class Phase1_DiscoveryResult:
     niche_name: str
     intent: str
     raw_topic: Dict[str, Any]
+    sentiment: Dict[str, Any] = field(default_factory=dict)
+    factset: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -163,7 +168,9 @@ class PipelineExecutionSummary:
                 "weights": self.phase7.tuned_weights
             },
             "hcu_score": self.phase4.hcu_score,
-            "hcu_metrics": self.phase4.hcu_metrics
+            "hcu_metrics": self.phase4.hcu_metrics,
+            "sentiment": self.phase1.sentiment,
+            "factset": self.phase1.factset
         }
 
 
@@ -178,14 +185,17 @@ class SequentialMediaPipeline:
     """
     def __init__(self, logger: Optional[CompanyLogger] = None):
         self.scout = TrendScout()
-        self.matcher = DemandMatcher()
+        self.feedback = FeedbackLoop()
+        self.matcher = DemandMatcher(feedback_loop=self.feedback)
+        self.community_scout = CommunitySentimentScout()
+        self.exp_verifier = ExperientialVerifier()
         self.agency = AgencyStack()
+        self.human_voice = HumanVoiceEngine()
         self.auditor = GStackAuditor()
         self.gateway = BloggerGateway()
         self.indexer = InstantIndexer()
         self.hook_maker = ViralHookMaker()
         self.distributor = MultiChannelDistributor()
-        self.feedback = FeedbackLoop()
         self.refresher = ContentRefresher()
         self.logger = logger or CompanyLogger()
 
@@ -204,6 +214,16 @@ class SequentialMediaPipeline:
         matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
         title = matched_topic.get("title", f"{matched_topic['keyword']} 실측 분석 및 모의 계산 가이드")
 
+        # Humanization Phase 1: Community Sentiment & Experiential Factset
+        sentiment_data = self.community_scout.scout_community_sentiment(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        factset_data = self.exp_verifier.build_experiential_factset(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        matched_topic["sentiment"] = sentiment_data
+        matched_topic["factset"] = factset_data
+
         return Phase1_DiscoveryResult(
             keyword=matched_topic["keyword"],
             category=matched_topic["category"],
@@ -218,7 +238,9 @@ class SequentialMediaPipeline:
             keyword_package=matched_topic.get("keyword_package", {}),
             niche_name=matched_topic.get("niche_name", "스마트 라이프"),
             intent=matched_topic.get("intent", "COMMERCIAL"),
-            raw_topic=matched_topic
+            raw_topic=matched_topic,
+            sentiment=sentiment_data,
+            factset=factset_data
         )
 
     # --------------------------------------------------------------------------
@@ -232,6 +254,14 @@ class SequentialMediaPipeline:
 
         if not editorial or "sections" not in editorial:
             editorial = self.agency._build_deterministic_content(phase1.raw_topic)
+
+        # Humanization Phase 3: Injects Human Rhythm, Burstiness, Anecdotes, Quotes, and Conversational Subheaders
+        editorial = self.human_voice.humanize_editorial_content(
+            editorial_data=editorial,
+            sentiment_data=phase1.sentiment,
+            factset_data=phase1.factset,
+            sub_keywords=phase1.subs
+        )
 
         lead_text = ""
         sections = editorial.get("sections", [])
@@ -272,17 +302,22 @@ class SequentialMediaPipeline:
         phase1: Phase1_DiscoveryResult,
         phase3: Phase3_AssemblyResult
     ) -> Phase4_QAResult:
+        # Pre-audit link healing: ensure outbound links are evergreen
+        healed_input_html, healed_links_count = self.refresher.heal_broken_links(
+            phase3.html_content, keyword=phase1.keyword, dry_run=True
+        )
+
         audit_res = self.auditor.audit_post(
             phase3.title,
-            phase3.html_content,
+            healed_input_html,
             keyword_package=phase1.keyword_package
         )
 
-        sanitized = False
-        final_html = phase3.html_content
+        sanitized = healed_links_count > 0
+        final_html = healed_input_html
 
         if not audit_res["passed"]:
-            final_html = self.auditor.sanitize_if_possible(phase3.html_content)
+            final_html = self.auditor.sanitize_if_possible(healed_input_html, main_keyword=phase1.keyword)
             re_audit = self.auditor.audit_post(
                 phase3.title,
                 final_html,
@@ -386,8 +421,12 @@ class SequentialMediaPipeline:
         )
         tuned_weights = self.feedback.tune_niche_weights()
 
-        # 2. Content Refresher & Link Health Audit
+        # 2. Content Refresher & Link Health Audit & Healing
         link_audit = self.refresher.audit_html_links(phase4.final_html, dry_run=dry_run)
+        if link_audit.get("has_dead_links"):
+            _, healed_count = self.refresher.heal_broken_links(phase4.final_html, keyword=phase1.keyword, dry_run=dry_run)
+            link_audit["healed_count"] = healed_count
+
         refresh_candidates = self.refresher.scan_for_refresh_candidates(max_age_days=30)
 
         return Phase7_FeedbackResult(

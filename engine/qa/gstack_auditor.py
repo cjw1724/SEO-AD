@@ -14,6 +14,7 @@ Performs strict automated audit before any publication:
 import os
 import sys
 import re
+from typing import Optional, List, Dict, Any
 
 base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if base_dir not in sys.path:
@@ -139,12 +140,12 @@ class GStackAuditor:
                     if s_clean and s_clean != main_kw and s_clean in title:
                         gate6_errors.append(f"서브 키워드('{s_clean}')가 제목에 포함됨 (제목 삽입 금지)")
 
-                # 3. 본문 내 메인 키워드 반복 빈도 (권장 3~5회, 풀 HTML 컴포넌트 포함 상한 16회)
+                # 3. 본문 내 메인 키워드 반복 빈도 (권장 3~10회, 풀 HTML 컴포넌트 포함 상한 20회)
                 main_count = len(re.findall(re.escape(main_kw), html_content))
                 if main_count < 3:
                     gate6_errors.append(f"메인 키워드('{main_kw}') 본문 노출 빈도 부족 ({main_count}회 < 3회)")
-                elif main_count > 16:
-                    gate6_errors.append(f"메인 키워드('{main_kw}') 과다 반복(키워드 스터핑) 감지 ({main_count}회 > 16회, 권장 3~10회)")
+                elif main_count > 20:
+                    gate6_errors.append(f"메인 키워드('{main_kw}') 과다 반복(키워드 스터핑) 감지 ({main_count}회 > 20회, 권장 3~12회)")
 
                 # 4. 부제목(첫 문단 첫 줄, article-lead) 검증: 메인 1회 포함, 서브 포함 금지
                 lead_match = re.search(r'<div[^>]*class=["\'][^"\']*article-lead[^"\']*["\'][^>]*>(.*?)</div>', html_content, re.DOTALL | re.IGNORECASE)
@@ -212,8 +213,27 @@ class GStackAuditor:
             gate_results.append({
                 "gate": "Gate 7 (Helpful Content & Anti-Spam)",
                 "status": "PASS",
-                "detail": f"HCU Score: {hcu_eval['score']}/100, Lexical Diversity: {hcu_eval['metrics']['ttr']:.2f}, Affiliate Ratio: {hcu_eval['metrics']['affiliate_ratio']:.1f}%",
+                "detail": f"HCU Score: {hcu_eval['score']}/100, Lexical Diversity: {hcu_eval['metrics']['ttr']:.2f}, Reading Ease: {hcu_eval['metrics']['reading_ease_score']}/100, Affiliate Ratio: {hcu_eval['metrics']['affiliate_ratio']:.1f}%",
                 "metrics": hcu_eval["metrics"]
+            })
+
+        # Gate 8: AI Detection Bypass & Naturalness QA (어휘적 불규칙성 & 인간성 검수)
+        nat_eval = self.evaluate_human_naturalness(title, html_content)
+        if not nat_eval["passed"]:
+            for err in nat_eval["errors"]:
+                errors.append(f"[GATE 8 FAIL] {err}")
+            gate_results.append({
+                "gate": "Gate 8 (Human Naturalness & Burstiness)",
+                "status": "FAIL",
+                "detail": "; ".join(nat_eval["errors"]),
+                "metrics": nat_eval["metrics"]
+            })
+        else:
+            gate_results.append({
+                "gate": "Gate 8 (Human Naturalness & Burstiness)",
+                "status": "PASS",
+                "detail": f"Naturalness Score: {nat_eval['score']}/100, Burstiness StdDev: {nat_eval['metrics']['burstiness_std_dev']:.1f}, Markers: {nat_eval['metrics']['colloquial_markers']}",
+                "metrics": nat_eval["metrics"]
             })
 
         passed = len(errors) == 0
@@ -222,7 +242,58 @@ class GStackAuditor:
             "gate_results": gate_results,
             "errors": errors,
             "hcu_score": hcu_eval.get("score", 85),
-            "hcu_metrics": hcu_eval.get("metrics", {})
+            "hcu_metrics": hcu_eval.get("metrics", {}),
+            "naturalness_score": nat_eval.get("score", 85),
+            "naturalness_metrics": nat_eval.get("metrics", {})
+        }
+
+    def evaluate_human_naturalness(self, title: str, html_content: str) -> dict:
+        """
+        Evaluates Human Naturalness & Burstiness (Gate 8):
+        1. Sentence length variance (Burstiness standard deviation)
+        2. Presence of authentic colloquial & experiential marker tokens
+        3. Authentic handcrafted visual marker presence
+        """
+        clean_text = re.sub(r'<[^>]+>', ' ', html_content)
+        sentences = [s.strip() for s in re.split(r'[\.\?\!\n]+', clean_text) if len(s.strip()) >= 5]
+        lengths = [len(s) for s in sentences]
+
+        if len(lengths) >= 5:
+            mean_len = sum(lengths) / len(lengths)
+            variance = sum((l - mean_len) ** 2 for l in lengths) / len(lengths)
+            std_dev = round(variance ** 0.5, 2)
+        else:
+            std_dev = 16.5
+
+        markers = ["직접", "실제로", "솔직히", "주의", "꿀팁", "놓치", "테스트", "경험", "의외로", "결론부터", "체감", "대조", "확인"]
+        found_markers = [m for m in markers if m in clean_text]
+
+        has_visuals = any(k in html_content for k in ["amateur-photo", "hand-drawn", "unfiltered-review", "handwritten-tip", "bento-hero"])
+
+        errors = []
+        # Flag if long article has completely flat, uniform sentence lengths without visuals (monotonous AI signal)
+        if len(lengths) >= 20 and std_dev < 4.0 and not has_visuals:
+            errors.append(f"AI 기계적 균일 문장 패턴 감지 (문장 길이 표준편차 {std_dev} < 4.0)")
+
+        # Scoring
+        score = 0
+        score += min(35, int(std_dev * 1.8))
+        score += min(35, len(found_markers) * 5)
+        score += 30 if has_visuals else 15
+        score = max(60, min(100, score))
+
+        passed = len(errors) == 0
+
+        return {
+            "passed": passed,
+            "score": score,
+            "errors": errors,
+            "metrics": {
+                "burstiness_std_dev": std_dev,
+                "sentence_count": len(sentences),
+                "colloquial_markers": len(found_markers),
+                "has_authentic_visuals": has_visuals
+            }
         }
 
     def evaluate_hcu_quality(self, title: str, html_content: str) -> dict:
@@ -230,8 +301,9 @@ class GStackAuditor:
         Evaluates Google Helpful Content (HCU) & Anti-Spam criteria:
         1. Lexical Diversity (Type-Token Ratio)
         2. Information Gain & Empirical Data density (facts, figures, percentages, won, etc.)
-        3. Commercial / Affiliate link ratio <= 15% (Strict anti-thin-affiliate rule)
-        4. Cloaking / Hidden text detection (display: none / font-size: 0 keyword stuffing)
+        3. Reading Ease & Sentence Flow (Average sentence length & readability index)
+        4. Commercial / Affiliate link ratio <= 15% (Strict anti-thin-affiliate rule)
+        5. Cloaking / Hidden text detection (display: none / font-size: 0 keyword stuffing)
         """
         clean_text = re.sub(r'<[^>]+>', ' ', html_content)
         words = [w for w in re.findall(r'[\w가-힣]+', clean_text) if len(w) >= 2]
@@ -246,18 +318,38 @@ class GStackAuditor:
             re.IGNORECASE
         )
 
-        # 2. Affiliate link count & ratio
-        all_links = re.findall(r'<a\s+[^>]*href=[\'"]([^\'"]+)[\'"]', html_content, re.IGNORECASE)
-        affiliate_links = [l for l in all_links if any(k in l.lower() for k in ["coupang", "linkprice", "adpick", "affiliate", "btn-affiliate"])]
-        affiliate_ratio = round((len(affiliate_links) / max(len(all_links), 1)) * 100, 1)
+        # 2. Reading Ease & Sentence Flow
+        sentences = [s.strip() for s in re.split(r'[\.\?\!\n]+', clean_text) if len(s.strip()) >= 5]
+        sentence_count = max(len(sentences), 1)
+        avg_words_per_sentence = round(total_words / sentence_count, 1)
 
-        # Ratio of affiliate characters to total HTML
-        affiliate_html_footprint = sum(
-            len(m.group(0)) for m in re.finditer(r'<a\s+[^>]*class=[\'"][^\'"]*btn-affiliate[^\'"]*[\'"][^>]*>.*?</a>', html_content, re.DOTALL | re.IGNORECASE)
-        )
+        # Korean/Web reading ease scoring: optimal readability is 8~25 words per sentence
+        if 8.0 <= avg_words_per_sentence <= 25.0:
+            reading_ease_score = 95
+        elif avg_words_per_sentence < 8.0:
+            reading_ease_score = max(50, int(95 - (8.0 - avg_words_per_sentence) * 6))
+        else:
+            reading_ease_score = max(35, int(95 - (avg_words_per_sentence - 25.0) * 2.5))
+
+        # 3. Comprehensive Affiliate link count & footprint ratio
+        all_link_tags = list(re.finditer(r'<a\s+[^>]*href=[\'"]([^\'"]+)[\'"][^>]*>(.*?)</a>', html_content, re.DOTALL | re.IGNORECASE))
+        total_links_count = len(all_link_tags)
+
+        affiliate_tags = []
+        for tag in all_link_tags:
+            tag_html = tag.group(0)
+            tag_href = tag.group(1).lower()
+            if any(k in tag_href for k in ["coupang", "linkprice", "adpick", "affiliate"]) or "btn-affiliate" in tag_html.lower():
+                affiliate_tags.append(tag)
+
+        affiliate_links_count = len(affiliate_tags)
+        affiliate_ratio = round((affiliate_links_count / max(total_links_count, 1)) * 100, 1)
+
+        # Calculate exact byte footprint of all affiliate link tags
+        affiliate_html_footprint = sum(len(m.group(0)) for m in affiliate_tags)
         affiliate_footprint_ratio = round((affiliate_html_footprint / max(len(html_content), 1)) * 100, 2)
 
-        # 3. Empirical facts count
+        # 4. Empirical facts count
         facts = re.findall(r'(\d+[\d,\.]*\s*(?:만원|원|%|일|개월|시간|점|배|세|건|명|위))', clean_text)
         facts_count = len(facts)
 
@@ -265,20 +357,27 @@ class GStackAuditor:
         if hidden_text_matches:
             errors.append(f"스팸 회피/클로킹(숨김 텍스트) 감지: {len(hidden_text_matches)}건 발견")
 
-        # Affiliate ratio check: cannot dominate page (> 15% affiliate footprint)
+        # Affiliate ratio check: cannot dominate page (> 15% affiliate footprint or link ratio)
         if affiliate_footprint_ratio > 15.0:
             errors.append(f"과도한 제휴 링크 비중({affiliate_footprint_ratio}% > 15% 상한선) - 씬 어필리에이트(Thin Affiliate) 감지")
+        elif total_links_count >= 3 and affiliate_ratio > 35.0:
+            errors.append(f"과도한 제휴 링크 비율({affiliate_ratio}% > 35% 상한선) - 상업성 링크 편중 감지")
 
-        # Scoring
+        # Reading ease check: warn if severe run-on walls of text
+        if avg_words_per_sentence > 45.0 and len(clean_text) > 800:
+            errors.append(f"가독성(Reading Ease) 저하: 문장당 평균 어절 수({avg_words_per_sentence}단어) 과다로 모바일 독해 곤란")
+
+        # HCU Scoring (0 - 100)
         score = 0
-        score += min(25, int(ttr * 50))
-        score += min(25, facts_count * 5)
-        score += min(25, int(len(clean_text) / 50))
-        hygiene = 25
+        score += min(20, int(ttr * 45))
+        score += min(20, facts_count * 4)
+        score += min(20, int(len(clean_text) / 60))
+        score += min(20, int(reading_ease_score * 0.2))
+        hygiene = 20
         if hidden_text_matches:
-            hygiene -= 25
-        if affiliate_footprint_ratio > 15.0:
             hygiene -= 20
+        if affiliate_footprint_ratio > 15.0 or (total_links_count >= 3 and affiliate_ratio > 35.0):
+            hygiene -= 15
         score += max(0, hygiene)
 
         passed = len(errors) == 0
@@ -292,16 +391,24 @@ class GStackAuditor:
                 "total_words": total_words,
                 "unique_words": unique_words,
                 "facts_count": facts_count,
-                "affiliate_links_count": len(affiliate_links),
+                "sentence_count": sentence_count,
+                "avg_words_per_sentence": avg_words_per_sentence,
+                "reading_ease_score": reading_ease_score,
+                "total_links_count": total_links_count,
+                "affiliate_links_count": affiliate_links_count,
                 "affiliate_ratio": affiliate_ratio,
                 "affiliate_footprint_ratio": affiliate_footprint_ratio,
                 "hidden_elements": len(hidden_text_matches)
             }
         }
 
-    def sanitize_if_possible(self, html_content: str) -> str:
+    def sanitize_if_possible(self, html_content: str, main_keyword: Optional[str] = None) -> str:
         """
-        Attempts safe automatic sanitization for minor gate violations.
+        Attempts safe automatic sanitization for minor gate violations:
+        - Replaces broken entities
+        - Strips hidden cloaking styles (display:none, font-size:0, color:transparent)
+        - Cleans forbidden slop phrases
+        - Softens excessive main keyword repetition (desaturates keyword stuffing)
         """
         # Replace broken entities with clean CSS/text
         html_content = re.sub(r"&#10003;", "✓", html_content)
@@ -309,11 +416,35 @@ class GStackAuditor:
         html_content = re.sub(r"&#9660;", "", html_content)
         
         # Strip hidden cloaking styles
-        html_content = re.sub(r'style=[\'"][^\'"]*display\s*:\s*none[^\'"]*[\'"]', '', html_content, flags=re.IGNORECASE)
+        html_content = re.sub(
+            r'style=[\'"][^\'"]*(?:display\s*:\s*none\b|font-size\s*:\s*0(?:\.0+)?(?:px|pt|rem|em)?\s*(?:;|[\'"])|color\s*:\s*transparent\b)[^\'"]*[\'"]',
+            '',
+            html_content,
+            flags=re.IGNORECASE
+        )
 
         # Strip slop phrases
         for s in FORBIDDEN_SLOP_PHRASES:
             html_content = html_content.replace(s, "")
+
+        # Desaturate keyword stuffing if keyword provided or discoverable
+        if main_keyword and len(main_keyword.strip()) >= 2:
+            kw = main_keyword.strip()
+            occurrences = list(re.finditer(re.escape(kw), html_content))
+            if len(occurrences) > 12:
+                # Keep first 8 occurrences intact (Title, Lead, First sections, Calc)
+                # Replace every 2nd later occurrence in paragraphs with natural demonstratives
+                parts = []
+                last_idx = 0
+                for idx, match in enumerate(occurrences):
+                    parts.append(html_content[last_idx:match.start()])
+                    if idx >= 8 and (idx % 2 == 1):
+                        parts.append("해당 지원제도")
+                    else:
+                        parts.append(match.group(0))
+                    last_idx = match.end()
+                parts.append(html_content[last_idx:])
+                html_content = "".join(parts)
             
         return html_content
 

@@ -48,7 +48,7 @@ class InstantIndexer:
         Submits URL notification to Google Indexing API.
         In dry-run or mock mode, simulates standard Google 200 OK response.
         """
-        if dry_run or not url.startswith("http"):
+        if dry_run:
             return {
                 "engine": "google_indexing_api",
                 "status": "SIMULATED_SUCCESS",
@@ -62,6 +62,16 @@ class InstantIndexer:
                         "notifyTime": datetime.now().isoformat()
                     }
                 }
+            }
+
+        if not url or not url.startswith("http"):
+            return {
+                "engine": "google_indexing_api",
+                "status": "INVALID_URL",
+                "action": action,
+                "url": url,
+                "status_code": 400,
+                "error": "URL must be an absolute HTTP/HTTPS URL"
             }
 
         # Live submission attempt
@@ -236,16 +246,36 @@ class InstantIndexer:
             pass
 
     def _get_google_token(self) -> Optional[str]:
-        """Loads OAuth2 access token if available in token.json."""
+        """Loads and auto-refreshes OAuth2 access token if available in token.json."""
         token_path = os.path.join(BASE_DIR, "token.json")
-        if os.path.exists(token_path):
-            try:
-                with open(token_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    return data.get("token") or data.get("access_token")
-            except Exception:
-                pass
-        return None
+        if not os.path.exists(token_path):
+            return None
+
+        # Attempt auto-refresh using Google Auth SDK if available
+        try:
+            from google.oauth2.credentials import Credentials
+            from google.auth.transport.requests import Request
+            scopes = ['https://www.googleapis.com/auth/blogger', 'https://www.googleapis.com/auth/indexing']
+            creds = Credentials.from_authorized_user_file(token_path, scopes)
+            if creds:
+                if (not creds.valid or creds.expired) and creds.refresh_token:
+                    try:
+                        creds.refresh(Request())
+                        with open(token_path, "w", encoding="utf-8") as f:
+                            f.write(creds.to_json())
+                    except Exception:
+                        pass
+                return creds.token
+        except Exception:
+            pass
+
+        # Fallback to direct JSON token extraction
+        try:
+            with open(token_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("token") or data.get("access_token")
+        except Exception:
+            return None
 
 
 def submit_url_instantly(url: str, dry_run: bool = False) -> Dict[str, Any]:

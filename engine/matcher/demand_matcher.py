@@ -301,13 +301,22 @@ def build_keyword_package(
         "reason": tier_info["reason"]
     }
 
-def match_trends_with_demand(trends: List[Dict[str, Any]]) -> Dict[str, Any]:
+def match_trends_with_demand(trends: List[Dict[str, Any]], feedback_loop: Optional[Any] = None) -> Dict[str, Any]:
     """
     실시간 트렌드 목록을 5대 황금 니치 및 실제 광고주 캠페인과 매칭하고,
     7티어 경쟁 판정 엔진을 통과한(허수/벽/포화 제외) 최고 PVS v2.0 수익성 토픽을 선정합니다.
     """
     niches = load_niches_db()
     scored_candidates = []
+
+    # Closed-loop Feedback 가중치 사전 캐싱 (Pillar 2, 디스크 I/O 최적화)
+    weights = {}
+    try:
+        from engine.analytics.feedback_loop import FeedbackLoop
+        fb = feedback_loop if feedback_loop is not None else FeedbackLoop()
+        weights = fb.load_weights()
+    except Exception:
+        weights = {}
 
     for t in trends:
         raw_kw = t["keyword"]
@@ -369,12 +378,7 @@ def match_trends_with_demand(trends: List[Dict[str, Any]]) -> Dict[str, Any]:
         expected_adsense_rpm = (base_cpc / 100) * 1.5
         expected_adsense_revenue = (vol / 1000) * expected_adsense_rpm * 1350
 
-        try:
-            from engine.analytics.feedback_loop import FeedbackLoop
-            category_feedback_weight = FeedbackLoop().get_category_weight(cat_code)
-        except Exception:
-            category_feedback_weight = 1.0
-
+        category_feedback_weight = weights.get(cat_code, 1.0)
         total_pvs = round((expected_affiliate_revenue + expected_adsense_revenue) * intent_multiplier * tier_multiplier * category_feedback_weight, 2)
         title = generate_optimized_title(kw, cat_code)
 
@@ -398,11 +402,11 @@ def match_trends_with_demand(trends: List[Dict[str, Any]]) -> Dict[str, Any]:
     return winner
 
 class DemandMatcher:
-    def __init__(self):
-        pass
+    def __init__(self, feedback_loop: Optional[Any] = None):
+        self.feedback_loop = feedback_loop
 
     def select_best_topic(self, trends: List[Dict[str, Any]], sub_candidates: Optional[List[str]] = None) -> Dict[str, Any]:
-        matched = match_trends_with_demand(trends)
+        matched = match_trends_with_demand(trends, feedback_loop=self.feedback_loop)
         cat_code = matched.get("category_code", "TECH")
         kw = matched.get("keyword", "2026 청년도약계좌")
         vol = matched.get("traffic_volume", 35000)

@@ -75,6 +75,11 @@ class TestAdvancedPillars(unittest.TestCase):
             logs = json.load(f)
             self.assertGreaterEqual(len(logs), 1)
 
+        # 5. Invalid URL check in non-dry-run mode
+        bad_res = indexer.submit_google_indexing("invalid_url", dry_run=False)
+        self.assertEqual(bad_res["status"], "INVALID_URL")
+        self.assertEqual(bad_res["status_code"], 400)
+
     # --------------------------------------------------------------------------
     # Pillar 2 Tests: Closed-Loop Feedback & Weight Tuner
     # --------------------------------------------------------------------------
@@ -120,8 +125,16 @@ class TestAdvancedPillars(unittest.TestCase):
         # TECH should be discounted due to 1% CTR
         self.assertLess(weights["TECH"], 1.0)
 
-        # 4. Verify DemandMatcher incorporates tuned weight
-        matcher = DemandMatcher()
+        # 4. Mathematical Stability: verify repeated tuning on static data does not runaway/explode
+        stable_subsidy = weights["SUBSIDY"]
+        stable_tech = weights["TECH"]
+        for _ in range(5):
+            repeated = fb.tune_niche_weights()["tuned_weights"]
+            self.assertEqual(repeated["SUBSIDY"], stable_subsidy, "Weights must not drift/compound on static data")
+            self.assertEqual(repeated["TECH"], stable_tech, "Discounted weights must remain stable")
+
+        # 5. Verify DemandMatcher incorporates tuned weight
+        matcher = DemandMatcher(feedback_loop=fb)
         best = matcher.select_best_topic([{"keyword": "근로장려금 정기신청", "traffic_volume": 60000}])
         self.assertIsNotNone(best)
         self.assertGreater(best["pvs"], 0)
@@ -214,6 +227,14 @@ class TestAdvancedPillars(unittest.TestCase):
         self.assertEqual(brief["action"], "CONTENT_REFRESH")
         self.assertIn("2026", brief["target_keyword"])
 
+        # 4. Queue and Maintenance Cycle verification
+        queue = refresher.get_refresh_queue()
+        self.assertGreaterEqual(len(queue), 1)
+        popped = refresher.pop_refresh_candidate()
+        self.assertIsNotNone(popped)
+        maint_res = refresher.run_maintenance_cycle(sample_html, keyword="근로장려금", posts=dummy_posts, dry_run=True)
+        self.assertEqual(maint_res["link_healing"]["healed_count"], 1)
+
     # --------------------------------------------------------------------------
     # Pillar 5 Tests: Google Helpful Content (HCU) & Anti-Spam Gate 7
     # --------------------------------------------------------------------------
@@ -235,6 +256,9 @@ class TestAdvancedPillars(unittest.TestCase):
         self.assertTrue(eval_res["passed"])
         self.assertGreaterEqual(eval_res["score"], 70)
         self.assertGreater(eval_res["metrics"]["facts_count"], 4)
+        self.assertIn("reading_ease_score", eval_res["metrics"])
+        self.assertGreater(eval_res["metrics"]["reading_ease_score"], 60)
+        self.assertGreater(eval_res["metrics"]["avg_words_per_sentence"], 0)
 
         # 2. Hidden Cloaking Text Violation (Spam Attempt)
         spam_html = good_html + '<div style="display:none">청년도약계좌 청년도약계좌 불법키워드도배</div>'
@@ -254,6 +278,19 @@ class TestAdvancedPillars(unittest.TestCase):
         thin_eval = auditor.evaluate_hcu_quality("과도한 어필리에이트", thin_affiliate_html)
         self.assertFalse(thin_eval["passed"], "Must fail when affiliate footprint dominates page")
         self.assertIn("씬 어필리에이트", thin_eval["errors"][0])
+
+        # 4. Thin affiliate detection without btn-affiliate class
+        no_class_html = (
+            '<div class="bento-hero">Hero</div><div class="saas-calculator">Calc</div><div class="adsense-slot">Ad</div><details><summary>FAQ</summary>A</details>'
+            + ('<a href="https://link.coupang.com/a/test_item">쿠팡 특가 바로가기</a> ' * 40)
+        )
+        no_class_eval = auditor.evaluate_hcu_quality("클래스없는 어필리에이트", no_class_html)
+        self.assertFalse(no_class_eval["passed"], "Must detect Coupang links even without btn-affiliate class")
+
+        # 5. Desaturate keyword stuffing during sanitization
+        stuffed_html = "<p>기사 본문 내용입니다.</p>" + ("<p>2026 청년도약계좌 혜택을 비교해보겠습니다.</p>" * 18)
+        desaturated = auditor.sanitize_if_possible(stuffed_html, main_keyword="2026 청년도약계좌")
+        self.assertLess(desaturated.count("2026 청년도약계좌"), stuffed_html.count("2026 청년도약계좌"))
 
     # --------------------------------------------------------------------------
     # Sequential Pipeline Integration Test (Phase 1 -> 7)

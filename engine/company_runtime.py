@@ -56,6 +56,9 @@ from engine.growth.viral_hook_maker import ViralHookMaker
 from engine.distribution.multi_channel_distributor import MultiChannelDistributor
 from engine.analytics.feedback_loop import FeedbackLoop
 from engine.maintenance.content_refresher import ContentRefresher
+from engine.radar.community_sentiment_scout import CommunitySentimentScout
+from engine.matcher.experiential_verifier import ExperientialVerifier
+from engine.agents.human_voice_engine import HumanVoiceEngine
 
 
 class CompanyLogger:
@@ -237,7 +240,10 @@ class SelfHealingPipeline:
         self.logger = logger
         self.scout = TrendScout()
         self.matcher = DemandMatcher()
+        self.community_scout = CommunitySentimentScout()
+        self.exp_verifier = ExperientialVerifier()
         self.agency = AgencyStack()
+        self.human_voice = HumanVoiceEngine()
         self.auditor = GStackAuditor()
         self.gateway = BloggerGateway()
         self.indexer = InstantIndexer()
@@ -311,6 +317,17 @@ class SelfHealingPipeline:
                 "cpa_type": "CPA_REFUND"
             }
 
+        # Humanization Phase 1: Community Sentiment & Experiential Factset
+        print(" -> [AI 직원 02 & 03] 커뮤니티 여론 수집 및 내돈내산 팩트체크 검증...")
+        sentiment_data = self.community_scout.scout_community_sentiment(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        factset_data = self.exp_verifier.build_experiential_factset(
+            matched_topic["keyword"], category=matched_topic["category"]
+        )
+        matched_topic["sentiment"] = sentiment_data
+        matched_topic["factset"] = factset_data
+
         print(f" -> 선정 메인 키워드: [{matched_topic['keyword']}]")
         print(f" -> 7티어 경쟁 판정: [{matched_topic.get('tier', '최적')}] (골든 비율: {matched_topic.get('ratio', 0):.2f})")
         print(f" -> 서브 키워드(1:1 H2 할당): {matched_topic.get('subs', [])}")
@@ -335,7 +352,15 @@ class SelfHealingPipeline:
             healing_events.append("AgencyStack generated empty structure -> deterministic rebuild")
             editorial = self.agency._build_deterministic_content(matched_topic)
 
-        print(f" -> 섹션 {len(editorial.get('sections', []))}개 및 FAQ {len(editorial.get('faq', []))}개 집필 완료")
+        # Humanization Phase 3: Conversational Human Voice Engine
+        editorial = self.human_voice.humanize_editorial_content(
+            editorial_data=editorial,
+            sentiment_data=matched_topic.get("sentiment"),
+            factset_data=matched_topic.get("factset"),
+            sub_keywords=matched_topic.get("subs", [])
+        )
+
+        print(f" -> 섹션 {len(editorial.get('sections', []))}개 및 FAQ {len(editorial.get('faq', []))}개 집필 완료 (인간화 음성 적용)")
 
         # -----------------------------------------------------------------
         # Step 3: CRO UI & Micro-SaaS Assembly

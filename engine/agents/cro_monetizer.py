@@ -26,6 +26,8 @@ if base_dir not in sys.path:
 from engine.visuals.saas_calculator import render_saas_calculator
 from engine.visuals.canvas_renderer import render_spec_comparison_chart, render_process_stepper
 from engine.matcher.coupang_link_builder import render_affiliate_cta_box
+from engine.visuals.handcrafted_annotation_renderer import HandcraftedAnnotationRenderer
+from engine.matcher.experiential_verifier import ExperientialVerifier
 
 
 def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
@@ -44,6 +46,21 @@ def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
     calc_html = render_saas_calculator(category)
     chart_html = render_spec_comparison_chart(keyword, category)
     affiliate_html = render_affiliate_cta_box(keyword, category)
+
+    # Phase 2 Authentic Visuals & Humanization
+    factset = topic.get("factset") or editorial_data.get("factset")
+    if not factset:
+        factset = ExperientialVerifier().build_experiential_factset(keyword, category)
+
+    photo_card_html = HandcraftedAnnotationRenderer.render_amateur_photo_card(
+        title="에디토리얼 팀 실측 분석 및 팩트체크 리포트",
+        caption="공식 데이터 및 폰카 뷰파인더 실시간 대조 검증 컷",
+        category=category
+    )
+    pros_cons_html = HandcraftedAnnotationRenderer.render_unfiltered_pros_cons_board(
+        pros=factset.get("pros_real", []),
+        cons=factset.get("cons_unfiltered", [])
+    )
     
     # 1. Bento Hero Card
     hero_bento = f"""
@@ -184,8 +201,10 @@ def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
 <div class="article-container" style="max-width: 760px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', Roboto, sans-serif; color: #0f172a; line-height: 1.7;">
   {hero_bento}
   {ad_slot_1}
+  {photo_card_html}
   {calc_html}
   {editorial_body}
+  {pros_cons_html}
   {affiliate_html}
   {ad_slot_3}
   {faq_html}

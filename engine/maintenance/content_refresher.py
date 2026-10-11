@@ -16,6 +16,7 @@ import sys
 import re
 import json
 import urllib.request
+import urllib.parse
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple
 
@@ -114,7 +115,8 @@ class ContentRefresher:
         self,
         html_content: str,
         keyword: str = "추천",
-        fallback_affiliate_url: Optional[str] = None
+        fallback_affiliate_url: Optional[str] = None,
+        dry_run: bool = True
     ) -> Tuple[str, int]:
         """
         Replaces dead or broken links with evergreen fallback URL.
@@ -122,7 +124,7 @@ class ContentRefresher:
         encoded_kw = urllib.parse.quote(keyword)
         default_fallback = fallback_affiliate_url or f"https://link.coupang.com/a/blogin_search?q={encoded_kw}"
 
-        audit = self.audit_html_links(html_content, dry_run=True)
+        audit = self.audit_html_links(html_content, dry_run=dry_run)
         replaced_count = 0
         healed_html = html_content
 
@@ -132,6 +134,58 @@ class ContentRefresher:
             replaced_count += 1
 
         return healed_html, replaced_count
+
+    def get_refresh_queue(self) -> List[Dict[str, Any]]:
+        """Returns the queued refresh candidates."""
+        try:
+            with open(self.refresh_queue_file, "r", encoding="utf-8") as f:
+                queue = json.load(f)
+                return queue if isinstance(queue, list) else []
+        except Exception:
+            return []
+
+    def pop_refresh_candidate(self) -> Optional[Dict[str, Any]]:
+        """Pops the next candidate from the refresh queue."""
+        queue = self.get_refresh_queue()
+        if not queue:
+            return None
+        candidate = queue.pop(0)
+        try:
+            with open(self.refresh_queue_file, "w", encoding="utf-8") as f:
+                json.dump(queue, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+        return candidate
+
+    def run_maintenance_cycle(
+        self,
+        html_content: Optional[str] = None,
+        keyword: str = "추천",
+        posts: Optional[List[Dict[str, Any]]] = None,
+        max_age_days: int = 30,
+        dry_run: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Runs comprehensive post-publication maintenance:
+        - Link health audit & healing
+        - Refresh candidate detection & queueing
+        """
+        heal_result = {"healed_html": html_content, "healed_count": 0}
+        if html_content:
+            healed_html, count = self.heal_broken_links(html_content, keyword=keyword, dry_run=dry_run)
+            heal_result = {"healed_html": healed_html, "healed_count": count}
+
+        candidates = self.scan_for_refresh_candidates(posts=posts, max_age_days=max_age_days)
+        briefs = [self.generate_refresh_brief(c) for c in candidates]
+
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "dry_run": dry_run,
+            "link_healing": heal_result,
+            "refresh_candidates_found": len(candidates),
+            "refresh_candidates": candidates,
+            "refresh_briefs": briefs
+        }
 
     # -------------------------------------------------------------
     # 2. Content Refresh & Stale Post Detection
