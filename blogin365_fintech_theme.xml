@@ -12,6 +12,9 @@
   <link crossorigin='' href='https://fonts.gstatic.com' rel='preconnect'/>
   <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;display=swap' rel='stylesheet'/>
 
+  <!-- Google AdSense Official Script -->
+  <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2174726915215446'></script>
+
   <!-- Trick B: Google CSE & AdSense for Search (AFS) Configuration Token -->
   <script type='text/javascript'>
     /* <![CDATA[ */

@@ -300,21 +300,35 @@ def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
 </div>
 """
 
-    # AdSense Slot 1: Top Hero Slot
-    ad_slot_1 = """
-<div class="adsense-slot adsense-top" style="margin: 24px 0; text-align: center; min-height: 100px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px;">
-  <span style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace;">ADVERTISEMENT · B365 AD NETWORK</span>
-  <span style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">반응형 고수익 애드센스 슬롯 (상단 황금 영역)</span>
+    def _render_adsense_slot(slot_class: str, label: str) -> str:
+        client_id = os.getenv("ADSENSE_CLIENT_ID", "").strip()
+        slot_id = os.getenv("ADSENSE_SLOT_ID", "").strip()
+        if client_id and slot_id:
+            return f"""
+<div class="adsense-slot {slot_class}" style="margin: 26px 0; text-align: center; min-height: 100px;">
+  <div style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace; margin-bottom: 6px;">ADVERTISEMENT · B365 AD NETWORK</div>
+  <!-- Blogin 365 AI - {label} -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="{html_lib.escape(client_id)}"
+       data-ad-slot="{html_lib.escape(slot_id)}"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+       (adsbygoogle = window.adsbygoogle || []).push({{}});
+  </script>
 </div>
-"""
+""".strip()
+        else:
+            return f"""
+<div class="adsense-slot {slot_class}" style="margin: 24px 0; text-align: center; min-height: 100px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px;">
+  <span style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace;">ADVERTISEMENT · B365 AD NETWORK</span>
+  <span style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">반응형 고수익 애드센스 슬롯 ({label})</span>
+</div>
+""".strip()
 
-    # AdSense Slot 2: Mid-Content Break
-    ad_slot_2 = """
-<div class="adsense-slot adsense-mid" style="margin: 28px 0; text-align: center; min-height: 100px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px;">
-  <span style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace;">ADVERTISEMENT · B365 AD NETWORK</span>
-  <span style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">반응형 고수익 애드센스 슬롯 (본문 중앙 영역)</span>
-</div>
-"""
+    ad_slot_1 = _render_adsense_slot("adsense-top", "상단 황금 영역")
+    ad_slot_2 = _render_adsense_slot("adsense-mid", "본문 중앙 영역")
 
     # Build Editorial Sections (H2: 1:1 Sub-Keyword Mapping)
     sec_html_list = [lead_box]
@@ -366,20 +380,10 @@ def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
 """
 
     # AdSense Slot 3: Mid-Content Break 2 (Post-Affiliate CTA)
-    ad_slot_3 = """
-<div class="adsense-slot adsense-mid-2" style="margin: 28px 0; text-align: center; min-height: 100px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px;">
-  <span style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace;">ADVERTISEMENT · B365 AD NETWORK</span>
-  <span style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">반응형 고수익 애드센스 슬롯 (전환 행동 직후 영역)</span>
-</div>
-"""
+    ad_slot_3 = _render_adsense_slot("adsense-mid-2", "전환 행동 직후 영역")
 
     # AdSense Slot 4: Pre-Footer Slot
-    ad_slot_4 = """
-<div class="adsense-slot adsense-bottom" style="margin: 28px 0; text-align: center; min-height: 100px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px;">
-  <span style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; font-family: ui-monospace, Menlo, monospace;">ADVERTISEMENT · B365 AD NETWORK</span>
-  <span style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">반응형 고수익 애드센스 슬롯 (하단 최종 체류 영역)</span>
-</div>
-"""
+    ad_slot_4 = _render_adsense_slot("adsense-bottom", "하단 최종 체류 영역")
 
     # Zero-Persona Editorial Footer
     editorial_footer = """
