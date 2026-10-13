@@ -17,7 +17,7 @@
     /* <![CDATA[ */
     // [설정] 구글 맞춤검색(Google CSE) Search Engine ID: SEO.env의 GOOGLE_CSE_CX 값을 입력하면 고단가 AFS 검색광고가 활성화됩니다.
     // 미설정('') 시에도 블로그 내부 검색 및 연관 키워드 태그로 무중단 자동 작동합니다.
-    window.B365_CSE_CX = '';
+    window.B365_CSE_CX = '863c2f0c96b064551';
     /* ]]> */
   </script>
 

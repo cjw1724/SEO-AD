@@ -90,7 +90,10 @@ def render_search_navigation_widget(
     if not clean_kw:
         clean_kw = "추천 가이드"
 
-    cx = (cse_cx or os.getenv("GOOGLE_CSE_CX", "")).strip()
+    if cse_cx is not None:
+        cx = cse_cx.strip()
+    else:
+        cx = (os.getenv("GOOGLE_CSE_CX") or "").strip()
 
     # Build clean, high-intent pill queries without repeating main keyword excessively
     pills: List[str] = []
