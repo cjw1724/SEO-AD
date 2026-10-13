@@ -86,6 +86,9 @@ class ContentRefresher:
         alive_links = []
 
         for u in urls:
+            if "blogin365ai.blogspot.com/search" in u or "/search?q=" in u:
+                alive_links.append({"url": u, "status": "ALIVE", "status_code": 200, "note": "Internal search link"})
+                continue
             if dry_run:
                 # Simulated heuristic: example.com/broken or dead test URLs
                 if "broken" in u or "expired" in u or "404" in u:

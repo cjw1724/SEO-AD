@@ -161,7 +161,11 @@ class FeedbackLoop:
         conversions = max(1, int(clicks * random.uniform(0.018, 0.045)))
         
         affiliate_rev = round(conversions * random.randint(15000, 38000), 2)
-        adsense_rev = round((impressions / 1000.0) * random.uniform(8.0, 16.0) * 1350, 2)
+        base_adsense_rev = round((impressions / 1000.0) * random.uniform(8.0, 16.0) * 1350, 2)
+        # Trick B: AdSense for Search (AFS) additional search engagement revenue
+        search_queries = max(1, int(clicks * random.uniform(0.18, 0.32)))
+        afs_rev = round((search_queries * random.uniform(0.04, 0.08)) * random.randint(1800, 4200), 2)
+        adsense_rev = round(base_adsense_rev + afs_rev, 2)
         dwell_time = round(random.uniform(110.0, 195.0), 1)
 
         return self.record_post_metric(

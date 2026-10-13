@@ -53,6 +53,16 @@ def generate_affiliate_cta_button(keyword: str, cpa_type: str) -> str:
     return html
 
 def render_affiliate_cta_box(keyword: str, category: str = "TECH") -> str:
-    cpa_type = "CPS_COUPANG" if category in ["TECH", "WELLNESS"] else "CPA_REFUND"
+    cat_upper = (category or "TECH").upper()
+    if cat_upper in ["TECH", "WELLNESS"]:
+        cpa_type = "CPS_COUPANG"
+    elif cat_upper in ["SAVINGS", "CASHFLOW"]:
+        cpa_type = "CPA_TELECOM"
+    elif cat_upper in ["MEDICAL", "CLINIC"]:
+        cpa_type = "CPA_CLINIC"
+    elif cat_upper in ["CAREER", "EDUCATION", "CERT"]:
+        cpa_type = "CPA_EDUCATION"
+    else:
+        cpa_type = "CPA_REFUND"
     return generate_affiliate_cta_button(keyword, cpa_type)
 

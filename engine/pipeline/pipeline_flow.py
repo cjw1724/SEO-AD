@@ -170,7 +170,12 @@ class PipelineExecutionSummary:
             "hcu_score": self.phase4.hcu_score,
             "hcu_metrics": self.phase4.hcu_metrics,
             "sentiment": self.phase1.sentiment,
-            "factset": self.phase1.factset
+            "factset": self.phase1.factset,
+            "trick_b": {
+                "present": "b365-search-nav" in self.phase3.html_content,
+                "has_pills": "b365-search-pill" in self.phase3.html_content,
+                "mode": "GOOGLE_CSE" if os.getenv("GOOGLE_CSE_CX") else "BLOG_FALLBACK"
+            }
         }
 
 
@@ -286,6 +291,8 @@ class SequentialMediaPipeline:
     ) -> Phase3_AssemblyResult:
         assembled_html = assemble_world_class_article(phase1.raw_topic, phase2.editorial_dict)
         components = ["bento-hero", "saas-calculator", "adsense-slots", "faq-accordion"]
+        if "b365-search-nav" in assembled_html:
+            components.append("b365-search-nav")
 
         return Phase3_AssemblyResult(
             title=phase1.title,

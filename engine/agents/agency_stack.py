@@ -11,6 +11,7 @@ Agency Agents (⭐15.7만) & prompts.chat (⭐17.3만) 기반 AI 저널리스트
 
 import os
 import sys
+import re
 import json
 import requests
 from dotenv import load_dotenv
@@ -115,6 +116,12 @@ class AgencyStack:
       "question": "자주 묻는 핵심 질문 3",
       "answer": "명확하고 간결한 단답형 답변 (1~2문장)"
     }}
+  ],
+  "related_searches": [
+    "{keyword} 자격 조건",
+    "{keyword} 신청 기간",
+    "{keyword} 모의 계산",
+    "{keyword} 혜택 비교"
   ]
 }}"""
 
@@ -182,6 +189,17 @@ class AgencyStack:
                 for v in violations:
                     s["content"] = s["content"].replace(v, "")
                     s["heading"] = s["heading"].replace(v, "")
+        if "related_searches" in data and isinstance(data["related_searches"], list):
+            data["related_searches"] = [
+                re.sub(r'[\r\n]+', ' ', s).strip() for s in data["related_searches"] if s and isinstance(s, str)
+            ]
+        if not data.get("related_searches"):
+            data["related_searches"] = [
+                f"{keyword} 자격 조건",
+                f"{keyword} 신청 기간",
+                f"{keyword} 모의 계산",
+                f"{keyword} 혜택 비교"
+            ]
         return data
 
     def _build_deterministic_content(self, topic: dict) -> dict:
@@ -292,7 +310,20 @@ class AgencyStack:
             }
         ]
 
-        return {"subtitle": subtitle, "sections": sections, "faq": faq}
+        related_searches = [
+            sub1,
+            sub2,
+            sub3,
+            f"{keyword} 자격 조건",
+            f"{keyword} 모의 계산"
+        ]
+
+        return {
+            "subtitle": subtitle,
+            "sections": sections,
+            "faq": faq,
+            "related_searches": related_searches
+        }
 
 
 if __name__ == "__main__":

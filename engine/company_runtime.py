@@ -37,6 +37,8 @@ import argparse
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 
+from dotenv import load_dotenv
+
 # Enforce UTF-8 console output for Windows PowerShell / CMD
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -44,6 +46,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
+
+load_dotenv(os.path.join(BASE_DIR, "SEO.env"))
 
 from engine.radar.trend_scout import TrendScout
 from engine.matcher.demand_matcher import DemandMatcher
@@ -175,7 +179,7 @@ class AICompanyStaff:
         },
         "02_ProductPlanner": {
             "title": "Product Planner (Niche Monetization Strategist)",
-            "description": "5대 골든 니치 선정, 상업적 의도 및 수익화 프레임 기획"
+            "description": "5대 골든 니치 선정, 상업적 의도 및 수익화 프레임 기획 (트릭 B AFS 연동 포함)"
         },
         "03_MarketResearcher": {
             "title": "Market Researcher (Google Trends KR Analyst)",
@@ -183,11 +187,11 @@ class AICompanyStaff:
         },
         "04_UIDesigner": {
             "title": "UI Designer (Canvas & Visual Architect)",
-            "description": "인라인 SVG 스펙 비교 매트릭스, 프로세스 스텝퍼 및 Bento Hero 설계"
+            "description": "인라인 SVG 스펙 비교 매트릭스, 프로세스 스텝퍼, Bento Hero 및 Trick B 맞춤검색 UI 설계"
         },
         "05_Developer": {
-            "title": "Developer (Micro-SaaS Software Engineer)",
-            "description": "체류시간 극대화 인터랙티브 JavaScript 계산기 및 시맨틱 HTML 엔지니어링"
+            "title": "Developer (Micro-SaaS & Search Engineer)",
+            "description": "체류시간 극대화 인터랙티브 JavaScript 계산기, 시맨틱 HTML 및 Trick B Google CSE/AFS 위젯 엔지니어링"
         },
         "06_QATester": {
             "title": "QA Tester (57 Slop-Test Gate Inspector)",
@@ -224,6 +228,15 @@ class AICompanyStaff:
         if not os.path.exists(niche_db):
             health["02_ProductPlanner"]["status"] = "WARNING"
             health["02_ProductPlanner"]["details"] = "high_cpc_keywords.json missing"
+
+        # Check Trick B Search Engine & AdSense for Search (AFS) Health
+        cse_cx = os.getenv("GOOGLE_CSE_CX", "").strip()
+        if cse_cx:
+            health["05_Developer"]["trick_b"] = f"GOOGLE_CSE (CX: {cse_cx[:6]}...)"
+            health["05_Developer"]["details"] = f"Micro-SaaS & Google CSE AFS Active ({cse_cx[:6]}...)"
+        else:
+            health["05_Developer"]["trick_b"] = "BLOG_FALLBACK"
+            health["05_Developer"]["details"] = "Micro-SaaS & Blog Search Dual Fallback Active"
 
         return health
 
@@ -365,10 +378,13 @@ class SelfHealingPipeline:
         # -----------------------------------------------------------------
         # Step 3: CRO UI & Micro-SaaS Assembly
         # -----------------------------------------------------------------
-        print("\n[AI 직원 04 & 05] 월드클래스 UX/UI 조립 (Bento Hero + SaaS 계산기 + Canvas SVG + 애드센스 4슬롯)...")
+        print("\n[AI 직원 04 & 05] 월드클래스 UX/UI 조립 (Bento Hero + SaaS 계산기 + Canvas SVG + 애드센스 4슬롯 + 트릭 B 검색허브)...")
         assembled_html = assemble_world_class_article(matched_topic, editorial)
         title = matched_topic.get("title", f"{matched_topic['keyword']} 실측 분석 및 모의 계산 가이드")
+        cse_cx = os.getenv("GOOGLE_CSE_CX", "").strip()
+        trick_b_mode = "GOOGLE_CSE" if cse_cx else "BLOG_FALLBACK"
         print(f" -> 제목: {title}")
+        print(f" -> [트릭 B] 맞춤검색 네비게이션 & 연관 키워드 알약(Pills) 조립 완료 (모드: {trick_b_mode})")
         print(f" -> 최종 HTML 조립 완료: {len(assembled_html):,} bytes")
 
         # -----------------------------------------------------------------
@@ -489,6 +505,12 @@ class SelfHealingPipeline:
             },
             "link_audit": link_audit,
             "refresh_candidates": refresh_cands,
+            "trick_b": {
+                "mode": trick_b_mode,
+                "has_search_widget": "b365-search-nav" in assembled_html,
+                "has_pills": "b365-search-pill" in assembled_html,
+                "cse_cx_present": bool(cse_cx)
+            },
             "healing_events": healing_events
         }
 
@@ -517,6 +539,7 @@ class CompanyRuntime:
         metrics = data.get("metrics", {})
         history = data.get("execution_history", [])
         health = self.staff.check_health()
+        cse_cx = os.getenv("GOOGLE_CSE_CX", "").strip()
 
         print("\n" + "═" * 76)
         print("  🏢 BLOGIN 365 AI HOLDINGS - AUTONOMOUS MEDIA OPERATING SYSTEM (v6.0)")
@@ -532,6 +555,14 @@ class CompanyRuntime:
         print(f"    - 자가치유 복구      : {metrics.get('healed_cycles', 0)} 건 완벽 자동 복구")
         print(f"    - 총 발행 포스트     : {metrics.get('total_published_posts', 0)} 개")
         print(f"    - 누적 PVS 수익 점수 : {metrics.get('cumulative_pvs_score', 0):,.0f} pt")
+        print("─" * 76)
+        print("  🔍 Trick B 검색엔진 & AdSense for Search (AFS) 상태:")
+        if cse_cx:
+            print(f"    - 엔진 모드 : 🟢 GOOGLE_CSE 활성화 (CX ID: {cse_cx})")
+            print("    - 광고 유닛 : AdSense for Search (AFS) 고단가 검색광고 실시간 송출 중")
+        else:
+            print("    - 엔진 모드 : 🟡 BLOG_SEARCH 무중단 듀얼 폴백 활성화 (CX 미설정 시 안전 내부 검색)")
+            print("    - 안내      : SEO.env에 GOOGLE_CSE_CX를 입력하면 즉시 구글 공식 검색광고로 승격됩니다.")
         print("─" * 76)
         print("  👥 8인 AI 직원 조직도 & 헬스체크 (Every AI Playbook Org Chart):")
         for key, info in health.items():

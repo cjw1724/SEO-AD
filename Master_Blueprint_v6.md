@@ -44,6 +44,10 @@ $$\text{where } \mathbf{\text{Sessions}} = \text{Organic Search SEO (누적 지�
   * 알뜰폰/자동차보험/환급금 글 $\rightarrow$ 링크프라이스/애드픽 CPA 공식 링크 (건당 **25,000원 ~ 85,000원** 확정 정산).
 * **방식 C (자체 독자 락인 & 스폰서십)**:
   * 본문 중간 Lazyowen 스타일의 이메일 수집 폼 (`/api/subscribe`) $\rightarrow$ 자체 유료 상품 및 고단가 B2B 광고 유치.
+* **트릭 B (Google CSE & AdSense for Search — AFS 검색 광고)**:
+  * 본문 하단 및 테마 사이드바 내 구글 맞춤검색(CSE) 및 스마트 검색 폼 연동 (`<div class="b365-search-nav">`).
+  * 5대 황금 니치별 연관 검색어 트리거 알약(Pill 태그)을 자동 배치하여 방문자 2차 검색 유도 $\rightarrow$ **서버비 $0, 검색당 고단가 AFS 광고수익 추가 창출**.
+  * `GOOGLE_CSE_CX` 미설정 시에도 내부 블로그 검색으로 무중단 자동 폴백되는 듀얼 아키텍처.
 
 ---
 

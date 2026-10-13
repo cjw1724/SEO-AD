@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsversion='3' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/namespaces/2010' xmlns:data='http://www.google.com/namespaces/2010' xmlns:expr='http://www.google.com/namespaces/2010'>
+<head>
+  <meta content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+  <b:include data='blog' name='all-head-content'/>
+
+  <!-- Pretendard & JetBrains Mono Fonts -->
+  <link href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css' rel='stylesheet'/>
+  <link href='https://fonts.googleapis.com' rel='preconnect'/>
+  <link crossorigin='' href='https://fonts.gstatic.com' rel='preconnect'/>
+  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;display=swap' rel='stylesheet'/>
+
+  <b:skin><![CDATA[
+    /* -------------------------------------------------------------------------
+       Blogin 365 Fintech CRO - Clean Standalone Blogger Theme
+       Style: Toss / Stripe / NerdWallet Fintech Bento Grid & Clean CRO
+       ------------------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-body: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --border-color: #E2E8F0;
+      --border-focus: #2563EB;
+      --text-main: #0F172A;
+      --text-sub: #475569;
+      --text-muted: #64748B;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --success: #16A34A;
+      --font-stack: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    }
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Layout Container */
+    .b365-site-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    .b365-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .b365-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 24px;
+    }
+    .b365-brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .b365-brand-title a {
+      color: var(--text-main);
+    }
+    .b365-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+    .b365-nav-links a {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .b365-nav-links a:hover {
+      color: var(--primary);
+    }
+    .b365-header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 16px;
+      background: var(--primary);
+      color: #FFFFFF !important;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .b365-header-cta:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Main Grid */
+    .b365-main-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 28px;
+      padding: 28px 0 60px;
+    }
+    @media (max-width: 860px) {
+      .b365-main-layout {
+        grid-template-columns: 1fr;
+      }
+      .b365-nav-links {
+        display: none;
+      }
+    }
+
+    /* Cards */
+    .b365-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Post Entry */
+    .b365-post {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    }
+    .b365-post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .b365-post-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+    .b365-post-title a:hover {
+      color: var(--primary);
+    }
+    .b365-post-snippet {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .b365-read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Post Body Typography & Content */
+    .post-body {
+      font-size: 16px;
+      color: var(--text-main);
+      line-height: 1.75;
+    }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 32px 0 14px 0;
+      letter-spacing: -0.02em;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    .post-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 24px 0 10px 0;
+    }
+    .post-body p {
+      margin-bottom: 16px;
+      color: #1E293B;
+    }
+    .post-body ul, .post-body ol {
+      margin: 0 0 18px 24px;
+    }
+    .post-body li {
+      margin-bottom: 6px;
+    }
+
+    /* AdSense Slot Placeholder */
+    .b365-ad-slot {
+      margin: 24px 0;
+      padding: 16px;
+      background: #F1F5F9;
+      border: 1px dashed #CBD5E1;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* Sidebar */
+    .b365-sidebar .widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    }
+    .b365-sidebar h2.title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .b365-sidebar ul {
+      list-style: none;
+    }
+    .b365-sidebar li {
+      padding: 8px 0;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+    .b365-sidebar li:last-child {
+      border-bottom: none;
+    }
+    .b365-sidebar li a:hover {
+      color: var(--primary);
+    }
+
+    /* Pagination */
+    .blog-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-top: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Footer */
+    .b365-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 32px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .b365-footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+  ]]></b:skin>
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header class='b365-header'>
+    <div class='b365-site-wrapper b365-header-inner'>
+      <b:section id='header' maxwidgets='1' showaddelement='no'>
+        <b:widget id='Header1' locked='true' title='블로그 헤더' type='Header' version='2'>
+          <b:includable id='main'>
+            <div class='b365-brand-title'>
+              <a expr:href='data:blog.homepageUrl'><data:title/></a>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+
+      <nav class='b365-nav-links'>
+        <a expr:href='data:blog.homepageUrl'>홈</a>
+        <a href='#calculator'>금융 계산기</a>
+        <a href='#popular'>인기 가이드</a>
+        <a href='#policy'>2026 금융 정책</a>
+      </nav>
+
+      <a class='b365-header-cta' href='#calculator'>실시간 모의계산</a>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class='b365-site-wrapper b365-main-layout'>
+    <main class='b365-main-content'>
+      <b:section id='main' showaddelement='yes'>
+        <b:widget id='Blog1' locked='true' title='블로그 글' type='Blog' version='2'>
+          <b:includable id='main' var='top'>
+            <b:loop values='data:posts' var='post'>
+              <article class='b365-post' expr:id='data:post.id'>
+                <div class='b365-post-meta'>
+                  <span><data:post.dateHeader/></span>
+                  <b:if cond='data:post.labels'>
+                    <span>&#183;</span>
+                    <b:loop values='data:post.labels' var='label'>
+                      <a expr:href='data:label.url' rel='tag'><data:label.name/></a>
+                    </b:loop>
+                  </b:if>
+                </div>
+
+                <h1 class='b365-post-title' expr:id='&quot;post-title-&quot; + data:post.id'>
+                  <b:if cond='data:blog.pageType == &quot;item&quot;'>
+                    <data:post.title/>
+                  <b:else/>
+                    <a expr:href='data:post.url'><data:post.title/></a>
+                  </b:if>
+                </h1>
+
+                <!-- ADSENSE_SLOT: Title 직하단 -->
+                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_TOP --&gt;</div>
+
+                <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id'>
+                  <data:post.body/>
+                </div>
+
+                <!-- ADSENSE_SLOT: Post 하단 -->
+                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_BOTTOM --&gt;</div>
+
+                <b:if cond='data:blog.pageType != &quot;item&quot;'>
+                  <div style='margin-top: 16px;'>
+                    <a class='b365-read-more' expr:href='data:post.url'>가이드 전문 및 계산기 바로가기 &#8594;</a>
+                  </div>
+                </b:if>
+              </article>
+            </b:loop>
+
+            <!-- Blog Pagination -->
+            <b:include name='nextprev'/>
+          </b:includable>
+
+          <b:includable id='nextprev'>
+            <div class='blog-pager' id='blog-pager'>
+              <b:if cond='data:newerPageUrl'>
+                <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:title='data:newerPageTitle'>&#8592; 이전 글</a>
+              </b:if>
+              <b:if cond='data:olderPageUrl'>
+                <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:title='data:olderPageTitle'>다음 글 &#8594;</a>
+              </b:if>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+    </main>
+
+    <!-- Sidebar Section -->
+    <aside class='b365-sidebar'>
+      <b:section id='sidebar' showaddelement='yes'>
+        <b:widget id='PopularPosts1' locked='false' title='인기 금융 가이드' type='PopularPosts' version='2'>
+          <b:includable id='main'>
+            <b:if cond='data:title != &quot;&quot;'>
+              <h2 class='title'><data:title/></h2>
+            </b:if>
+            <div class='widget-content'>
+              <ul>
+                <b:loop values='data:posts' var='post'>
+                  <li>
+                    <a expr:href='data:post.href'><data:post.title/></a>
+                  </li>
+                </b:loop>
+              </ul>
+            </div>
+          </b:includable>
+        </b:widget>
+
+        <b:widget id='Label1' locked='false' title='카테고리' type='Label' version='2'>
+          <b:includable id='main'>
+            <b:if cond='data:title != &quot;&quot;'>
+              <h2 class='title'><data:title/></h2>
+            </b:if>
+            <div class='widget-content'>
+              <ul>
+                <b:loop values='data:labels' var='label'>
+                  <li>
+                    <a expr:href='data:label.url'><data:label.name/></a> (<data:label.count/>)
+                  </li>
+                </b:loop>
+              </ul>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+    </aside>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class='b365-footer'>
+    <div class='b365-site-wrapper b365-footer-inner'>
+      <div>
+        &#169; <data:blog.title/> &#183; 스마트 라이프 에디토리얼 팀 &#183; All Rights Reserved.
+      </div>
+      <div>
+        Powered by Blogger &#183; Fintech Bento CRO Theme
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

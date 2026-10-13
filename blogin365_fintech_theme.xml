@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsversion='3' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/namespaces/2010' xmlns:data='http://www.google.com/namespaces/2010' xmlns:expr='http://www.google.com/namespaces/2010'>
+<head>
+  <meta content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+  <b:include data='blog' name='all-head-content'/>
+
+  <!-- Pretendard & JetBrains Mono Fonts -->
+  <link href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css' rel='stylesheet'/>
+  <link href='https://fonts.googleapis.com' rel='preconnect'/>
+  <link crossorigin='' href='https://fonts.gstatic.com' rel='preconnect'/>
+  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;display=swap' rel='stylesheet'/>
+
+  <!-- Trick B: Google CSE & AdSense for Search (AFS) Configuration Token -->
+  <script type='text/javascript'>
+    /* <![CDATA[ */
+    // [설정] 구글 맞춤검색(Google CSE) Search Engine ID: SEO.env의 GOOGLE_CSE_CX 값을 입력하면 고단가 AFS 검색광고가 활성화됩니다.
+    // 미설정('') 시에도 블로그 내부 검색 및 연관 키워드 태그로 무중단 자동 작동합니다.
+    window.B365_CSE_CX = '';
+    /* ]]> */
+  </script>
+
+  <b:skin><![CDATA[
+    /* -------------------------------------------------------------------------
+       Blogin 365 AI Holdings - Fintech Bento CRO Standalone Blogger Theme
+       Style: Toss / Stripe / NerdWallet Fintech Bento Grid & Clean CRO
+       Omni Calculator & Viewability-Optimized AdSense Architecture
+       ------------------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-body: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --border-color: #E2E8F0;
+      --border-focus: #2563EB;
+      --text-main: #0F172A;
+      --text-sub: #475569;
+      --text-muted: #64748B;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --success: #10B981;
+      --font-stack: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    }
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.68;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Layout Container */
+    .b365-site-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    .b365-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+    .b365-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+      gap: 24px;
+    }
+    .b365-brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .b365-brand-title a {
+      color: var(--text-main);
+    }
+    .b365-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+    .b365-nav-links a {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .b365-nav-links a:hover {
+      color: var(--primary);
+    }
+    .b365-header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 16px;
+      background: var(--primary);
+      color: #FFFFFF !important;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      white-space: nowrap;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .b365-header-cta:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Main Grid */
+    .b365-main-layout {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 28px;
+      padding: 28px 0 60px;
+    }
+    @media (max-width: 880px) {
+      .b365-main-layout {
+        grid-template-columns: 1fr;
+      }
+      .b365-nav-links {
+        display: none;
+      }
+    }
+
+    /* Post Entry Card */
+    .b365-post {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 30px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    }
+    .b365-post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .b365-post-title {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+      margin-bottom: 18px;
+    }
+    .b365-post-title a:hover {
+      color: var(--primary);
+    }
+    .b365-read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .b365-read-more:hover {
+      text-decoration: underline;
+    }
+
+    /* Post Body Typography & Content */
+    .post-body {
+      font-size: 16px;
+      color: var(--text-main);
+      line-height: 1.75;
+    }
+    .post-body h2 {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 34px 0 14px 0;
+      letter-spacing: -0.02em;
+      border-bottom: 2px solid #F1F5F9;
+      padding-bottom: 8px;
+    }
+    .post-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 26px 0 10px 0;
+    }
+    .post-body p {
+      margin-bottom: 16px;
+      color: #1E293B;
+    }
+    .post-body ul, .post-body ol {
+      margin: 0 0 18px 24px;
+    }
+    .post-body li {
+      margin-bottom: 6px;
+    }
+
+    /* NerdWallet Bento Hero Card */
+    .bento-hero {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Omni Calculator UI & Slider */
+    .saas-calculator {
+      margin: 36px auto;
+      max-width: 760px;
+      padding: 28px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.06);
+    }
+    .saas-calculator input[type="range"] {
+      -webkit-appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: #E2E8F0;
+      outline: none;
+    }
+    .saas-calculator input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+    }
+
+    /* AdSense Golden Monetization Slots */
+    .adsense-slot, .b365-ad-slot {
+      margin: 24px 0;
+      padding: 16px;
+      background: #F8FAFC;
+      border: 1px dashed #CBD5E1;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Native Affiliate CTA Box */
+    .editorial-affiliate-box {
+      margin: 36px auto;
+      max-width: 760px;
+      padding: 24px;
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      text-align: center;
+    }
+    .btn-affiliate-action {
+      display: inline-block;
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 24px;
+      background: var(--primary);
+      color: #FFFFFF !important;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-affiliate-action:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* FAQ Details & Chevron */
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+    details[open] .faq-chevron {
+      transform: rotate(225deg) !important;
+    }
+
+    /* Trick B: Google CSE & Search Navigation */
+    .b365-search-nav {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+    }
+    .b365-search-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .b365-search-badge {
+      display: inline-flex;
+      align-items: center;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      letter-spacing: -0.2px;
+    }
+    .b365-search-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .b365-search-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .b365-search-input {
+      flex: 1;
+      padding: 11px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: var(--font-stack);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .b365-search-input:focus {
+      border-color: var(--primary);
+    }
+    .b365-search-btn {
+      padding: 11px 20px;
+      background: var(--primary);
+      color: #FFFFFF !important;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+    .b365-search-btn:hover {
+      background: var(--primary-hover);
+    }
+    .b365-search-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #F1F5F9;
+    }
+    .b365-pills-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+    .b365-search-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: var(--primary-light);
+      color: var(--primary) !important;
+      border: 1px solid #BFDBFE;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .b365-search-pill:hover {
+      background: var(--primary);
+      color: #FFFFFF !important;
+      border-color: var(--primary);
+    }
+
+    /* Sidebar */
+    .b365-sidebar .widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    }
+    .b365-sidebar h2.title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .b365-sidebar ul {
+      list-style: none;
+    }
+    .b365-sidebar li {
+      padding: 8px 0;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+    .b365-sidebar li:last-child {
+      border-bottom: none;
+    }
+    .b365-sidebar li a:hover {
+      color: var(--primary);
+    }
+
+    /* Pagination */
+    .blog-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-top: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Footer */
+    .b365-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 34px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .b365-footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+  ]]></b:skin>
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header class='b365-header'>
+    <div class='b365-site-wrapper b365-header-inner'>
+      <b:section id='header' maxwidgets='1' showaddelement='no'>
+        <b:widget id='Header1' locked='true' title='블로그 헤더' type='Header' version='2'>
+          <b:includable id='main'>
+            <div class='b365-brand-title'>
+              <a expr:href='data:blog.homepageUrl'><data:title/></a>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+
+      <nav class='b365-nav-links'>
+        <a expr:href='data:blog.homepageUrl'>홈</a>
+        <a href='#custom-saas-tool'>실시간 계산기</a>
+        <a href='#popular'>인기 금융 가이드</a>
+        <a href='#policy'>2026 정부 정책</a>
+      </nav>
+
+      <a class='b365-header-cta' href='#custom-saas-tool'>실시간 모의계산</a>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class='b365-site-wrapper b365-main-layout'>
+    <main class='b365-main-content'>
+      <b:section id='main' showaddelement='yes'>
+        <b:widget id='Blog1' locked='true' title='블로그 글' type='Blog' version='2'>
+          <b:includable id='main' var='top'>
+            <b:loop values='data:posts' var='post'>
+              <article class='b365-post' expr:id='data:post.id'>
+                <div class='b365-post-meta'>
+                  <span><data:post.dateHeader/></span>
+                  <b:if cond='data:post.labels'>
+                    <span>·</span>
+                    <b:loop values='data:post.labels' var='label'>
+                      <a expr:href='data:label.url' rel='tag'><data:label.name/></a>
+                    </b:loop>
+                  </b:if>
+                </div>
+
+                <h1 class='b365-post-title' expr:id='&quot;post-title-&quot; + data:post.id'>
+                  <b:if cond='data:blog.pageType == &quot;item&quot;'>
+                    <data:post.title/>
+                  <b:else/>
+                    <a expr:href='data:post.url'><data:post.title/></a>
+                  </b:if>
+                </h1>
+
+                <!-- ADSENSE_SLOT: Title 직하단 -->
+                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_TOP --&gt;</div>
+
+                <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id'>
+                  <data:post.body/>
+                </div>
+
+                <!-- ADSENSE_SLOT: Post 하단 -->
+                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_BOTTOM --&gt;</div>
+
+                <b:if cond='data:blog.pageType != &quot;item&quot;'>
+                  <div style='margin-top: 16px;'>
+                    <a class='b365-read-more' expr:href='data:post.url'>가이드 전문 및 계산기 바로가기 →</a>
+                  </div>
+                </b:if>
+              </article>
+            </b:loop>
+
+            <!-- Blog Pagination -->
+            <b:include name='nextprev'/>
+          </b:includable>
+
+          <b:includable id='nextprev'>
+            <div class='blog-pager' id='blog-pager'>
+              <b:if cond='data:newerPageUrl'>
+                <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:title='data:newerPageTitle'>← 이전 글</a>
+              </b:if>
+              <b:if cond='data:olderPageUrl'>
+                <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:title='data:olderPageTitle'>다음 글 →</a>
+              </b:if>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+    </main>
+
+    <!-- Sidebar Section -->
+    <aside class='b365-sidebar'>
+      <!-- Trick B: Google CSE & Smart Internal Search Widget -->
+      <div class='b365-search-nav' id='sidebar-search-widget'>
+        <div class='b365-search-header'>
+          <span class='b365-search-badge'>SMART SEARCH</span>
+          <span class='b365-search-title'>스마트 통합 맞춤검색</span>
+        </div>
+        <form action='/search' class='b365-search-form' method='get'>
+          <input class='b365-search-input' name='q' placeholder='지원금, 요금제, 테크 검색...' type='text'/>
+          <button class='b365-search-btn' type='submit'>검색</button>
+        </form>
+        <!-- Google Programmable Search Element (Trick B Dual Slot) -->
+        <div class='gcse-search' data-autoSearchOnFocus='false' data-queryParameterName='q'></div>
+        <div class='b365-search-pills'>
+          <span class='b365-pills-label'>🔥 실시간 추천:</span>
+          <a class='b365-search-pill' href='/search?q=2026+청년도약계좌'>청년도약계좌</a>
+          <a class='b365-search-pill' href='/search?q=근로장려금+정기신청'>근로장려금</a>
+          <a class='b365-search-pill' href='/search?q=알뜰폰+0원+요금제'>알뜰폰</a>
+          <a class='b365-search-pill' href='/search?q=건보료+피부양자'>건보료</a>
+          <a class='b365-search-pill' href='/search?q=내일배움카드+국비지원'>국비지원</a>
+        </div>
+      </div>
+
+      <b:section id='sidebar' showaddelement='yes'>
+        <b:widget id='PopularPosts1' locked='false' title='인기 금융 가이드' type='PopularPosts' version='2'>
+          <b:includable id='main'>
+            <b:if cond='data:title != &quot;&quot;'>
+              <h2 class='title'><data:title/></h2>
+            </b:if>
+            <div class='widget-content'>
+              <ul>
+                <b:loop values='data:posts' var='post'>
+                  <li>
+                    <a expr:href='data:post.href'><data:post.title/></a>
+                  </li>
+                </b:loop>
+              </ul>
+            </div>
+          </b:includable>
+        </b:widget>
+
+        <b:widget id='Label1' locked='false' title='카테고리' type='Label' version='2'>
+          <b:includable id='main'>
+            <b:if cond='data:title != &quot;&quot;'>
+              <h2 class='title'><data:title/></h2>
+            </b:if>
+            <div class='widget-content'>
+              <ul>
+                <b:loop values='data:labels' var='label'>
+                  <li>
+                    <a expr:href='data:label.url'><data:label.name/></a> (<data:label.count/>)
+                  </li>
+                </b:loop>
+              </ul>
+            </div>
+          </b:includable>
+        </b:widget>
+      </b:section>
+    </aside>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class='b365-footer'>
+    <div class='b365-site-wrapper b365-footer-inner'>
+      <div>
+        © <data:blog.title/> · 스마트 라이프 에디토리얼 팀 · All Rights Reserved.
+      </div>
+      <div>
+        Powered by Blogger · Fintech Bento CRO Theme
+      </div>
+    </div>
+  </footer>
+
+  <!-- Trick B: Google CSE Dynamic Injection Script -->
+  <script type='text/javascript'>
+  //&lt;![CDATA[
+  (function() {
+    var cseCx = window.B365_CSE_CX || '';
+    if (cseCx) {
+      var fallbackForm = document.querySelector('#sidebar-search-widget .b365-search-form');
+      if (fallbackForm) { fallbackForm.style.display = 'none'; }
+
+      var gcse = document.createElement('script');
+      gcse.type = 'text/javascript';
+      gcse.async = true;
+      gcse.src = 'https://cse.google.com/cse.js?cx=' + encodeURIComponent(cseCx);
+      var s = document.getElementsByTagName('script')[0] || document.head;
+      if (s.parentNode) {
+        s.parentNode.insertBefore(gcse, s);
+      } else {
+        document.head.appendChild(gcse);
+      }
+    } else {
+      var gcseBox = document.querySelector('#sidebar-search-widget .gcse-search');
+      if (gcseBox) { gcseBox.style.display = 'none'; }
+    }
+  })();
+  //]]&gt;
+  </script>
+</body>
+</html>
