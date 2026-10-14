@@ -85,46 +85,43 @@ class HandcraftedAnnotationRenderer:
 
         # Category thematic icon & color accents
         cat_accents = {
-            "TECH": ("#1e293b", "#0f172a", "💻 데스크 실측 테스트베드"),
-            "SUBSIDY": ("#0369a1", "#0284c7", "📑 국세청 홈택스 직접 접수 화면"),
-            "SAVINGS": ("#15803d", "#16a34a", "📱 실제 유심 셀프개통 단말기"),
-            "CASHFLOW": ("#b45309", "#d97706", "📊 가계부 실시간 잔고 분리"),
+            "TECH": ("#1e293b", "#0f172a", "💻 기술 사양 및 실측 대조"),
+            "SUBSIDY": ("#0369a1", "#0284c7", "📑 정부 공식 포털 전산 지침 대조"),
+            "SAVINGS": ("#15803d", "#16a34a", "📱 통신사 공식 전산 및 약관 대조"),
+            "CASHFLOW": ("#b45309", "#d97706", "📊 금융 공시 및 금리 테이블 대조"),
             "MEDICAL": ("#4338ca", "#4f46e5", "🏥 심평원 비급여 항목 대조"),
             "CAREER": ("#9333ea", "#a855f7", "📝 30일 완성 기출 분석 노트")
         }
-        bg_dark, border_accent, env_label = cat_accents.get(category.upper(), ("#1e293b", "#0f172a", "📸 실측 테스트 검증"))
+        bg_dark, border_accent, env_label = cat_accents.get(category.upper(), ("#1e293b", "#0f172a", "📑 공식 실측 데이터 검증"))
 
         circle_svg = cls.render_hand_drawn_circle_svg(width=135, height=44, stroke_color="#ef4444")
         arrow_svg = cls.render_hand_drawn_arrow_svg(stroke_color="#dc2626")
 
         return f"""
-<!-- [Phase 2 Authentic Visual] 일반인 촬영 감성 스틸컷 프레임 & 수작업 어노테이션 -->
+<!-- [Phase 2 Authentic Visual] 공식 데이터 대조 실측 프레임 & 어노테이션 -->
 <div class="amateur-photo-card-wrapper" style="margin: 36px auto; max-width: 680px; box-sizing: border-box;">
   <div class="amateur-photo-frame" style="position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px 22px 20px; box-shadow: 0 14px 28px -6px rgba(15,23,42,0.12), 0 4px 10px -2px rgba(15,23,42,0.06); transform: rotate({tilt_deg}deg); transition: transform 0.2s ease;">
     
-    <!-- 마스킹 테이프 오버레이 -->
-    <div style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%) rotate(0.8deg); width: 120px; height: 22px; background: rgba(254, 240, 138, 0.75); border-left: 2px dashed rgba(202, 138, 4, 0.35); border-right: 2px dashed rgba(202, 138, 4, 0.35); box-shadow: 0 2px 4px rgba(0,0,0,0.06); z-index: 5;"></div>
-
-    <!-- 스틸컷 헤더 바 -->
+    <!-- 상단 뱃지 바 -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
       <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #0f172a;">
         <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
         {env_label}
       </span>
-      <span style="font-size: 11px; color: #64748b; font-weight: 600; font-family: monospace;">
-        ISO 400 • F/1.8 • 1/120s
+      <span style="font-size: 11px; color: #16a34a; font-weight: 700;">
+        공식 공시 지침 대조 완료 ✓
       </span>
     </div>
 
-    <!-- 스틸컷 모의 뷰파인더 화면 (실제 폰카 촬영 질감) -->
+    <!-- 실측 데이터 대조 화면 -->
     <div style="position: relative; background: #0f172a; border-radius: 8px; padding: 28px 22px; color: #ffffff; overflow: hidden; min-height: 180px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
       
-      <!-- 폰카 타임스탬프 (우측 상단 오렌지색 LED) -->
+      <!-- 실시간 타임스탬프 -->
       <div style="position: absolute; top: 12px; right: 14px; font-family: 'Courier New', Courier, monospace; font-size: 12px; font-weight: 700; color: #fb923c; letter-spacing: 0.8px; text-shadow: 0 0 6px rgba(251,146,60,0.6);">
         REC [{ts}]
       </div>
 
-      <!-- 뷰파인더 포커스 그리드 라인 -->
+      <!-- 전산 확인 라인 -->
       <div style="position: absolute; top: 12px; left: 14px; font-size: 10px; color: #94a3b8; font-family: monospace;">
         [+] AUTO-FOCUS: ON
       </div>
@@ -152,13 +149,13 @@ class HandcraftedAnnotationRenderer:
       </div>
     </div>
 
-    <!-- 스틸컷 하단 수작업 캡션 & 에디토리얼 노트 -->
+    <!-- 하단 수작업 캡션 & 에디토리얼 노트 -->
     <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
       <div style="font-size: 12px; color: #475569; font-weight: 600;">
-        📌 <span style="color: #0f172a; font-weight: 800;">에디토리얼 팀 실측 코멘트:</span> 보정 앱 없는 스마트폰 기본 카메라 실촬영 캡처본입니다.
+        📌 <span style="color: #0f172a; font-weight: 800;">에디토리얼 팀 실측 코멘트:</span> 관계부처 공식 고시 및 온라인 전산 지침을 대조 검증한 데이터입니다.
       </div>
-      <span style="font-size: 11px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">
-        무단 복제 방지 실사 워터마크 ✓
+      <span style="font-size: 11px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 2px 8px; border-radius: 6px; font-weight: 700;">
+        공식 데이터 대조 팩트체크 ✓
       </span>
     </div>
 

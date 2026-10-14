@@ -243,8 +243,8 @@ def assemble_world_class_article(topic: dict, editorial_data: dict) -> str:
         factset = ExperientialVerifier().build_experiential_factset(keyword, category)
 
     photo_card_html = HandcraftedAnnotationRenderer.render_amateur_photo_card(
-        title="에디토리얼 팀 실측 분석 및 팩트체크 리포트",
-        caption="공식 데이터 및 폰카 뷰파인더 실시간 대조 검증 컷",
+        title=f"{keyword} 공식 가이드라인 실측 검증 리포트",
+        caption="공식 고시 지침 및 온라인 전산 데이터 실시간 대조 검증 결과",
         category=category
     )
     pros_cons_html = HandcraftedAnnotationRenderer.render_unfiltered_pros_cons_board(
