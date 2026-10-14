@@ -46,6 +46,21 @@ def run_phase1_test():
     cta_html = generate_affiliate_cta_button(winner["keyword"], winner["cpa_type"])
     assert "btn-affiliate-action" in cta_html, "CTA 버튼 HTML이 생성되지 않았습니다."
     print(f"✅ CTA 박스 HTML 생성 완료 (길이: {len(cta_html)}자)")
+
+    # 4. 공공데이터 노-API 스카우트 & 팩트 검증
+    print("\n[Step 4] Zero-API 공공데이터 정책 스카우트 & 팩트 검증...")
+    from engine.radar.public_data_scout import PublicDataScout
+    pub_scout = PublicDataScout()
+    gov_subsidies = pub_scout.fetch_live_public_subsidies(limit=3)
+    assert len(gov_subsidies) > 0, "공공데이터 정책 수집 결과가 0건입니다."
+    print(f"✅ 공공데이터 지원금 {len(gov_subsidies)}건 실시간 수집 성공:")
+    for s in gov_subsidies:
+        print(f"   • [{s['dept']}] {s['title'][:40]}... (키워드: {s['keyword']})")
+
+    fact = pub_scout.verify_official_facts("2026 청년도약계좌", "SUBSIDY")
+    assert fact["is_verified"] is True
+    assert "portal_url" in fact and fact["portal_url"].startswith("http")
+    print(f"✅ 공식 정부 누리집 팩트 검증 완료: {fact['department']} -> {fact['portal_name']} ({fact['portal_url']})")
     
     print("\n" + "=" * 60)
     print("🎉 [Phase 1 테스트 100% 통과 완료] 트렌드 레이더와 광고주 일감 매칭이 완벽하게 가동됩니다!")

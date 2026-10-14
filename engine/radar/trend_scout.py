@@ -153,10 +153,28 @@ def fetch_google_trends_kr() -> List[Dict[str, Any]]:
 
 class TrendScout:
     def __init__(self):
-        pass
+        try:
+            from engine.radar.public_data_scout import PublicDataScout
+            self.public_scout = PublicDataScout()
+        except Exception:
+            self.public_scout = None
 
-    def fetch_live_trends(self, limit: int = 10) -> List[Dict[str, Any]]:
-        return fetch_google_trends_kr()[:limit]
+    def fetch_live_trends(self, limit: int = 10, include_public_data: bool = True) -> List[Dict[str, Any]]:
+        trends = fetch_google_trends_kr()
+        if include_public_data and self.public_scout:
+            try:
+                gov_items = self.public_scout.fetch_live_public_subsidies(limit=3)
+                for g in gov_items:
+                    trends.append({
+                        "keyword": g["keyword"],
+                        "traffic_volume": g.get("traffic_volume", 40000),
+                        "snippet": f"[{g.get('dept', '정부공식')}] {g.get('title', '')}",
+                        "news_items": [g.get("title", "")],
+                        "source": "public_data_scout"
+                    })
+            except Exception:
+                pass
+        return sorted(trends, key=lambda x: x["traffic_volume"], reverse=True)[:limit]
 
     def expand_autocomplete(self, keyword: str, limit: int = 10) -> List[str]:
         return expand_naver_autocomplete(keyword, limit=limit)

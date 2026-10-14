@@ -18,6 +18,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
+from engine.radar.public_data_scout import PublicDataScout
+
 
 class ExperientialVerifier:
     """
@@ -107,7 +109,7 @@ class ExperientialVerifier:
     }
 
     def __init__(self):
-        pass
+        self.public_scout = PublicDataScout()
 
     def build_experiential_factset(
         self,
@@ -116,7 +118,8 @@ class ExperientialVerifier:
         sentiment_data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
-        Builds experiential testing summary and real user review pros/cons.
+        Builds experiential testing summary and real user review pros/cons,
+        combined with authoritative government portal verification data.
         """
         cat_key = category.upper() if category.upper() in self.EXPERIENTIAL_VAULT else "TECH"
         vault = self.EXPERIENTIAL_VAULT[cat_key]
@@ -129,6 +132,9 @@ class ExperientialVerifier:
         # Rating score
         rating = round(random.uniform(4.4, 4.8), 1)
 
+        # Official government portal & fact verification (Zero-API)
+        official_facts = self.public_scout.verify_official_facts(keyword, category=cat_key)
+
         return {
             "keyword": keyword,
             "category": cat_key,
@@ -139,6 +145,7 @@ class ExperientialVerifier:
             "cons_unfiltered": cons,
             "failure_anecdote": anecdote,
             "subtle_pro_tip": subtle_tip,
+            "official_facts": official_facts,
             "credibility_badge": "내돈내산 & 공식 데이터 대조 100% 팩트체크 완료"
         }
 

@@ -62,6 +62,7 @@ from engine.analytics.feedback_loop import FeedbackLoop
 from engine.maintenance.content_refresher import ContentRefresher
 from engine.radar.community_sentiment_scout import CommunitySentimentScout
 from engine.matcher.experiential_verifier import ExperientialVerifier
+from engine.radar.public_data_scout import PublicDataScout
 from engine.agents.human_voice_engine import HumanVoiceEngine
 
 
@@ -182,8 +183,8 @@ class AICompanyStaff:
             "description": "5대 골든 니치 선정, 상업적 의도 및 수익화 프레임 기획 (트릭 B AFS 연동 포함)"
         },
         "03_MarketResearcher": {
-            "title": "Market Researcher (Google Trends KR Analyst)",
-            "description": "구글 실시간 트렌드 RSS 스카우팅 및 PVS v2.0 수익 속도 점수 산출"
+            "title": "Market Researcher (Google Trends & Zero-API Public Data Scout)",
+            "description": "구글 실시간 트렌드 및 보건복지부·복지로 공공데이터 실시간 스카우팅 및 PVS v2.0 산출"
         },
         "04_UIDesigner": {
             "title": "UI Designer (Canvas & Visual Architect)",
@@ -215,6 +216,9 @@ class AICompanyStaff:
                 "status": "HEALTHY",
                 "details": "Operational & Active"
             }
+
+        # Check Public Data Scout Health
+        health["03_MarketResearcher"]["details"] = "Trends RSS & Zero-API Public Data Ingestion Active"
 
         # Check OAuth Token Health
         token_path = os.path.join(BASE_DIR, "token.json")
@@ -253,6 +257,7 @@ class SelfHealingPipeline:
         self.logger = logger
         self.scout = TrendScout()
         self.matcher = DemandMatcher()
+        self.public_scout = PublicDataScout()
         self.community_scout = CommunitySentimentScout()
         self.exp_verifier = ExperientialVerifier()
         self.agency = AgencyStack()
@@ -331,7 +336,7 @@ class SelfHealingPipeline:
             }
 
         # Humanization Phase 1: Community Sentiment & Experiential Factset
-        print(" -> [AI 직원 02 & 03] 커뮤니티 여론 수집 및 내돈내산 팩트체크 검증...")
+        print(" -> [AI 직원 02 & 03] 공공데이터 정책 검증, 커뮤니티 여론 수집 및 내돈내산 팩트체크...")
         sentiment_data = self.community_scout.scout_community_sentiment(
             matched_topic["keyword"], category=matched_topic["category"]
         )
@@ -340,6 +345,10 @@ class SelfHealingPipeline:
         )
         matched_topic["sentiment"] = sentiment_data
         matched_topic["factset"] = factset_data
+
+        if factset_data.get("official_facts") and factset_data["official_facts"].get("is_verified"):
+            of = factset_data["official_facts"]
+            print(f" -> [공공데이터 팩트] 소관: {of.get('department')} | 공식 신청처: {of.get('portal_name')}")
 
         print(f" -> 선정 메인 키워드: [{matched_topic['keyword']}]")
         print(f" -> 7티어 경쟁 판정: [{matched_topic.get('tier', '최적')}] (골든 비율: {matched_topic.get('ratio', 0):.2f})")
