@@ -466,10 +466,13 @@ def _render_medical_calc(clean_kw: str) -> str:
 
       <!-- Quick Presets -->
       <div style="margin-bottom:20px; padding:12px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
-        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">항목별 평균 견적:</span>
-        <button type="button" onclick="setMedicalPreset(1800000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">라식/라섹 (180만)</button>
-        <button type="button" onclick="setMedicalPreset(2600000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">스마일라식 (260만)</button>
-        <button type="button" onclick="setMedicalPreset(1300000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">임플란트 1대 (130만)</button>
+        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">치료 목적 비급여 예시:</span>
+        <button type="button" onclick="setMedicalPreset(1500000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">도수치료 10회 (150만)</button>
+        <button type="button" onclick="setMedicalPreset(600000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">MRI 정밀검사 (60만)</button>
+        <button type="button" onclick="setMedicalPreset(300000, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">체외충격파 (30만)</button>
+      </div>
+      <div style="font-size:0.78rem; color:#b91c1c; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:8px 12px; margin-bottom:16px;">
+        ⚠️ <strong>면책 유의사항:</strong> 치과 비급여(임플란트·보철), 시력교정술(라식·라섹), 단순 미용 치료는 실손보험 표준약관상 보상 제외(면책) 항목입니다.
       </div>
 
       <!-- Input Controls Grid -->
@@ -564,7 +567,7 @@ def _render_medical_calc(clean_kw: str) -> str:
       calcMedical();
     }}
     function resetMedical() {{
-      setMedicalPreset(2400000, 70);
+      setMedicalPreset(1500000, 70);
     }}
     </script>
     """
@@ -693,17 +696,179 @@ def _render_career_calc(clean_kw: str) -> str:
     """
 
 
+def render_cost_spec_comparison_table(clean_kw: str, category_code: str = "MEDICAL") -> str:
+    """
+    [Patch 3] 실제 견적 및 비용 항목별 상세 비교표 (비급여 시술 및 비공식 산정 주제 대체용).
+    임플란트, 라식 등 정형화된 공제율 산정이 불가한 주제에서 억지 계산기 대신
+    현실적인 세부 견적 대조표와 실시간 비용 모의 시뮬레이션을 제공합니다.
+    """
+    return f"""
+    <div class="saas-calculator editorial-calculator-card cost-comparison-table" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:9999px; font-weight:800; letter-spacing:0.02em;">OMNI SIMULATOR</span>
+            <span style="font-size:0.75rem; background:#ecfdf5; color:#10b981; padding:3px 10px; border-radius:9999px; font-weight:800;">2026 시장 실측치</span>
+          </div>
+          <h3 style="margin:0 0 6px 0; font-size:1.25rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">📊 {clean_kw} 실제 견적 및 항목별 비용 상세 비교표</h3>
+          <p style="margin:0; font-size:0.88rem; color:#64748b; line-height:1.5;">심평원 및 시장 실측 가격을 바탕으로 옵션별 평균 견적과 지원 기준을 산출합니다.</p>
+        </div>
+      </div>
+
+      <!-- Quick Option Buttons -->
+      <div style="margin-bottom:20px; padding:12px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
+        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">대표 선택 옵션:</span>
+        <button type="button" onclick="setCostTableOption(1150000, '국산 보급형 (오스템/덴티움)')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">국산 표준 (115만/대)</button>
+        <button type="button" onclick="setCostTableOption(1850000, '외산 프리미엄 (스트라우만)')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">외산 프리미엄 (185만/대)</button>
+        <button type="button" onclick="setCostTableOption(400000, '만 65세 이상 건보 30% 적용')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">만 65세 건보 (약 40만/대)</button>
+      </div>
+
+      <!-- Interactive Cost Slider -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-cost-unit-price" style="font-size:0.88rem; font-weight:700; color:#475569;">1대당 기준 단가</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#0f172a;" id="disp-cost-unit-price">1,150,000원</span>
+          </div>
+          <input type="range" id="slider-cost-unit-price" min="400000" max="2500000" step="50000" value="1150000" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcCostTable()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>400,000원 (건보적용)</span>
+            <span>2,500,000원 (최고급)</span>
+          </div>
+        </div>
+
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-cost-count" style="font-size:0.88rem; font-weight:700; color:#475569;">예상 시술 / 적용 수량</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#2563eb;" id="disp-cost-count">1대 (기본)</span>
+          </div>
+          <input type="range" id="slider-cost-count" min="1" max="4" step="1" value="1" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcCostTable()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>1대</span>
+            <span>4대 (다수 치아)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real Cost Comparison Table -->
+      <div style="margin-bottom:20px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; min-width:500px; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:#f1f5f9; color:#1e293b; border-bottom:2px solid #cbd5e1;">
+              <th style="padding:10px 12px; font-weight:800;">구분 / 사양</th>
+              <th style="padding:10px 12px; font-weight:800;">평균 실측 비용</th>
+              <th style="padding:10px 12px; font-weight:800;">핵심 특징 및 보험 적용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:10px 12px; font-weight:700;">국산 표준 (오스템/덴티움)</td>
+              <td style="padding:10px 12px; color:#2563eb; font-weight:800;">100만 ~ 125만원</td>
+              <td style="padding:10px 12px; color:#475569;">국내 최다 임상, 부품 교체 및 사후 관리 용이</td>
+            </tr>
+            <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc;">
+              <td style="padding:10px 12px; font-weight:700;">외산 프리미엄 (스트라우만)</td>
+              <td style="padding:10px 12px; color:#2563eb; font-weight:800;">160만 ~ 210만원</td>
+              <td style="padding:10px 12px; color:#475569;">조기 골유착 표면 처리, 고령·골질 취약층 유리</td>
+            </tr>
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:10px 12px; font-weight:700;">만 65세 건강보험 적용</td>
+              <td style="padding:10px 12px; color:#10b981; font-weight:800;">약 38만 ~ 42만원 (본인 30%)</td>
+              <td style="padding:10px 12px; color:#475569;">평생 2개 한도 지원 (단, 완전 무치악 제외)</td>
+            </tr>
+            <tr style="background:#f8fafc;">
+              <td style="padding:10px 12px; font-weight:700;">뼈이식 (치조골 이식 추가)</td>
+              <td style="padding:10px 12px; color:#d97706; font-weight:800;">30만 ~ 50만원 별도</td>
+              <td style="padding:10px 12px; color:#475569;">잇몸뼈 흡수 심할 때 필수 (비급여)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Result Hero Card -->
+      <div style="background:#0f172a; padding:22px; border-radius:14px; color:#ffffff; margin-bottom:20px; box-shadow:0 8px 24px -4px rgba(15,23,42,0.25);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; flex-wrap:wrap; gap:6px;">
+          <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">선택 조건 기준 총 예상 비용</span>
+          <span style="font-size:0.75rem; background:#1e293b; color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:700;" id="badge-cost-option">국산 표준 기준</span>
+        </div>
+        <div style="font-size:2rem; font-weight:800; color:#38bdf8; letter-spacing:-0.02em; margin:6px 0;" id="result-cost-total">1,150,000원 예상</div>
+        
+        <!-- Breakdown Bar -->
+        <div style="margin:16px 0 10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">
+            <span>기준 식립 비용 (<span id="txt-bar-base">1,150,000원</span>)</span>
+            <span style="color:#38bdf8; font-weight:700;">적용 수량 (<span id="txt-bar-units">1대</span>)</span>
+          </div>
+          <div style="background:#334155; height:12px; border-radius:6px; overflow:hidden; display:flex; width:100%;">
+            <div id="bar-cost-base" style="background:#3b82f6; width:75%; height:100%; transition:width 0.2s ease;"></div>
+            <div id="bar-cost-extra" style="background:#10b981; width:25%; height:100%; transition:width 0.2s ease;"></div>
+          </div>
+        </div>
+
+        <div style="font-size:0.82rem; color:#cbd5e1; margin-top:8px;" id="desc-cost-detail">치과 비급여 항목은 실손보험 보상 제외 대상이며, 뼈이식 여부에 따라 추가 비용이 발생할 수 있습니다.</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:10px;">
+        <button type="button" id="btn-copy-cost" onclick="copyToolVal('result-cost-total', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">견적 결과 복사하기</button>
+        <button type="button" onclick="resetCostTable()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
+      </div>
+
+      <!-- Real-Time CTA Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-cost" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 견적 및 맞춤 조건 바로 조회하기</a>
+    </div>
+
+    <script>
+    function calcCostTable() {{
+      const price = parseInt(document.getElementById('slider-cost-unit-price').value);
+      const count = parseInt(document.getElementById('slider-cost-count').value);
+      const total = price * count;
+
+      document.getElementById('disp-cost-unit-price').innerText = price.toLocaleString() + '원';
+      document.getElementById('disp-cost-count').innerText = count + '대';
+
+      document.getElementById('result-cost-total').innerText = total.toLocaleString() + '원 예상';
+      document.getElementById('txt-bar-base').innerText = total.toLocaleString() + '원';
+      document.getElementById('txt-bar-units').innerText = count + '대';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-cost');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 ' + total.toLocaleString() + '원 견적 세부 조건 바로 조회하기';
+      }}
+    }}
+    function setCostTableOption(price, name) {{
+      document.getElementById('slider-cost-unit-price').value = price;
+      const badge = document.getElementById('badge-cost-option');
+      if (badge) badge.innerText = name;
+      calcCostTable();
+    }}
+    function resetCostTable() {{
+      setCostTableOption(1150000, '국산 보급형 (오스템/덴티움)');
+      document.getElementById('slider-cost-count').value = 1;
+      calcCostTable();
+    }}
+    </script>
+    """
+
+
 def get_calculator_by_category(category_code: str, keyword: str = "") -> str:
     """
     5대 황금 니치에 맞춤화된 고체류 인터랙티브 Micro-SaaS Omni Calculator를 반환합니다.
     - SAVINGS: 알뜰폰/통신비 절감
     - SUBSIDY: 정부지원금/환급/청년도약계좌
     - TECH: 스마트 가전/테크 일할 커피값 계산기
-    - MEDICAL: 비급여 의료/실손보험 환급 계산기
+    - MEDICAL: 비급여 의료/실손보험 환급 계산기 (임플란트/라식 등은 상세 견적 비교표로 자동 전환)
     - CAREER: 국비지원/내일배움카드 ROI 계산기
     """
     clean_kw = _clean_keyword(keyword)
     cat = (category_code or "TECH").upper()
+    kw_lower = clean_kw.lower()
+
+    # [Patch 3] 주제별 동적 전환: 정형화 계산이 불가능한 시술/견적 주제는 '실제 견적/비용 상세 비교표'로 전환
+    procedure_keywords = ["임플란트", "라식", "라섹", "스마일라식", "치과", "치아", "보철", "성형", "백내장", "견적"]
+    if any(k in kw_lower for k in procedure_keywords):
+        return render_cost_spec_comparison_table(clean_kw, cat)
 
     if cat in ["SAVINGS", "CASHFLOW"]:
         return _render_savings_calc(clean_kw)
@@ -727,3 +892,9 @@ if __name__ == "__main__":
     for cat in ["SAVINGS", "SUBSIDY", "TECH", "MEDICAL", "CAREER"]:
         html = render_saas_calculator(cat, f"2026 {cat} 테스트")
         print(f"[{cat}] Calculator Generated: {len(html)} chars | Has JS: {'<script>' in html} | Has Breakdown Bar: {'bar-' in html}")
+    # Test procedure dynamic switching
+    implant_html = render_saas_calculator("MEDICAL", "임플란트 비용 비교")
+    assert "cost-comparison-table" in implant_html
+    assert "라식/라섹" not in implant_html
+    assert "스마일라식" not in implant_html
+    print("[IMPLANT] Dynamic cost table switched successfully without fake presets!")

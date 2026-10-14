@@ -15,7 +15,7 @@
   <!-- Google AdSense Official Script -->
   <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2174726915215446'></script>
 
-  <!-- Trick B: Google CSE & AdSense for Search (AFS) Configuration Token -->
+  <!-- Smart Search: Google CSE & AdSense for Search (AFS) Configuration Token -->
   <script type='text/javascript'>
     /* <![CDATA[ */
     // [설정] 구글 맞춤검색(Google CSE) Search Engine ID: SEO.env의 GOOGLE_CSE_CX 값을 입력하면 고단가 AFS 검색광고가 활성화됩니다.
@@ -574,7 +574,7 @@
 
     <!-- Sidebar Section -->
     <aside class='b365-sidebar'>
-      <!-- Trick B: Google CSE & Smart Internal Search Widget -->
+      <!-- Smart Search: Google CSE & Internal Search Widget -->
       <div class='b365-search-nav' id='sidebar-search-widget'>
         <div class='b365-search-header'>
           <span class='b365-search-badge'>SMART SEARCH</span>
@@ -584,7 +584,7 @@
           <input class='b365-search-input' name='q' placeholder='지원금, 요금제, 테크 검색...' type='text'/>
           <button class='b365-search-btn' type='submit'>검색</button>
         </form>
-        <!-- Google Programmable Search Element (Trick B Dual Slot) -->
+        <!-- Google Programmable Search Element (Dual Slot) -->
         <div class='gcse-search' data-autoSearchOnFocus='false' data-queryParameterName='q'></div>
         <div class='b365-search-pills'>
           <span class='b365-pills-label'>🔥 실시간 추천:</span>
@@ -646,7 +646,7 @@
     </div>
   </footer>
 
-  <!-- Trick B: Google CSE Dynamic Injection Script -->
+  <!-- Smart Search: Google CSE Dynamic Injection Script -->
   <script type='text/javascript'>
   //&lt;![CDATA[
   (function() {

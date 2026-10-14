@@ -48,11 +48,11 @@ class HumanVoiceEngine:
     def __init__(self):
         pass
 
-    def inject_burstiness_to_paragraphs(self, paragraph: str) -> str:
+    def inject_burstiness_to_paragraphs(self, paragraph: str, section_idx: int = 0) -> str:
         """
         Injects rhythmic sentence-length variance (Burstiness):
-        Combines ultra-short punchlines (10~15 chars) with thorough empirical explanations (55~85 chars)
-        to prevent flat, monotonous AI sentence structures.
+        Combines ultra-short punchlines with thorough empirical explanations
+        to prevent flat, monotonous AI sentence structures without repeating the same punchline.
         """
         sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', paragraph) if s.strip()]
         if not sentences:
@@ -60,8 +60,8 @@ class HumanVoiceEngine:
 
         modified_sentences = []
         if len(sentences) >= 2:
-            punch = random.choice(self.SHORT_BURST_PUNCHLINES)
-            transition = random.choice(self.HUMAN_TRANSITIONAL_PARTICLES)
+            punch = self.SHORT_BURST_PUNCHLINES[section_idx % len(self.SHORT_BURST_PUNCHLINES)]
+            transition = self.HUMAN_TRANSITIONAL_PARTICLES[section_idx % len(self.HUMAN_TRANSITIONAL_PARTICLES)]
 
             for i, sent in enumerate(sentences):
                 if i == 0:
@@ -77,21 +77,22 @@ class HumanVoiceEngine:
 
     def humanize_subheaders(self, sub_keyword: str, base_heading: str, index: int = 1) -> str:
         """
-        Transforms dry subheaders into lively, curiosity-inducing casual headings
-        while strictly preserving the 1:1 sub-keyword placement rule.
+        Transforms dry subheaders into lively headings while preserving 1:1 sub-keyword placement.
+        If base_heading is already a customized domain heading containing sub_keyword,
+        it is preserved to maintain 100% LLM tailored authoring.
         """
+        clean_base = re.sub(r'^\d+[\.\)]\s*', '', base_heading or '').strip()
+        if clean_base and sub_keyword in clean_base and len(clean_base) >= len(sub_keyword) + 3:
+            return f"{index}. {clean_base}" if not re.match(r'^\d+[\.\)]', base_heading.strip()) else base_heading
+
         templates = [
-            f"1달간 직접 겪어보고 알게 된 {sub_keyword}, 솔직한 실측 포인트",
-            f"막상 해보니 여기서 다들 막힙니다: {sub_keyword} 핵심 체크",
-            f"실제로 계산해보고 깜짝 놀란 {sub_keyword} 반전 결과",
-            f"여기가 진짜 차별점이에요! {sub_keyword} 알짜배기 가이드",
-            f"아무도 미리 안 알려줬던 {sub_keyword} 필수 주의사항"
+            f"{index}. {sub_keyword} 핵심 분석 및 실측 비교 가이드",
+            f"{index}. {sub_keyword} 주요 조건 및 신청 시 유의사항",
+            f"{index}. {sub_keyword} 실제 비용과 혜택 상세 대조",
+            f"{index}. {sub_keyword} 실전 전략 및 단계별 점검 포인트",
+            f"{index}. {sub_keyword} 실패 없는 사전 확인 체크리스트"
         ]
-        
-        # Pick template that safely contains sub_keyword
         chosen = templates[(index - 1) % len(templates)]
-        if sub_keyword not in chosen:
-            chosen = f"{sub_keyword} - 에디토리얼 팀 실측 및 솔직 후기"
         return chosen
 
     def humanize_editorial_content(
@@ -121,14 +122,14 @@ class HumanVoiceEngine:
             sub_kw = sec.get("sub_keyword") or (sub_keywords[idx] if sub_keywords and idx < len(sub_keywords) else "")
             body = sec.get("content") or sec.get("body", "")
 
-            # 1. Transform Subheader with conversational human tone (while keeping sub_kw)
-            if sub_kw and sub_kw in heading:
+            # 1. Transform Subheader with conversational tone while preserving custom LLM headings
+            if sub_kw:
                 new_heading = self.humanize_subheaders(sub_kw, heading, index=idx + 1)
             else:
                 new_heading = heading
 
-            # 2. Inject Burstiness & colloquial transitions to paragraph
-            new_body = self.inject_burstiness_to_paragraphs(body)
+            # 2. Inject Burstiness & colloquial transitions to paragraph with section variation
+            new_body = self.inject_burstiness_to_paragraphs(body, section_idx=idx)
 
             # 3. In Section 1: Inject real-world community voice
             if idx == 0 and raw_opinions:
@@ -157,12 +158,13 @@ class HumanVoiceEngine:
                 "content": new_body
             })
 
-        # Upgrade Subtitle / Lead
+        # Upgrade Subtitle / Lead (Pure Factual, No Robotic Canned Clichés)
         old_subtitle = editorial_data.get("subtitle", "")
-        if not old_subtitle and editorial_data.get("keyword"):
-            old_subtitle = f"{editorial_data.get('keyword')} 공식 데이터 및 핵심 기준 대조 분석 보고서입니다."
+        if not old_subtitle:
+            kw = editorial_data.get('keyword', '본 가이드')
+            old_subtitle = f"{kw} 공식 데이터 및 핵심 기준 대조 분석 보고서입니다."
 
-        lead_burst = f"직접 3주간 테스트해본 결론부터 말씀드립니다. {old_subtitle}"
+        lead_burst = old_subtitle
 
         return {
             **editorial_data,

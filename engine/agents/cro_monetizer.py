@@ -162,7 +162,20 @@ def render_search_navigation_widget(
 
     # Render pill elements with deduplicated target query and safe HTML escaping
     pill_html_list = []
-    commercial_suffix = " 금리 비교 추천 자격 조회"
+    cat_upper = (category or "TECH").upper()
+    if cat_upper in ["SUBSIDY", "REFUND", "GOVERNMENT", "FINANCE"]:
+        commercial_suffix = " 금리 비교 추천 자격 조회"
+    elif cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
+        commercial_suffix = " 비용 견적 비교 건강보험 기준"
+    elif cat_upper in ["SAVINGS", "CASHFLOW"]:
+        commercial_suffix = " 요금제 비교 혜택 가입"
+    elif cat_upper in ["CAREER", "EDUCATION", "CERT"]:
+        commercial_suffix = " 국비지원 수강료 자격증 취업"
+    elif cat_upper == "TECH":
+        commercial_suffix = " 최저가 스펙 비교 추천"
+    else:
+        commercial_suffix = " 비교 분석 추천 가이드"
+
     for p in pills[:5]:
         target_query = _build_clean_search_query(raw_kw, p)
         encoded_query = quote_plus(target_query)
@@ -174,7 +187,7 @@ def render_search_navigation_widget(
 
         pill_html_list.append(
             f'<a href="{safe_url}" class="b365-search-pill" data-query="{safe_comm_query}" target="_blank" rel="noopener" '
-            f'onclick="if(window.google&amp;&amp;google.search&amp;&amp;google.search.cse){{var q=(new URL(this.href).searchParams.get(\'q\')||\'\')+\' \'+(this.getAttribute(\'data-query\')||\'금리 비교 추천 자격 조회\');var el=google.search.cse.element.getElement(\'gsearch\')||google.search.cse.element.getElement(\'two-page-search-results\');if(el&amp;&amp;q){{el.execute(q.trim());return false;}}}}" '
+            f'onclick="if(window.google&amp;&amp;google.search&amp;&amp;google.search.cse){{var q=(new URL(this.href).searchParams.get(\'q\')||\'\')+\' \'+(this.getAttribute(\'data-query\')||\'{commercial_suffix.strip()}\');var el=google.search.cse.element.getElement(\'gsearch\')||google.search.cse.element.getElement(\'two-page-search-results\');if(el&amp;&amp;q){{el.execute(q.trim());return false;}}}}" '
             f'style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; '
             f'background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 9999px; '
             f'font-size: 12px; font-weight: 700; text-decoration: none; transition: all 0.15s ease;">'
@@ -205,7 +218,7 @@ def render_search_navigation_widget(
       SMART SEARCH · 맞춤검색
     </span>
     <span style="font-size: 11px; color: #64748b; font-weight: 600;">
-      트릭 B 고수익 AFS 검색엔진 연동
+      실시간 맞춤 검색 허브
     </span>
   </div>
   <div style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; letter-spacing: -0.3px;">
@@ -260,7 +273,6 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     keyword = topic.get("keyword", "")
     category = topic.get("category", "LIFESTYLE")
     cpc = topic.get("cpc", 1200)
-    pvs = topic.get("pvs", 2500)
 
     if is_adsense_approved is None:
         env_val = os.getenv("IS_ADSENSE_APPROVED", "false").strip().lower()
@@ -271,7 +283,8 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     
     # Generate Sub-components
     calc_html = render_saas_calculator(category, keyword)
-    chart_html = render_spec_comparison_chart(keyword, category)
+    comp_table_data = editorial_data.get("comparison_table")
+    chart_html = render_spec_comparison_chart(keyword, category, table_data=comp_table_data)
     
     # AdSense Defense Branching: Pure Informational vs. Full Affiliate Conversion
     if is_adsense_approved:
@@ -284,17 +297,23 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     if not factset:
         factset = ExperientialVerifier().build_experiential_factset(keyword, category)
 
-    photo_card_html = HandcraftedAnnotationRenderer.render_amateur_photo_card(
-        title=f"{keyword} 공식 가이드라인 실측 검증 리포트",
-        caption="공식 고시 지침 및 온라인 전산 데이터 실시간 대조 검증 결과",
-        category=category
-    )
+    # [Patch 2] Deactivate mock viewfinder box (AUTO-FOCUS / REC) from rendering pipeline
+    photo_card_html = ""
     pros_cons_html = HandcraftedAnnotationRenderer.render_unfiltered_pros_cons_board(
         pros=factset.get("pros_real", []),
         cons=factset.get("cons_unfiltered", [])
     )
     
-    # 1. Bento Hero Card (NerdWallet Fintech Benchmark)
+    # 1. Bento Hero Card (Clean Consumer Takeaways, No Artificial PVS / Fake Scores)
+    raw_takeaways = editorial_data.get("takeaways")
+    if not raw_takeaways or not isinstance(raw_takeaways, list):
+        raw_takeaways = [
+            f"실질 기준 대조: {keyword} 공식 고시 및 지원/비용 산정 기준 확인",
+            f"2026 최신 변동: 신규 산정 공식 및 신청 자격 조건 개편 사항 반영",
+            f"권장 실천 지침: 세부 조건 및 필수 서류를 사전에 교차 검증 후 진행 권장"
+        ]
+    takeaways_items = "".join(f"<li style='margin-bottom:6px;'>{t}</li>" for t in raw_takeaways[:3])
+
     hero_bento = f"""
 <div class="bento-hero" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 16px -2px rgba(15,23,42,0.04);">
   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -310,30 +329,32 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
   </div>
   <div style="background: #f8fafc; border-left: 4px solid #0f172a; padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;">
     <ul style="margin: 0; padding-left: 18px; color: #334155; font-size: 14px; line-height: 1.6;">
-      <li><strong>실질 혜택/절감폭:</strong> 공식 기준 대조 시 일반 신청 대비 최대 효과 체감</li>
-      <li><strong>주요 변동 사항:</strong> 2026년 신규 산정 공식 및 신청 자격 요건 강화 반영</li>
-      <li><strong>행동 지침:</strong> 예산 소진 전 전용 모의 계산기로 사전 검증 후 접수 권장</li>
+      {takeaways_items}
     </ul>
   </div>
   <div style="display: flex; gap: 12px; flex-wrap: wrap;">
     <div style="flex: 1; min-width: 130px; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px;">
-      <div style="font-size: 11px; color: #64748b; font-weight: 600;">상업적 가치 지표</div>
-      <div style="font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 2px;">PVS {pvs:,.0f} pt</div>
+      <div style="font-size: 11px; color: #64748b; font-weight: 600;">정보 기준</div>
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 2px;">2026년 최신 기준</div>
     </div>
     <div style="flex: 1; min-width: 130px; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px;">
-      <div style="font-size: 11px; color: #64748b; font-weight: 600;">에디토리얼 평점</div>
-      <div style="font-size: 16px; font-weight: 800; color: #2563eb; margin-top: 2px;">★★★★★ 4.9 / 5.0</div>
+      <div style="font-size: 11px; color: #64748b; font-weight: 600;">검증 구분</div>
+      <div style="font-size: 15px; font-weight: 800; color: #2563eb; margin-top: 2px;">공식 데이터 대조</div>
     </div>
     <div style="flex: 1; min-width: 130px; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px;">
       <div style="font-size: 11px; color: #64748b; font-weight: 600;">기준 검증 상태</div>
-      <div style="font-size: 16px; font-weight: 800; color: #10b981; margin-top: 2px;">공식 인증 데이터 ✓</div>
+      <div style="font-size: 15px; font-weight: 800; color: #10b981; margin-top: 2px;">공식 인증 데이터 ✓</div>
     </div>
   </div>
 </div>
 """
 
     # Subtitle Lead Box (부제목: 첫 문단 첫 줄, 메인 키워드 1회 포함)
-    subtitle = editorial_data.get("subtitle", f"{keyword} 공식 데이터 및 핵심 기준 대조 분석 보고서입니다.")
+    raw_sub = editorial_data.get("subtitle", "")
+    if not raw_sub or keyword not in raw_sub:
+        subtitle = f"{keyword} 공식 데이터 및 핵심 기준 대조 분석 보고서입니다."
+    else:
+        subtitle = raw_sub
     lead_box = f"""
 <div class="article-lead" style="margin-bottom: 24px; padding: 16px 20px; background: #f8fafc; border-left: 4px solid #0284c7; border-radius: 8px;">
   <p style="margin: 0; color: #1e293b; font-size: 15px; font-weight: 600; line-height: 1.6;">
@@ -372,11 +393,18 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     ad_slot_1 = _render_adsense_slot("adsense-top", "상단 황금 영역")
     ad_slot_2 = _render_adsense_slot("adsense-mid", "본문 중앙 영역")
 
-    # Build Editorial Sections (H2: 1:1 Sub-Keyword Mapping)
+    # Build Editorial Sections (H2: 1:1 Sub-Keyword Mapping Guaranteed)
+    subs = topic.get("subs", [])
+    if not subs and "keyword_package" in topic:
+        subs = topic["keyword_package"].get("subs", [])
+
     sec_html_list = [lead_box]
     for i, sec in enumerate(sections):
         sec_h = sec.get("heading", "")
         sec_c = sec.get("content", "")
+        target_sub = subs[i].strip() if i < len(subs) and isinstance(subs[i], str) else ""
+        if target_sub and target_sub not in sec_h:
+            sec_h = f"{target_sub} - {sec_h}".strip()
         s_block = f"""
 <div class="content-section" style="margin-bottom: 28px;">
   <h2 class="sub-heading" style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0 0 12px 0; line-height: 1.4; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
@@ -427,19 +455,31 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     # AdSense Slot 4: Pre-Footer Slot
     ad_slot_4 = _render_adsense_slot("adsense-bottom", "하단 최종 체류 영역")
 
-    # Zero-Persona Editorial Footer
-    editorial_footer = """
+    # Topic-Appropriate Natural Zero-Persona Editorial Footer
+    cat_upper = (category or "LIFESTYLE").upper()
+    if cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 건강보험심사평가원 및 보건복지부 공식 공시 기준을 바탕으로 신뢰할 수 있는 정보를 제공하기 위해 작성되었습니다. 비급여 진료비는 의료기관별로 상이하므로 시술 전 해당 의료기관의 상세 견적 및 약관을 반드시 확인하시기 바랍니다."
+    elif cat_upper in ["SUBSIDY", "REFUND", "GOVERNMENT"]:
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 소관 부처 및 공공기관의 공식 고시 기준을 바탕으로 작성되었습니다. 개인별 소득 인정액 및 자격 변동에 따라 실제 지원 혜택은 상이할 수 있으므로 공식 신청 전 포털(정부24, 복지로)의 최신 안내를 확인하시기 바랍니다."
+    elif cat_upper in ["SAVINGS", "CASHFLOW"]:
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 통신사 및 금융기관의 공식 공시 요금과 약관을 기준으로 작성되었습니다. 프로모션 혜택 및 약정 조건은 가입 시기에 따라 변동될 수 있으므로 계약 전 최신 고지서를 확인하시기 바랍니다."
+    elif cat_upper in ["CAREER", "EDUCATION"]:
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 고용노동부 HRD-Net 및 주관 기관의 공식 공고를 바탕으로 작성되었습니다. 과정별 자부담율과 출석 요건을 사전에 공식 확인하시기 바랍니다."
+    else:
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 공식 고시 기준, 소관 기관 안내 및 최신 공시 규격을 바탕으로 신뢰할 수 있는 정보를 제공하기 위해 작성되었습니다. 개인별 세부 조건, 신청 시기 및 시장 변동에 따라 실제 적용 결과는 상이할 수 있으므로 공식 신청이나 계약 전 해당 기관 및 업체의 최신 안내를 반드시 확인하시기 바랍니다."
+
+    editorial_footer = f"""
 <div class="editorial-footer" style="margin-top: 40px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 13px; color: #64748b; line-height: 1.6;">
   <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">
     Blogin 365 AI 리서치 팀 (Editorial Intelligence)
   </div>
   <div>
-    본 콘텐츠는 금융위원회, 고용노동부, 과학기술정보통신부 등 공공 고시 기준 및 각 사 공시 규격을 기반으로 알고리즘 교차 검증을 거쳐 제작되었습니다. 개인별 세부 조건 및 정책 변동에 따라 실제 결과는 상이할 수 있으므로 공식 접수 전 최종 약관을 확인하시기 바랍니다.
+    {footer_guideline}
   </div>
 </div>
 """
 
-    # Trick B: Google CSE & AFS Search Navigation Hub with Trigger Pills
+    # Search Navigation Hub with Trigger Pills
     related_queries = (
         editorial_data.get("related_searches")
         or topic.get("subs")
@@ -452,13 +492,12 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
         cse_cx=os.getenv("GOOGLE_CSE_CX")
     )
 
-    # Complete Combined HTML
+    # Complete Combined HTML (Clean Layout: Zero Fake Viewfinder)
     complete_html = f"""
 <!-- Blogin 365 AI Editorial Layout -->
 <div class="article-container" style="max-width: 760px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', Roboto, sans-serif; color: #0f172a; line-height: 1.7;">
   {hero_bento}
   {ad_slot_1}
-  {photo_card_html}
   {calc_html}
   {editorial_body}
   {pros_cons_html}

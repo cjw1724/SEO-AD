@@ -445,6 +445,16 @@ class GStackAuditor:
                     last_idx = match.end()
                 parts.append(html_content[last_idx:])
                 html_content = "".join(parts)
+
+        # Ensure main keyword is present in article-lead
+        if main_keyword and len(main_keyword.strip()) >= 2:
+            kw = main_keyword.strip()
+            lead_match = re.search(r'(<div[^>]*class=["\'][^"\']*article-lead[^"\']*["\'][^>]*>\s*<p[^>]*>)(.*?)(</p>\s*</div>)', html_content, re.DOTALL | re.IGNORECASE)
+            if lead_match:
+                lead_text = re.sub(r'<[^>]+>', '', lead_match.group(2)).strip()
+                if kw not in lead_text:
+                    new_lead = f"{lead_match.group(1)}{kw} 공식 데이터 및 핵심 기준 대조 분석 보고서입니다.{lead_match.group(3)}"
+                    html_content = html_content[:lead_match.start()] + new_lead + html_content[lead_match.end():]
             
         return html_content
 

@@ -97,7 +97,7 @@ class BloginMasterHarness:
         print(f" -> 서브 키워드(1:1 H2 매핑): {matched_topic.get('subs', [])}")
         print(f" -> 카테고리: {matched_topic['category']} | 검색의도: {matched_topic['intent']}")
         print(f" -> PVS v2.0 수익 속도 점수: {matched_topic['pvs']:,.0f} pt (예상 CPC: {matched_topic['cpc']}원)")
-        print(f" -> 커뮤니티 여론 및 내돈내산 팩트셋 수집 완료 (출처: {len(sentiment_data.get('community_sources', []))}개 커뮤니티)")
+        print(f" -> 커뮤니티 여론 및 에디토리얼 팩트셋 수집 완료 (출처: {len(sentiment_data.get('community_sources', []))}개 커뮤니티)")
 
         # ----------------------------------------------------
         # Phase 2: AI Investigative Writer

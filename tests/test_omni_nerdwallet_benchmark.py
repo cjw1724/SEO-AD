@@ -96,9 +96,11 @@ class TestOmniNerdWalletBenchmark(unittest.TestCase):
         # 1. Bento Hero Card
         self.assertIn("bento-hero", article_html)
         self.assertIn("3초 핵심 요약", article_html)
-        self.assertIn("PVS 25,000,000 pt", article_html)
-        self.assertIn("에디토리얼 평점", article_html)
+        self.assertIn("2026년 최신 기준", article_html)
+        self.assertIn("공식 데이터 대조", article_html)
         self.assertIn("공식 인증 데이터 ✓", article_html)
+        self.assertNotIn("PVS 25,000,000 pt", article_html)
+        self.assertNotIn("에디토리얼 평점", article_html)
 
         # 2. 4 Golden AdSense Slots
         self.assertIn("adsense-top", article_html)

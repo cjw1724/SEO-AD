@@ -88,18 +88,13 @@ class TestHumanizationUpgrade(unittest.TestCase):
         self.assertIn("<svg", arrow_svg)
         self.assertIn("hand-drawn-arrow", arrow_svg)
 
-        # 2. Mock Amateur Camera Photo Frame
+        # 2. Mock Amateur Camera Photo Frame (Permanently deactivated in Patch 2)
         photo_card = self.renderer.render_amateur_photo_card(
             title="청년도약계좌 실측 대조 리포트",
             caption="홈택스 모의 화면 캡처",
             category="SUBSIDY"
         )
-        self.assertIn("amateur-photo-card-wrapper", photo_card)
-        self.assertIn("amateur-photo-frame", photo_card)
-        self.assertIn("REC [", photo_card)
-        self.assertIn("AUTO-FOCUS: ON", photo_card)
-        self.assertNotIn("&#10003;", photo_card)  # Zero broken entities
-        self.assertNotIn("&#9662;", photo_card)
+        self.assertEqual("", photo_card, "Viewfinder photo card must be permanently deactivated")
 
         # 3. Unfiltered Pros & Cons Board
         pros = ["장점1", "장점2", "장점3"]
@@ -156,7 +151,8 @@ class TestHumanizationUpgrade(unittest.TestCase):
             sub_keywords=[sub_kw, "신청 절차"]
         )
         self.assertTrue(humanized.get("humanized"))
-        self.assertIn("직접 3주간 테스트해본 결론", humanized["subtitle"])
+        self.assertTrue(len(humanized["subtitle"]) > 10)
+        self.assertNotIn("직접 3주간 테스트해본 결론", humanized["subtitle"])
         self.assertIn("커뮤니티 실제 이용자들의 솔직한 반응", humanized["sections"][0]["content"])
         self.assertIn("에디토리얼 팀의 실제 시행착오", humanized["sections"][1]["content"])
 
@@ -241,7 +237,7 @@ class TestHumanizationUpgrade(unittest.TestCase):
         self.assertTrue(p2.editorial_dict.get("humanized"))
         
         p3 = pipeline.execute_phase3_assembly(p1, p2)
-        self.assertIn("amateur-photo-card-wrapper", p3.html_content)
+        self.assertNotIn("amateur-photo-card-wrapper", p3.html_content)
         self.assertIn("unfiltered-review-board", p3.html_content)
         
         p4 = pipeline.execute_phase4_qa(p1, p3)

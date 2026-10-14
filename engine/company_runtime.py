@@ -346,7 +346,7 @@ class SelfHealingPipeline:
             }
 
         # Humanization Phase 1: Community Sentiment & Experiential Factset
-        print(" -> [AI 직원 02 & 03] 공공데이터 정책 검증, 커뮤니티 여론 수집 및 내돈내산 팩트체크...")
+        print(" -> [AI 직원 02 & 03] 공공데이터 정책 검증, 커뮤니티 여론 수집 및 에디토리얼 팩트체크...")
         sentiment_data = self.community_scout.scout_community_sentiment(
             matched_topic["keyword"], category=matched_topic["category"]
         )
