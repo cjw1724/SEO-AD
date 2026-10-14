@@ -242,6 +242,16 @@ class AICompanyStaff:
             health["05_Developer"]["trick_b"] = "BLOG_FALLBACK"
             health["05_Developer"]["details"] = "Micro-SaaS & Blog Search Dual Fallback Active"
 
+        # Check Service Account & Indexing / GSC Health
+        sa_path = os.path.join(BASE_DIR, "service_account.json")
+        if os.path.exists(sa_path):
+            health["08_CSPublisher"]["indexing_api"] = "Service Account Connected (Auto-Flush Active)"
+            health["02_ProductPlanner"]["gsc_sync"] = "GSC Search Analytics Active"
+
+        # Check AdSense Approval Defense Mode
+        is_approved = os.getenv("IS_ADSENSE_APPROVED", "false").strip().lower() in ("true", "1", "yes")
+        health["02_ProductPlanner"]["adsense_mode"] = "FULL_MONETIZATION" if is_approved else "REVIEW_DEFENSE (Informational)"
+
         return health
 
 
@@ -478,9 +488,11 @@ class SelfHealingPipeline:
             est_pvs=matched_topic["pvs"]
         )
         tuned_weights = self.feedback.tune_niche_weights()
+        gsc_candidates_data = self.feedback.sync_gsc_performance_and_candidates()
         link_audit = self.refresher.audit_html_links(assembled_html, dry_run=dry_run)
         refresh_cands = self.refresher.scan_for_refresh_candidates(max_age_days=30)
-        print(f" -> 성과 데이터 기록 완료 (CTR: {perf_metric['ctr_percent']}%) | 니치 가중치 자동 튜닝 완료")
+        cands_count = gsc_candidates_data.get("total_candidates", 0)
+        print(f" -> 성과 데이터 기록 완료 (CTR: {perf_metric['ctr_percent']}%) | 니치 가중치 자동 튜닝 완료 | GSC 재작성 후보: {cands_count}건")
         if link_audit.get("has_dead_links"):
             print(f" ⚠️ 링크 헬스 경고: 깨진 링크 {link_audit['dead_count']}개 감지")
 
@@ -510,7 +522,8 @@ class SelfHealingPipeline:
             "distribution": dist_res,
             "feedback": {
                 "performance": perf_metric,
-                "weights": tuned_weights
+                "weights": tuned_weights,
+                "gsc_candidates": gsc_candidates_data
             },
             "link_audit": link_audit,
             "refresh_candidates": refresh_cands,

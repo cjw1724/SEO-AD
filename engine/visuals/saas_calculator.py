@@ -109,6 +109,9 @@ def _render_savings_calc(clean_kw: str) -> str:
         <button type="button" id="btn-copy-savings" onclick="copyToolVal('result-saved-total', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
         <button type="button" onclick="resetSavings()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
       </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-savings" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 금액 혜택 바로 조회하기</a>
     </div>
 
     <script>
@@ -131,6 +134,11 @@ def _render_savings_calc(clean_kw: str) -> str:
       document.getElementById('bar-plan-cost').style.width = costPercent + '%';
       document.getElementById('bar-plan-save').style.width = savePercent + '%';
       document.getElementById('desc-savings-monthly').innerText = '월 ' + monthly.toLocaleString() + '원 순수 고정비 절감 효과 (연간 약 ' + (monthly * 12).toLocaleString() + '원 절약)';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-savings');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 ' + total.toLocaleString() + '원 절약 혜택 바로 조회하기';
+      }}
     }}
     function setSavingsPreset(curr, tgt) {{
       document.getElementById('slider-current-bill').value = curr;
@@ -245,6 +253,9 @@ def _render_subsidy_calc(clean_kw: str) -> str:
         <button type="button" id="btn-copy-subsidy" onclick="copyToolVal('result-subsidy-val', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
         <button type="button" onclick="resetSubsidy()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
       </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-subsidy" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 금액 혜택 바로 조회하기</a>
     </div>
 
     <script>
@@ -289,6 +300,11 @@ def _render_subsidy_calc(clean_kw: str) -> str:
       const apr = inc <= 2400 ? '9.4%' : (inc <= 3600 ? '8.9%' : '7.8%');
       document.getElementById('badge-subsidy-rate').innerText = '실질 수익률 연 ' + apr + ' 상당';
       document.getElementById('desc-subsidy-benefit').innerText = '정부기여금 ' + Math.round(totalGrant / 10000) + '만원 + 비과세 은행이자 ' + Math.round(totalInterest / 10000) + '만원 전액 수령 대상';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-subsidy');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 약 ' + Math.round(totalSum / 10000).toLocaleString() + '만원 혜택 바로 조회하기';
+      }}
     }}
     function setSubsidyPreset(inc, dep) {{
       document.getElementById('slider-annual-income').value = inc;
@@ -383,6 +399,9 @@ def _render_tech_calc(clean_kw: str) -> str:
         <button type="button" id="btn-copy-gadget" onclick="copyToolVal('result-gadget-daily', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
         <button type="button" onclick="resetGadget()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
       </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-gadget" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 금액 혜택 바로 조회하기</a>
     </div>
 
     <script>
@@ -411,6 +430,11 @@ def _render_tech_calc(clean_kw: str) -> str:
       const coffeeRate = daily < 2000 ? '아메리카노 1/2잔 미만' : (daily < 4000 ? '아메리카노 1잔 수준' : '라떼 1잔 상당');
       document.getElementById('badge-gadget-coffee').innerText = coffeeRate;
       document.getElementById('desc-gadget-monthly').innerText = term + '개월 무이자 할부 시 월 ' + monthly.toLocaleString() + '원 (중고 방어율 고려 실질 하루 ' + netDaily.toLocaleString() + '원)';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-gadget');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 하루 ' + daily.toLocaleString() + '원 최저가 바로 조회하기';
+      }}
     }}
     function setGadgetPreset(pr, term) {{
       document.getElementById('slider-gadget-price').value = pr;
@@ -505,6 +529,9 @@ def _render_medical_calc(clean_kw: str) -> str:
         <button type="button" id="btn-copy-med" onclick="copyToolVal('result-med-outpocket', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
         <button type="button" onclick="resetMedical()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
       </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-med" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 금액 혜택 바로 조회하기</a>
     </div>
 
     <script>
@@ -525,6 +552,11 @@ def _render_medical_calc(clean_kw: str) -> str:
       document.getElementById('bar-med-pay').style.width = (100 - rate) + '%';
       document.getElementById('badge-med-reduction').innerText = '비용 ' + rate + '% 절감';
       document.getElementById('desc-med-detail').innerText = '보험 청구 시 약 ' + refund.toLocaleString() + '원 환급 (진료비 세부내역서 및 영수증 필수 지참)';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-med');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 ' + refund.toLocaleString() + '원 환급 혜택 바로 조회하기';
+      }}
     }}
     function setMedicalPreset(cost, rate) {{
       document.getElementById('slider-med-cost').value = cost;
@@ -619,6 +651,9 @@ def _render_career_calc(clean_kw: str) -> str:
         <button type="button" id="btn-copy-career" onclick="copyToolVal('result-career-pay', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
         <button type="button" onclick="resetCareer()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
       </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-career" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 금액 혜택 바로 조회하기</a>
     </div>
 
     <script>
@@ -640,6 +675,11 @@ def _render_career_calc(clean_kw: str) -> str:
       const paybackMonths = Math.max(0.5, (selfPay / 300000)).toFixed(1);
       document.getElementById('badge-career-roi').innerText = '투자 회수 약 ' + paybackMonths + '개월';
       document.getElementById('desc-career-detail').innerText = '정부 지원금 ' + grant.toLocaleString() + '원 즉시 혜택 (월 급여 30만원 상승 시 단 ' + paybackMonths + '개월 만에 자부담 전액 회수)';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-career');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 ' + grant.toLocaleString() + '원 국비 혜택 바로 조회하기';
+      }}
     }}
     function setCareerPreset(t, r, inc) {{
       document.getElementById('slider-tuition').value = t;

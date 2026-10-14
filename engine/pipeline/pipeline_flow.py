@@ -427,6 +427,7 @@ class SequentialMediaPipeline:
             est_pvs=phase1.pvs_score
         )
         tuned_weights = self.feedback.tune_niche_weights()
+        self.feedback.sync_gsc_performance_and_candidates()
 
         # 2. Content Refresher & Link Health Audit & Healing
         link_audit = self.refresher.audit_html_links(phase4.final_html, dry_run=dry_run)

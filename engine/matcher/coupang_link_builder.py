@@ -1,19 +1,24 @@
 import urllib.parse
 import os
+import sys
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from engine.monetization.coupang_api import CoupangPartnersClient, get_coupang_client
 
 def build_coupang_search_url(keyword: str, partners_subid: str = "blogin365") -> str:
     """
     키워드 기반 쿠팡 최저가 검색 딥링크를 생성합니다.
-    쿠팡 파트너스 채널 ID가 연동된 경우 제휴 수익 추적 지원.
+    쿠팡 파트너스 API 키가 연동된 경우 HMAC-SHA256 1위 상품 또는 단축 딥링크(link.coupang.com) 생성.
+    키가 비어있을 경우 기존 검색 URL로 안전하게 폴백(Fallback).
     """
     clean_keyword = keyword.replace(" 비교", "").replace(" 추천", "").strip()
-    encoded_kw = urllib.parse.quote(clean_keyword)
-    
-    # 쿠팡 검색 직접 랜딩 (모바일 & 데스크탑 호환)
-    base_search_url = f"https://www.coupang.com/np/search?component=&q={encoded_kw}&channel=user"
-    
-    # 파트너스 딥링크 생성 (파트너스 추적 서브아이디 포함)
-    return base_search_url
+    client = get_coupang_client()
+    if partners_subid:
+        client.sub_id = partners_subid
+    return client.get_affiliate_search_link(clean_keyword)
 
 def generate_affiliate_cta_button(keyword: str, cpa_type: str) -> str:
     """

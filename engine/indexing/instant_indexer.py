@@ -88,6 +88,12 @@ def submit_batch_to_google_indexing_api(
     return indexer.submit_batch_google_indexing(urls, action=action, dry_run=dry_run)
 
 
+def flush_indexing_queue(dry_run: bool = False, service_account_path: Optional[str] = None) -> Dict[str, Any]:
+    """큐에 쌓여 있던 FALLBACK_QUEUED 항목들을 Google Indexing API로 일괄 순차 발송 (플러시)"""
+    indexer = InstantIndexer(service_account_path=service_account_path)
+    return indexer.flush_fallback_queue(dry_run=dry_run)
+
+
 class InstantIndexer:
     """
     Coordinates real-time indexing notifications across Google Indexing API (Dual Auth:
@@ -338,6 +344,87 @@ class InstantIndexer:
             "pings": ping_results
         }
 
+    def flush_fallback_queue(self, dry_run: bool = False) -> Dict[str, Any]:
+        """
+        Flushes and submits any pending 'FALLBACK_QUEUED' items from data/indexing_logs.json
+        to the Google Indexing API sequentially when service_account.json is available.
+        """
+        sa_exists = os.path.exists(self.service_account_path)
+        if not sa_exists and not dry_run:
+            logger.info("[IndexingAPI] service_account.json 없음: 큐 플러시 대기 유지")
+            return {
+                "status": "SKIPPED_NO_CREDENTIALS",
+                "flushed_count": 0,
+                "remaining_queued": 0,
+                "message": "service_account.json not found."
+            }
+
+        if not os.path.exists(self.log_path):
+            return {
+                "status": "NO_LOGS",
+                "flushed_count": 0,
+                "remaining_queued": 0
+            }
+
+        try:
+            with open(self.log_path, "r", encoding="utf-8") as f:
+                logs = json.load(f)
+            if not isinstance(logs, list):
+                return {"status": "INVALID_LOG_FORMAT", "flushed_count": 0, "remaining_queued": 0}
+        except Exception as e:
+            logger.error(f"[IndexingAPI] 큐 플러시 로그 로드 실패: {e}")
+            return {"status": "READ_ERROR", "flushed_count": 0, "remaining_queued": 0, "error": str(e)}
+
+        queued_urls = []
+        for entry in logs:
+            if not isinstance(entry, dict):
+                continue
+            g_res = entry.get("results", {}).get("google_indexing", {})
+            if g_res.get("status") == "FALLBACK_QUEUED":
+                u = g_res.get("url") or entry.get("target_url")
+                if u and u not in queued_urls and u.startswith("http"):
+                    queued_urls.append(u)
+
+        if not queued_urls:
+            return {
+                "status": "EMPTY_QUEUE",
+                "flushed_count": 0,
+                "remaining_queued": 0
+            }
+
+        logger.info(f"[IndexingAPI] FALLBACK_QUEUED 항목 {len(queued_urls)}개 감지 -> 순차 플러시 발송 시작...")
+        flushed_results = []
+        for u in queued_urls:
+            res = self.submit_google_indexing(u, action="URL_UPDATED", dry_run=dry_run)
+            flushed_results.append(res)
+            # Update matching entries in logs
+            if res.get("status") in ("SUBMITTED", "SIMULATED_SUCCESS"):
+                for entry in logs:
+                    if not isinstance(entry, dict):
+                        continue
+                    g_res = entry.get("results", {}).get("google_indexing", {})
+                    if g_res.get("status") == "FALLBACK_QUEUED" and (g_res.get("url") == u or entry.get("target_url") == u):
+                        g_res["status"] = "SUBMITTED"
+                        g_res["flushed_at"] = datetime.now().isoformat()
+                        g_res["auth_type"] = res.get("auth_type", "service_account")
+            if not dry_run and len(queued_urls) > 1:
+                time.sleep(0.2)
+
+        # Save back updated logs
+        try:
+            with open(self.log_path, "w", encoding="utf-8") as f:
+                json.dump(logs, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.error(f"[IndexingAPI] 플러시 로그 저장 실패: {e}")
+
+        successful_flushes = sum(1 for r in flushed_results if r.get("status") in ("SUBMITTED", "SIMULATED_SUCCESS"))
+        return {
+            "status": "FLUSHED",
+            "total_candidates": len(queued_urls),
+            "flushed_count": successful_flushes,
+            "results": flushed_results
+        }
+
     def submit_all(
         self,
         urls: Union[str, List[str]],
@@ -349,6 +436,14 @@ class InstantIndexer:
         Accepts either a single URL string or a list of URLs.
         Logs output to data/indexing_logs.json.
         """
+        # If service account is present and not dry-run, auto-flush previously queued items
+        flush_info = None
+        if os.path.exists(self.service_account_path) and not dry_run:
+            try:
+                flush_info = self.flush_fallback_queue(dry_run=False)
+            except Exception as e:
+                logger.warning(f"[IndexingAPI] 큐 자동 플러시 중 경고: {e}")
+
         if isinstance(urls, (list, tuple)):
             url_list = [u for u in urls if u and isinstance(u, str) and u.startswith("http")]
             target_rep = url_list[0] if url_list else ""
@@ -373,6 +468,8 @@ class InstantIndexer:
                 "sitemap_ping": sitemap_res
             }
         }
+        if flush_info:
+            record["results"]["flush_info"] = flush_info
 
         self._record_log(record)
         return record
