@@ -58,16 +58,28 @@ class ContentRefresher:
         # Filter for http/https URLs
         return [m.strip() for m in matches if m.startswith("http")]
 
-    def check_link_health(self, url: str, timeout: int = 4) -> Dict[str, Any]:
-        """Checks HTTP status of a single outbound link."""
+    def check_link_health(self, url: str, timeout: int = 6) -> Dict[str, Any]:
+        """Checks HTTP status of a single outbound link with HEAD -> GET dual fallback."""
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        }
+
+        # 1. Quick HEAD attempt
         try:
-            req = urllib.request.Request(
-                url,
-                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Blogin365AI-HealthBot/1.0"}
-            )
-            # Use HEAD request if possible, fallback to GET
+            req = urllib.request.Request(url, headers=headers)
             req.get_method = lambda: "HEAD"
             with urllib.request.urlopen(req, timeout=timeout) as resp:
+                code = resp.getcode()
+                return {"url": url, "status": "ALIVE", "status_code": code}
+        except Exception:
+            # Many Korean public institutions (e.g., mvnohub.kr, hrd.go.kr) reject HEAD with TCP RST (WinError 10054)
+            pass
+
+        # 2. Robust GET fallback attempt
+        try:
+            req_get = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req_get, timeout=timeout) as resp:
                 code = resp.getcode()
                 return {"url": url, "status": "ALIVE", "status_code": code}
         except urllib.error.HTTPError as e:
