@@ -15,6 +15,25 @@ Omni Calculator (옴니 칼큘레이터) & NerdWallet 벤치마크 기반 고체
 """
 
 import sys
+import os
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from engine.matcher.domain_router import (
+    classify_domain,
+    DOMAIN_AUTO_INSURANCE,
+    DOMAIN_HEALTH_INSURANCE,
+    DOMAIN_SUBSIDY,
+    DOMAIN_TELECOM,
+    DOMAIN_CARDS_TRAVEL,
+    DOMAIN_SAVINGS,
+    DOMAIN_MEDICAL,
+    DOMAIN_CAREER,
+    DOMAIN_TECH
+)
+
 if hasattr(sys.stdout, 'reconfigure'):
     try:
         sys.stdout.reconfigure(encoding='utf-8')
@@ -852,35 +871,293 @@ def render_cost_spec_comparison_table(clean_kw: str, category_code: str = "MEDIC
     """
 
 
+def _render_auto_insurance_calc(clean_kw: str) -> str:
+    """자동차보험 및 다이렉트 보험료 절감 & 특약 할인 시뮬레이터 (Omni Benchmark)"""
+    return f"""
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:9999px; font-weight:800; letter-spacing:0.02em;">OMNI SIMULATOR</span>
+            <span style="font-size:0.75rem; background:#ecfdf5; color:#10b981; padding:3px 10px; border-radius:9999px; font-weight:800;">실시간 견적 모의계산</span>
+          </div>
+          <h3 style="margin:0 0 6px 0; font-size:1.25rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">🚗 {clean_kw} 연간 보험료 절감 & 특약 할인 시뮬레이터</h3>
+          <p style="margin:0; font-size:0.88rem; color:#64748b; line-height:1.5;">오프라인 설계사 대비 다이렉트 전환 + 마일리지/안전운전 특약 적용 시 연간 절감액을 산출합니다.</p>
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div style="margin-bottom:20px; padding:12px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
+        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">차량 차급별 기본 견적:</span>
+        <button type="button" onclick="setAutoInsurancePreset(650000, 35)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">준중형/경차 (연 65만 기준)</button>
+        <button type="button" onclick="setAutoInsurancePreset(950000, 35)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">표준 중형차 (연 95만 기준)</button>
+        <button type="button" onclick="setAutoInsurancePreset(1350000, 35)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">대형 / SUV (연 135만 기준)</button>
+      </div>
+
+      <!-- Input Controls Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+        <!-- Control 1: Current Premium -->
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-auto-premium" style="font-size:0.88rem; font-weight:700; color:#475569;">오프라인/현재 연간 보험료</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#0f172a;" id="disp-auto-premium">950,000원</span>
+          </div>
+          <input type="range" id="slider-auto-premium" min="300000" max="2500000" step="10000" value="950000" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcAutoInsurance()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>300,000원</span>
+            <span>2,500,000원</span>
+          </div>
+        </div>
+
+        <!-- Control 2: Discount Rate -->
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-auto-discount" style="font-size:0.88rem; font-weight:700; color:#475569;">다이렉트 + 특약 할인 합산율</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#2563eb;" id="disp-auto-discount">35%</span>
+          </div>
+          <input type="range" id="slider-auto-discount" min="10" max="50" step="1" value="35" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcAutoInsurance()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>10% (다이렉트 기본)</span>
+            <span>50% (마일리지+티맵 최대)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Hero Card -->
+      <div style="background:#0f172a; padding:22px; border-radius:14px; color:#ffffff; margin-bottom:20px; box-shadow:0 8px 24px -4px rgba(15,23,42,0.25);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; flex-wrap:wrap; gap:6px;">
+          <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">연간 총 순수 절감 예상액</span>
+          <span style="font-size:0.75rem; background:#1e293b; color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:700;" id="badge-auto-ratio">절감율 35.0%</span>
+        </div>
+        <div style="font-size:2rem; font-weight:800; color:#38bdf8; letter-spacing:-0.02em; margin:6px 0;" id="result-auto-saved">332,500원 절약</div>
+        
+        <!-- Omni Visual Breakdown Bar -->
+        <div style="margin:16px 0 10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">
+            <span>최종 예상 납부액 (<span id="txt-bar-auto-pay">617,500원</span>)</span>
+            <span style="color:#34d399; font-weight:700;">아낀 순수 절감액 (<span id="txt-bar-auto-save">332,500원</span>)</span>
+          </div>
+          <div style="background:#334155; height:12px; border-radius:6px; overflow:hidden; display:flex; width:100%;">
+            <div id="bar-auto-pay" style="background:#3b82f6; width:65%; height:100%; transition:width 0.2s ease;"></div>
+            <div id="bar-auto-save" style="background:#10b981; width:35%; height:100%; transition:width 0.2s ease;"></div>
+          </div>
+        </div>
+
+        <div style="font-size:0.82rem; color:#cbd5e1; margin-top:8px;" id="desc-auto-monthly">월 약 27,700원 고정비 세이브 효과 (다이렉트 15.6% 기본할인 + 주행거리 마일리지 환급 기준)</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:10px;">
+        <button type="button" id="btn-copy-auto" onclick="copyToolVal('result-auto-saved', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">절감 결과 복사하기</button>
+        <button type="button" onclick="resetAutoInsurance()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
+      </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-auto" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 다이렉트 최저가 견적 조회하기</a>
+    </div>
+
+    <script>
+    function calcAutoInsurance() {{
+      const premium = parseInt(document.getElementById('slider-auto-premium').value);
+      const discountRate = parseInt(document.getElementById('slider-auto-discount').value);
+      const saved = Math.round(premium * (discountRate / 100));
+      const finalPay = premium - saved;
+      const monthly = Math.round(saved / 12);
+
+      document.getElementById('disp-auto-premium').innerText = premium.toLocaleString() + '원';
+      document.getElementById('disp-auto-discount').innerText = discountRate + '%';
+
+      document.getElementById('result-auto-saved').innerText = saved.toLocaleString() + '원 절약';
+      document.getElementById('badge-auto-ratio').innerText = '절감율 ' + discountRate + '%';
+      document.getElementById('txt-bar-auto-pay').innerText = finalPay.toLocaleString() + '원';
+      document.getElementById('txt-bar-auto-save').innerText = saved.toLocaleString() + '원';
+
+      const payPercent = 100 - discountRate;
+      document.getElementById('bar-auto-pay').style.width = payPercent + '%';
+      document.getElementById('bar-auto-save').style.width = discountRate + '%';
+
+      document.getElementById('desc-auto-monthly').innerText = '월 약 ' + monthly.toLocaleString() + '원 고정비 세이브 효과 (다이렉트 기본할인 + 주행거리 마일리지 환급 기준)';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-auto');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 연 ' + saved.toLocaleString() + '원 절감 다이렉트 견적 바로 조회하기';
+      }}
+    }}
+    function setAutoInsurancePreset(prem, disc) {{
+      document.getElementById('slider-auto-premium').value = prem;
+      document.getElementById('slider-auto-discount').value = disc;
+      calcAutoInsurance();
+    }}
+    function resetAutoInsurance() {{
+      setAutoInsurancePreset(950000, 35);
+    }}
+    </script>
+    """
+
+
+def _render_general_savings_calc(clean_kw: str) -> str:
+    """고정비 및 생활비 절감 시뮬레이터 (Omni Benchmark)"""
+    return f"""
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:9999px; font-weight:800; letter-spacing:0.02em;">OMNI SIMULATOR</span>
+            <span style="font-size:0.75rem; background:#ecfdf5; color:#10b981; padding:3px 10px; border-radius:9999px; font-weight:800;">실시간 모의계산</span>
+          </div>
+          <h3 style="margin:0 0 6px 0; font-size:1.25rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">💰 {clean_kw} 연간 고정비 절감 시뮬레이터</h3>
+          <p style="margin:0; font-size:0.88rem; color:#64748b; line-height:1.5;">매월 고정 지출 항목 최적화 시 12개월간 축적되는 순수 목돈을 산출합니다.</p>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px; padding:12px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
+        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">지출 규모 프리셋:</span>
+        <button type="button" onclick="setGeneralSavingsPreset(300000, 20)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">소액 지출 (월 30만)</button>
+        <button type="button" onclick="setGeneralSavingsPreset(600000, 25)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">표준 가구 (월 60만)</button>
+        <button type="button" onclick="setGeneralSavingsPreset(1200000, 30)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">다인 가구 (월 120만)</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-gen-spend" style="font-size:0.88rem; font-weight:700; color:#475569;">현재 월 고정 지출액</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#0f172a;" id="disp-gen-spend">600,000원</span>
+          </div>
+          <input type="range" id="slider-gen-spend" min="100000" max="2000000" step="10000" value="600000" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcGeneralSavings()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>100,000원</span>
+            <span>2,000,000원</span>
+          </div>
+        </div>
+
+        <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="slider-gen-ratio" style="font-size:0.88rem; font-weight:700; color:#475569;">목표 절감율</label>
+            <span style="font-size:1.05rem; font-weight:800; color:#2563eb;" id="disp-gen-ratio">25%</span>
+          </div>
+          <input type="range" id="slider-gen-ratio" min="5" max="50" step="1" value="25" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcGeneralSavings()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+            <span>5%</span>
+            <span>50%</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#0f172a; padding:22px; border-radius:14px; color:#ffffff; margin-bottom:20px; box-shadow:0 8px 24px -4px rgba(15,23,42,0.25);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; flex-wrap:wrap; gap:6px;">
+          <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">12개월간 총 순수 절감 예상액</span>
+          <span style="font-size:0.75rem; background:#1e293b; color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:700;" id="badge-gen-ratio">절감율 25.0%</span>
+        </div>
+        <div style="font-size:2rem; font-weight:800; color:#38bdf8; letter-spacing:-0.02em; margin:6px 0;" id="result-gen-saved">1,800,000원 절약</div>
+        
+        <div style="margin:16px 0 10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">
+            <span>최적화 후 지출 (<span id="txt-bar-gen-pay">5,400,000원</span>)</span>
+            <span style="color:#34d399; font-weight:700;">아낀 순수 목돈 (<span id="txt-bar-gen-save">1,800,000원</span>)</span>
+          </div>
+          <div style="background:#334155; height:12px; border-radius:6px; overflow:hidden; display:flex; width:100%;">
+            <div id="bar-gen-pay" style="background:#3b82f6; width:75%; height:100%; transition:width 0.2s ease;"></div>
+            <div id="bar-gen-save" style="background:#10b981; width:25%; height:100%; transition:width 0.2s ease;"></div>
+          </div>
+        </div>
+
+        <div style="font-size:0.82rem; color:#cbd5e1; margin-top:8px;" id="desc-gen-monthly">월 150,000원 순수 고정비 절감 효과</div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button type="button" id="btn-copy-gen" onclick="copyToolVal('result-gen-saved', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
+        <button type="button" onclick="resetGeneralSavings()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
+      </div>
+
+      <a href="#article-search-nav" id="btn-calc-cta-gen" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 절약 혜택 바로 조회하기</a>
+    </div>
+
+    <script>
+    function calcGeneralSavings() {{
+      const spend = parseInt(document.getElementById('slider-gen-spend').value);
+      const ratio = parseInt(document.getElementById('slider-gen-ratio').value);
+      const monthlySaved = Math.round(spend * (ratio / 100));
+      const yearlySaved = monthlySaved * 12;
+      const yearlySpend = (spend - monthlySaved) * 12;
+
+      document.getElementById('disp-gen-spend').innerText = spend.toLocaleString() + '원';
+      document.getElementById('disp-gen-ratio').innerText = ratio + '%';
+
+      document.getElementById('result-gen-saved').innerText = yearlySaved.toLocaleString() + '원 절약';
+      document.getElementById('badge-gen-ratio').innerText = '절감율 ' + ratio + '%';
+      document.getElementById('txt-bar-gen-pay').innerText = yearlySpend.toLocaleString() + '원';
+      document.getElementById('txt-bar-gen-save').innerText = yearlySaved.toLocaleString() + '원';
+
+      const payPercent = 100 - ratio;
+      document.getElementById('bar-gen-pay').style.width = payPercent + '%';
+      document.getElementById('bar-gen-save').style.width = ratio + '%';
+
+      document.getElementById('desc-gen-monthly').innerText = '월 ' + monthlySaved.toLocaleString() + '원 순수 고정비 절감 효과';
+
+      const ctaBtn = document.getElementById('btn-calc-cta-gen');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 연 ' + yearlySaved.toLocaleString() + '원 절약 플랜 바로 조회하기';
+      }}
+    }}
+    function setGeneralSavingsPreset(sp, r) {{
+      document.getElementById('slider-gen-spend').value = sp;
+      document.getElementById('slider-gen-ratio').value = r;
+      calcGeneralSavings();
+    }}
+    function resetGeneralSavings() {{
+      setGeneralSavingsPreset(600000, 25);
+    }}
+    </script>
+    """
+
+
 def get_calculator_by_category(category_code: str, keyword: str = "") -> str:
     """
     5대 황금 니치에 맞춤화된 고체류 인터랙티브 Micro-SaaS Omni Calculator를 반환합니다.
-    - SAVINGS: 알뜰폰/통신비 절감
-    - SUBSIDY: 정부지원금/환급/청년도약계좌
-    - TECH: 스마트 가전/테크 일할 커피값 계산기
-    - MEDICAL: 비급여 의료/실손보험 환급 계산기 (임플란트/라식 등은 상세 견적 비교표로 자동 전환)
-    - CAREER: 국비지원/내일배움카드 ROI 계산기
+    도메인 라우터를 기반으로 100% 안전하게 도메인별 계산기를 라우팅합니다.
     """
     clean_kw = _clean_keyword(keyword)
     cat = (category_code or "TECH").upper()
-    kw_lower = clean_kw.lower()
+    domain = classify_domain(clean_kw, cat)
 
-    # [Patch 3] 주제별 동적 전환: 정형화 계산이 불가능한 시술/견적 주제는 '실제 견적/비용 상세 비교표'로 전환
-    procedure_keywords = ["임플란트", "라식", "라섹", "스마일라식", "치과", "치아", "보철", "성형", "백내장", "견적"]
-    if any(k in kw_lower for k in procedure_keywords):
-        return render_cost_spec_comparison_table(clean_kw, cat)
+    # 1. AUTO INSURANCE ONLY
+    if domain == DOMAIN_AUTO_INSURANCE:
+        return _render_auto_insurance_calc(clean_kw)
 
-    if cat in ["SAVINGS", "CASHFLOW"]:
-        return _render_savings_calc(clean_kw)
-    elif cat in ["SUBSIDY", "REFUND", "GOVERNMENT"]:
-        return _render_subsidy_calc(clean_kw)
-    elif cat in ["MEDICAL", "WELLNESS", "CLINIC"]:
+    # 2. MEDICAL / PROCEDURES / DENTAL
+    if domain == DOMAIN_MEDICAL:
+        procedure_keywords = ["임플란트", "라식", "라섹", "스마일라식", "치과", "치아", "보철", "성형", "백내장", "견적"]
+        if any(k in clean_kw.lower() for k in procedure_keywords):
+            return render_cost_spec_comparison_table(clean_kw, cat)
         return _render_medical_calc(clean_kw)
-    elif cat in ["CAREER", "EDUCATION", "CERT"]:
+
+    # 3. HEALTH / INDEMNITY INSURANCE
+    if domain == DOMAIN_HEALTH_INSURANCE:
+        return _render_medical_calc(clean_kw)
+
+    # 4. SUBSIDY / GOVERNMENT
+    if domain == DOMAIN_SUBSIDY:
+        return _render_subsidy_calc(clean_kw)
+
+    # 5. EXPLICIT TELECOM
+    if domain == DOMAIN_TELECOM:
+        return _render_savings_calc(clean_kw)
+
+    # 6. CARDS / TRAVEL / FOREIGN EXCHANGE
+    if domain == DOMAIN_CARDS_TRAVEL:
+        return _render_general_savings_calc(clean_kw)
+
+    # 7. CAREER / EDUCATION
+    if domain == DOMAIN_CAREER:
         return _render_career_calc(clean_kw)
-    else:
-        # Default TECH
-        return _render_tech_calc(clean_kw)
+
+    # 8. SAVINGS / CASHFLOW (General fixed costs)
+    if domain == DOMAIN_SAVINGS:
+        return _render_general_savings_calc(clean_kw)
+
+    # 9. DEFAULT TECH
+    return _render_tech_calc(clean_kw)
 
 
 def render_saas_calculator(category_code: str = "TECH", keyword: str = "") -> str:

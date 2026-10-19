@@ -119,8 +119,9 @@ class HumanVoiceEngine:
 
         for idx, sec in enumerate(sections):
             heading = sec.get("heading", "")
-            sub_kw = sec.get("sub_keyword") or (sub_keywords[idx] if sub_keywords and idx < len(sub_keywords) else "")
             body = sec.get("content") or sec.get("body", "")
+            # Prioritize canonical golden sub-keyword from keyword package to guarantee Gate 6 1:1 mapping
+            sub_kw = (sub_keywords[idx] if sub_keywords and idx < len(sub_keywords) else "") or sec.get("sub_keyword") or ""
 
             # 1. Transform Subheader with conversational tone while preserving custom LLM headings
             if sub_kw:

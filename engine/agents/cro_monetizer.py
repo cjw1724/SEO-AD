@@ -74,14 +74,15 @@ def render_search_navigation_widget(
     keyword: str,
     category: str = "FINANCE",
     related_keywords: Optional[List[str]] = None,
-    cse_cx: Optional[str] = None
+    cse_cx: Optional[str] = None,
+    is_adsense_approved: Optional[bool] = None
 ) -> str:
     """
     Trick B: Google Programmable Search Engine (CSE) & AdSense for Search (AFS) 연동 네비게이션.
     - 비용 $0, 서버 $0 무중단 듀얼 아키텍처:
-      1) GOOGLE_CSE_CX 설정 시: 공식 구글 맞춤검색(CSE) 스크립트 및 AFS 연동 검색 슬롯 렌더링
-      2) GOOGLE_CSE_CX 미설정 시: blogin365ai.blogspot.com/search?q=... 로 자동 라우팅되는 스마트 검색 폼 폴백
-    - 관련 키워드 검색 트리거 알약(Pill 태그)을 자동 배치하여 방문자의 추가 검색 유도 & 광고 수익 극대화
+      1) GOOGLE_CSE_CX 설정 및 애드센스 승인 시: 공식 구글 맞춤검색(CSE) 스크립트 및 AFS 연동 검색 슬롯 렌더링
+      2) 미승인(Ghost Mode) 또는 GOOGLE_CSE_CX 미설정 시: blogin365ai.blogspot.com/search?q=... 로 자동 라우팅되는 클린 블로그 검색 폼 폴백
+    - 관련 키워드 검색 트리거 알약(Pill 태그)을 자동 배치하여 방문자의 추가 검색 유도 & 탐색성 극대화
     """
     raw_kw = (keyword or "인기 금융 가이드").strip()
     clean_kw = re.sub(r'^(\[|\()[\d\w\s\.\-]+(\]|\))\s*', '', raw_kw).strip()
@@ -90,7 +91,14 @@ def render_search_navigation_widget(
     if not clean_kw:
         clean_kw = "추천 가이드"
 
-    if cse_cx is not None:
+    if is_adsense_approved is None:
+        is_approved_mode = True
+    else:
+        is_approved_mode = is_adsense_approved
+
+    if not is_approved_mode:
+        cx = ""
+    elif cse_cx is not None:
         cx = cse_cx.strip()
     else:
         cx = (os.getenv("GOOGLE_CSE_CX") or "").strip()
@@ -126,16 +134,16 @@ def render_search_navigation_widget(
             "정부지원금 환급 혜택"
         ],
         "SAVINGS": [
-            "요금제 비교 분석",
-            "가입 혜택 총정리",
-            "위약금 실시간 조회",
-            "알뜰폰 0원 요금제"
+            "고정비 절감 노하우",
+            "비용 비교 분석",
+            "할인 혜택 총정리",
+            "실시간 모의 계산"
         ],
         "CASHFLOW": [
             "고정비 절감 노하우",
-            "요금제 비교 분석",
+            "지출 다이어트 팁",
             "환급 혜택 총정리",
-            "알뜰폰 0원 요금제"
+            "실시간 모의 계산"
         ],
         "MEDICAL": [
             "실비 환급 기준",
@@ -150,31 +158,64 @@ def render_search_navigation_widget(
             "내일배움카드 한도"
         ]
     }
-    defaults = cat_fallbacks.get(cat, [
-        "세부 조건 안내",
-        "신청 방법 가이드",
-        "실시간 모의 계산",
-        "2026 추천 가이드"
-    ])
+
+    kw_lower = (raw_kw or "").lower()
+    cat_upper = (category or "TECH").upper()
+
+    if any(k in kw_lower for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"]):
+        defaults = [
+            "보험료 비교 견적",
+            "마일리지 할인 특약",
+            "다이렉트 갱신 팁",
+            "보장 한도 추천"
+        ]
+        commercial_suffix = " 다이렉트 견적 비교 할인 특약"
+    elif any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim", "0원 요금제"]):
+        defaults = [
+            "요금제 비교 분석",
+            "가입 혜택 총정리",
+            "위약금 실시간 조회",
+            "알뜰폰 프로모션"
+        ]
+        commercial_suffix = " 요금제 비교 혜택 가입"
+    elif any(k in kw_lower for k in ["카드", "트래블", "환전", "해외결제"]):
+        defaults = [
+            "환전 수수료 비교",
+            "해외 결제 혜택",
+            "체크카드 발급 팁",
+            "ATM 출금 수수료"
+        ]
+        commercial_suffix = " 수수료 비교 혜택 발급"
+    elif cat_upper in ["SUBSIDY", "REFUND", "GOVERNMENT", "FINANCE"]:
+        defaults = cat_fallbacks.get("SUBSIDY", ["자격 조건 및 대상", "신청 기간 및 일정", "실수령액 모의 계산"])
+        commercial_suffix = " 금리 비교 추천 자격 조회"
+    elif cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
+        defaults = cat_fallbacks.get("MEDICAL", ["실비 환급 기준", "비용 실측 비교", "비급여 진료비 확인"])
+        commercial_suffix = " 비용 견적 비교 건강보험 기준"
+    elif cat_upper in ["SAVINGS", "CASHFLOW"]:
+        defaults = cat_fallbacks.get("SAVINGS", ["고정비 절감 노하우", "비용 비교 분석", "할인 혜택 총정리"])
+        commercial_suffix = " 비용 절감 비교 가이드"
+    elif cat_upper in ["CAREER", "EDUCATION", "CERT"]:
+        defaults = cat_fallbacks.get("CAREER", ["국비지원 신청 가이드", "환급 조건 확인", "내일배움카드 한도"])
+        commercial_suffix = " 국비지원 수강료 자격증 취업"
+    elif cat_upper == "TECH":
+        defaults = cat_fallbacks.get("TECH", ["최저가 가격 비교", "실사용 솔직 후기", "스펙 사양 분석"])
+        commercial_suffix = " 최저가 스펙 비교 추천"
+    else:
+        defaults = [
+            "세부 조건 안내",
+            "신청 방법 가이드",
+            "실시간 모의 계산",
+            "2026 추천 가이드"
+        ]
+        commercial_suffix = " 비교 분석 추천 가이드"
+
     for df in defaults:
         if df not in pills and len(pills) < 5:
             pills.append(df)
 
     # Render pill elements with deduplicated target query and safe HTML escaping
     pill_html_list = []
-    cat_upper = (category or "TECH").upper()
-    if cat_upper in ["SUBSIDY", "REFUND", "GOVERNMENT", "FINANCE"]:
-        commercial_suffix = " 금리 비교 추천 자격 조회"
-    elif cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
-        commercial_suffix = " 비용 견적 비교 건강보험 기준"
-    elif cat_upper in ["SAVINGS", "CASHFLOW"]:
-        commercial_suffix = " 요금제 비교 혜택 가입"
-    elif cat_upper in ["CAREER", "EDUCATION", "CERT"]:
-        commercial_suffix = " 국비지원 수강료 자격증 취업"
-    elif cat_upper == "TECH":
-        commercial_suffix = " 최저가 스펙 비교 추천"
-    else:
-        commercial_suffix = " 비교 분석 추천 가이드"
 
     for p in pills[:5]:
         target_query = _build_clean_search_query(raw_kw, p)
@@ -182,12 +223,24 @@ def render_search_navigation_widget(
         pill_url = f"https://blogin365ai.blogspot.com/search?q={encoded_query}"
         safe_url = html_lib.escape(pill_url)
         safe_label = html_lib.escape(p)
-        commercial_query = f"{p}{commercial_suffix}".strip()
-        safe_comm_query = html_lib.escape(commercial_query)
+
+        if is_approved_mode and commercial_suffix:
+            commercial_query = f"{p}{commercial_suffix}".strip()
+            safe_comm_query = html_lib.escape(commercial_query)
+            data_query_attr = f'data-query="{safe_comm_query}" '
+            onclick_attr = (
+                f'onclick="if(window.google&amp;&amp;google.search&amp;&amp;google.search.cse){{'
+                f'var q=(new URL(this.href).searchParams.get(\'q\')||\'\')+\' \'+(this.getAttribute(\'data-query\')||\'{commercial_suffix.strip()}\');'
+                f'var el=google.search.cse.element.getElement(\'gsearch\')||google.search.cse.element.getElement(\'two-page-search-results\');'
+                f'if(el&amp;&amp;q){{el.execute(q.trim());return false;}}}}" '
+            )
+        else:
+            data_query_attr = ""
+            onclick_attr = ""
 
         pill_html_list.append(
-            f'<a href="{safe_url}" class="b365-search-pill" data-query="{safe_comm_query}" target="_blank" rel="noopener" '
-            f'onclick="if(window.google&amp;&amp;google.search&amp;&amp;google.search.cse){{var q=(new URL(this.href).searchParams.get(\'q\')||\'\')+\' \'+(this.getAttribute(\'data-query\')||\'{commercial_suffix.strip()}\');var el=google.search.cse.element.getElement(\'gsearch\')||google.search.cse.element.getElement(\'two-page-search-results\');if(el&amp;&amp;q){{el.execute(q.trim());return false;}}}}" '
+            f'<a href="{safe_url}" class="b365-search-pill" {data_query_attr}target="_blank" rel="noopener" '
+            f'{onclick_attr}'
             f'style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; '
             f'background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 9999px; '
             f'font-size: 12px; font-weight: 700; text-decoration: none; transition: all 0.15s ease;">'
@@ -206,7 +259,7 @@ def render_search_navigation_widget(
     else:
         search_box_markup = f"""
   <form action="https://blogin365ai.blogspot.com/search" method="get" class="b365-search-form" style="display: flex; gap: 8px; margin-bottom: 14px;">
-    <input type="text" name="q" placeholder="궁금한 지원 정책, 요금제 조건, 실측 비교 정보 검색..." style="flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; background: #ffffff; color: #0f172a;" />
+    <input type="text" name="q" placeholder="궁금한 제도 기준, 할인 특약, 실측 비교 정보 검색..." style="flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; background: #ffffff; color: #0f172a;" />
     <button type="submit" class="btn-search-submit" style="padding: 12px 22px; background: #2563eb; color: #ffffff; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; white-space: nowrap; transition: background 0.15s ease;">검색</button>
   </form>
 """
@@ -225,7 +278,7 @@ def render_search_navigation_widget(
     🔍 스마트 실시간 맞춤검색 &amp; 연관 분석 허브
   </div>
   <p style="font-size: 13px; color: #64748b; margin: 0 0 14px 0; line-height: 1.5;">
-    원하시는 세부 조건표나 다른 지원금 및 요금제 혜택을 실시간으로 검색해 보세요.
+    원하시는 세부 조건표나 관련 금융 및 절감 혜택을 실시간으로 검색해 보세요.
   </p>
   {search_box_markup}
   <div class="b365-search-pills" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9;">
@@ -364,6 +417,8 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
 """
 
     def _render_adsense_slot(slot_class: str, label: str) -> str:
+        if not is_adsense_approved:
+            return ""
         client_id = os.getenv("ADSENSE_CLIENT_ID", "").strip()
         slot_id = os.getenv("ADSENSE_SLOT_ID", "").strip()
         if client_id and slot_id:
@@ -457,24 +512,43 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
 
     # Topic-Appropriate Natural Zero-Persona Editorial Footer
     cat_upper = (category or "LIFESTYLE").upper()
-    if cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
+    kw_lower = (keyword or "").lower()
+
+    if any(k in kw_lower for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"]):
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 금융위원회 및 손해보험협회·생명보험협회의 공식 공시 요율과 표준 약관을 기준으로 작성되었습니다. 각 보험사별 할인 특약 적용 기준과 담보 한도에 따라 실제 보험료는 상이할 수 있으므로 가입 전 해당 보험사의 상품설명서 및 약관을 반드시 확인하시기 바랍니다."
+    elif any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim", "0원 요금제"]):
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 과학기술정보통신부 및 이동통신 사업자의 공식 공시 요금과 약관을 기준으로 작성되었습니다. 프로모션 혜택 및 가입 조건은 시기에 따라 변동될 수 있으므로 계약 전 최신 공시를 확인하시기 바랍니다."
+    elif any(k in kw_lower for k in ["카드", "트래블", "환전", "해외결제"]):
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 금융감독원 및 여신금융협회의 공식 공시 기준을 바탕으로 작성되었습니다. 카드사별 환전 우대율 및 해외 이용 수수료 면제 정책은 변동될 수 있으므로 이용 전 공식 약관을 확인하시기 바랍니다."
+    elif cat_upper in ["MEDICAL", "CLINIC", "WELLNESS"]:
         footer_guideline = f"본 콘텐츠는 {keyword} 관련 건강보험심사평가원 및 보건복지부 공식 공시 기준을 바탕으로 신뢰할 수 있는 정보를 제공하기 위해 작성되었습니다. 비급여 진료비는 의료기관별로 상이하므로 시술 전 해당 의료기관의 상세 견적 및 약관을 반드시 확인하시기 바랍니다."
     elif cat_upper in ["SUBSIDY", "REFUND", "GOVERNMENT"]:
         footer_guideline = f"본 콘텐츠는 {keyword} 관련 소관 부처 및 공공기관의 공식 고시 기준을 바탕으로 작성되었습니다. 개인별 소득 인정액 및 자격 변동에 따라 실제 지원 혜택은 상이할 수 있으므로 공식 신청 전 포털(정부24, 복지로)의 최신 안내를 확인하시기 바랍니다."
     elif cat_upper in ["SAVINGS", "CASHFLOW"]:
-        footer_guideline = f"본 콘텐츠는 {keyword} 관련 통신사 및 금융기관의 공식 공시 요금과 약관을 기준으로 작성되었습니다. 프로모션 혜택 및 약정 조건은 가입 시기에 따라 변동될 수 있으므로 계약 전 최신 고지서를 확인하시기 바랍니다."
+        footer_guideline = f"본 콘텐츠는 {keyword} 관련 공식 공시 기준과 시장 표준 요율을 바탕으로 작성되었습니다. 개인별 이용 조건 및 계약 시점에 따라 실제 적용 혜택은 변동될 수 있으므로 신청 전 해당 기관의 공식 고지서를 확인하시기 바랍니다."
     elif cat_upper in ["CAREER", "EDUCATION"]:
         footer_guideline = f"본 콘텐츠는 {keyword} 관련 고용노동부 HRD-Net 및 주관 기관의 공식 공고를 바탕으로 작성되었습니다. 과정별 자부담율과 출석 요건을 사전에 공식 확인하시기 바랍니다."
     else:
         footer_guideline = f"본 콘텐츠는 {keyword} 관련 공식 고시 기준, 소관 기관 안내 및 최신 공시 규격을 바탕으로 신뢰할 수 있는 정보를 제공하기 위해 작성되었습니다. 개인별 세부 조건, 신청 시기 및 시장 변동에 따라 실제 적용 결과는 상이할 수 있으므로 공식 신청이나 계약 전 해당 기관 및 업체의 최신 안내를 반드시 확인하시기 바랍니다."
 
     editorial_footer = f"""
-<div class="editorial-footer" style="margin-top: 40px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 13px; color: #64748b; line-height: 1.6;">
-  <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-    Blogin 365 AI 리서치 팀 (Editorial Intelligence)
+<div class="editorial-footer" style="margin-top: 40px; padding: 22px 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 13px; color: #64748b; line-height: 1.6;">
+  <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+    <span>Blogin 365 AI 리서치 팀 (Editorial Intelligence)</span>
+    <span style="font-size: 11px; background: #eff6ff; color: #2563eb; padding: 2px 8px; border-radius: 9999px; font-weight: 600;">공식 팩트 대조 완료</span>
   </div>
-  <div>
+  <div style="margin-bottom: 14px;">
     {footer_guideline}
+  </div>
+  <div class="editorial-trust-links" style="padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 12px; color: #64748b;">
+    <span style="font-weight: 700; color: #0f172a;">공식 정책 및 신뢰 센터:</span>
+    <a href="https://blogin365ai.blogspot.com/p/about-us-blogin-365-ai.html" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: none; font-weight: 600;">블로그 소개</a>
+    <span style="color: #cbd5e1;">·</span>
+    <a href="https://blogin365ai.blogspot.com/p/privacy-policy.html" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: none; font-weight: 600;">개인정보처리방침</a>
+    <span style="color: #cbd5e1;">·</span>
+    <a href="https://blogin365ai.blogspot.com/p/terms-of-service.html" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: none; font-weight: 600;">이용약관</a>
+    <span style="color: #cbd5e1;">·</span>
+    <a href="https://blogin365ai.blogspot.com/p/contact-us.html" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: none; font-weight: 600;">문의하기</a>
   </div>
 </div>
 """
@@ -489,7 +563,8 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
         keyword=keyword,
         category=category,
         related_keywords=related_queries,
-        cse_cx=os.getenv("GOOGLE_CSE_CX")
+        cse_cx=os.getenv("GOOGLE_CSE_CX") if is_adsense_approved else "",
+        is_adsense_approved=is_adsense_approved
     )
 
     # Complete Combined HTML (Clean Layout: Zero Fake Viewfinder)

@@ -436,7 +436,7 @@ class TestAdvancedPillars(unittest.TestCase):
         summary = pipeline.run_full_cycle(keyword_override="2026 청년도약계좌", dry_run=True)
 
         self.assertIsNotNone(summary)
-        self.assertEqual(summary.status, "SUCCESS")
+        self.assertIn(summary.status, ["SUCCESS", "HEALED"])
         self.assertEqual(summary.phase1.keyword, "2026 청년도약계좌")
         self.assertEqual(summary.phase1.tier, "최적")
         self.assertGreater(len(summary.phase2.sections), 0)

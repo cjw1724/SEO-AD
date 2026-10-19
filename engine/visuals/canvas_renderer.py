@@ -8,7 +8,25 @@ with a clean, responsive HTML <table> comparison matrix comparing actual prices,
 """
 
 import sys
+import os
 from typing import Optional, Dict, Any, List
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from engine.matcher.domain_router import (
+    classify_domain,
+    DOMAIN_AUTO_INSURANCE,
+    DOMAIN_HEALTH_INSURANCE,
+    DOMAIN_SUBSIDY,
+    DOMAIN_TELECOM,
+    DOMAIN_CARDS_TRAVEL,
+    DOMAIN_SAVINGS,
+    DOMAIN_MEDICAL,
+    DOMAIN_CAREER,
+    DOMAIN_TECH
+)
 
 if hasattr(sys.stdout, 'reconfigure'):
     try:
@@ -32,9 +50,53 @@ def render_spec_comparison_table(keyword: str, category: str = "TECH", table_dat
         headers = table_data.get("headers", ["비교 항목", "표준 선택지", "추천 선택지"])
         rows = table_data.get("rows", [])
     else:
-        # Dynamic domain-tailored default comparisons
-        kw_lower = clean_kw.lower()
-        if any(k in kw_lower for k in ["임플란트", "치과", "치아", "라식", "라섹", "의료", "병원"]) or cat == "MEDICAL":
+        domain = classify_domain(clean_kw, cat)
+        if domain == DOMAIN_AUTO_INSURANCE:
+            title = f"{clean_kw} 가입 방식 및 보장 조건 비교표"
+            headers = ["구분 항목", "오프라인 설계사 가입", "다이렉트 온라인 가입"]
+            rows = [
+                ["평균 보험료 수준", "설계사 수수료 포함 (기준가)", "약 15% ~ 18% 저렴한 다이렉트 최저가"],
+                ["주요 할인 특약", "기본 마일리지 특약 위주", "마일리지 + 티맵/블랙박스 + 자녀 중복 할인"],
+                ["보상 출동 서비스", "본사 보상망 24시간 출동", "100% 동일 본사 공식 보상 네트워크"],
+                ["연간 예상 절감액", "기준 금액 납부", "평균 15만 ~ 35만원 순수 절감"]
+            ]
+        elif domain == DOMAIN_HEALTH_INSURANCE:
+            title = f"{clean_kw} 가입 채널 및 보장 조건 비교표"
+            headers = ["비교 항목", "일반 오프라인 설계사 가입", "온라인 다이렉트 가입"]
+            rows = [
+                ["평균 납입 보험료", "판매 수수료 포함 표준 요율", "15% 내외 사업비 절감 요율"],
+                ["보장 범위 설정", "정형화된 기본 패키지", "필수 특약 단독 선별 가입"],
+                ["보험금 청구 편의", "대면 서류 전달 방식", "모바일 영수증 촬영 즉시 청구"],
+                ["가입 심사 편의", "대면 심사 및 서류 제출", "비대면 간편 고지 심사"]
+            ]
+        elif domain == DOMAIN_SUBSIDY:
+            title = f"{clean_kw} 혜택 및 조건 실측 비교표"
+            headers = ["구분 항목", "일반 시중 금융 상품", "2026 정부 정책 지원 기준"]
+            rows = [
+                ["실질 적용 금리 / 수익률", "연 3.0% ~ 3.5% 수준", "연 최대 5.5% ~ 6.0% (우대 포함)"],
+                ["정부 기여금 매칭", "해당 없음", "소득 구간별 월 최대 3.3만원 추가 적립"],
+                ["이자소득세 감면", "15.4% 일반 과세", "만기 시 15.4% 전액 비과세 혜택"],
+                ["5년 만기 예상 목돈", "약 4,500만원 내외", "최대 약 5,000만원 수령 가능"]
+            ]
+        elif domain == DOMAIN_TELECOM:
+            title = f"{clean_kw} 통신 요금 및 혜택 비교표"
+            headers = ["비교 항목", "통신 3사 기본 요금제", "알뜰폰 무제한 프로모션"]
+            rows = [
+                ["월 기본 통신비", "69,000원 ~ 89,000원", "15,900원 ~ 25,900원"],
+                ["약정 및 해지 위약금", "24개월 약정 / 위약금 발생", "무약정 / 언제든 위약금 0원"],
+                ["통신망 품질 & 커버리지", "SKT/KT/LGU+ 기지국", "동일 기지국 사용 (품질 100% 동일)"],
+                ["24개월 누적 지출액", "약 165만 ~ 213만원", "약 38만 ~ 62만원 (100만원 이상 절약)"]
+            ]
+        elif domain == DOMAIN_CARDS_TRAVEL:
+            title = f"{clean_kw} 환전 수수료 및 혜택 비교표"
+            headers = ["비교 항목", "일반 시중은행 환전/카드", "전용 트래블 체크카드"]
+            rows = [
+                ["해외 이용 수수료", "건당 0.5$ + 이용액 1%", "해외 결제 수수료 0원 (전액 면제)"],
+                ["현지 ATM 출금 수수료", "건당 3$ + 이용액 1%", "현지 ATM 인출 수수료 면제"],
+                ["환전 우대율", "주요 통화 80~90% 우대", "100% 실시간 환전 수수료 무료"],
+                ["연회비 부담", "연 1만 ~ 3만원 내외", "연회비 0원 (체크카드 기본)"]
+            ]
+        elif domain == DOMAIN_MEDICAL:
             title = f"{clean_kw} 실제 견적 및 재료별 조건 비교표"
             headers = ["비교 항목", "국산 보급형 (오스템/덴티움)", "외산 프리미엄 (스트라우만)"]
             rows = [
@@ -44,25 +106,7 @@ def render_spec_comparison_table(keyword: str, category: str = "TECH", table_dat
                 ["보철물 재질 사양", "지르코니아 / PFM 선택", "프리미엄 지르코니아 기본"],
                 ["적합 환자 유형", "일반 잇몸뼈 상태 양호 환자", "고령·골다공증·당뇨 등 고위험군"]
             ]
-        elif any(k in kw_lower for k in ["청년도약계좌", "근로장려금", "지원금", "환급금", "수당", "급여", "기여금"]) or cat == "SUBSIDY":
-            title = f"{clean_kw} 혜택 및 조건 실측 비교표"
-            headers = ["구분 항목", "일반 시중 금융 상품", "2026 정부 정책 지원 기준"]
-            rows = [
-                ["실질 적용 금리 / 수익률", "연 3.0% ~ 3.5% 수준", "연 최대 5.5% ~ 6.0% (우대 포함)"],
-                ["정부 기여금 매칭", "해당 없음", "소득 구간별 월 최대 3.3만원 추가 적립"],
-                ["이자소득세 감면", "15.4% 일반 과세", "만기 시 15.4% 전액 비과세 혜택"],
-                ["5년 만기 예상 목돈", "약 4,500만원 내외", "최대 약 5,000만원 수령 가능"]
-            ]
-        elif any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim"]) or cat in ["SAVINGS", "CASHFLOW"]:
-            title = f"{clean_kw} 통신 요금 및 혜택 비교표"
-            headers = ["비교 항목", "통신 3사 기본 요금제", "알뜰폰 무제한 프로모션"]
-            rows = [
-                ["월 기본 통신비", "69,000원 ~ 89,000원", "15,900원 ~ 25,900원"],
-                ["약정 및 해지 위약금", "24개월 약정 / 위약금 발생", "무약정 / 언제든 위약금 0원"],
-                ["통신망 품질 & 커버리지", "SKT/KT/LGU+ 기지국", "동일 기지국 사용 (품질 100% 동일)"],
-                ["24개월 누적 지출액", "약 165만 ~ 213만원", "약 38만 ~ 62만원 (100만원 이상 절약)"]
-            ]
-        elif any(k in kw_lower for k in ["내일배움카드", "국비지원", "자격증"]) or cat == "CAREER":
+        elif domain == DOMAIN_CAREER:
             title = f"{clean_kw} 국비 지원 및 자부담 비교표"
             headers = ["구분 항목", "일반 사설 학원 등록", "국민내일배움카드 국비지원"]
             rows = [
@@ -70,6 +114,14 @@ def render_spec_comparison_table(keyword: str, category: str = "TECH", table_dat
                 ["실제 자부담율", "100% 본인 납부", "0% ~ 최대 45% (유형별 우대)"],
                 ["훈련 장려금 지원", "해당 없음", "출석 요건 충족 시 월 최대 11.6만원"],
                 ["취업 연계 서비스", "자체 취업 지원 (제한적)", "고용노동부 워크넷 연계 취업 알선"]
+            ]
+        elif domain == DOMAIN_SAVINGS:
+            title = f"{clean_kw} 고정 지출 최적화 비교표"
+            headers = ["항목 구분", "최적화 전 지출 상태", "스마트 고정비 다이어트 후"]
+            rows = [
+                ["월 고정 지출 규모", "불필요 구독 및 과다 요율 지출", "필수 항목 중심 20~30% 비용 절감"],
+                ["자동이체 관리", "개별 일자 분산 (지출 누수)", "급여일 익일 일괄 통합 관리"],
+                ["연간 절감 누적액", "지출 누수 지속", "연간 60만 ~ 150만원 잉여 자금 확보"]
             ]
         else:
             title = f"{clean_kw} 실사용 핵심 지표 비교표"

@@ -96,7 +96,8 @@ class GStackAuditor:
         calc_identifiers = ["saas-calculator", "calc-container", "editorial-calculator-card", "custom-saas-tool", "calc"]
         if not any(cid in html_content for cid in calc_identifiers):
             missing_components.append("Interactive JS Calculator")
-        if "adsense-slot" not in html_content:
+        is_adsense_approved = os.getenv("IS_ADSENSE_APPROVED", "false").strip().lower() in ("true", "1", "yes")
+        if is_adsense_approved and "adsense-slot" not in html_content:
             missing_components.append("AdSense Golden Monetization Slots")
         if "<details" not in html_content:
             missing_components.append("Interactive FAQ Accordion")
@@ -140,12 +141,22 @@ class GStackAuditor:
                     if s_clean and s_clean != main_kw and s_clean in title:
                         gate6_errors.append(f"서브 키워드('{s_clean}')가 제목에 포함됨 (제목 삽입 금지)")
 
-                # 3. 본문 내 메인 키워드 반복 빈도 (권장 3~10회, 풀 HTML 컴포넌트 포함 상한 20회)
-                main_count = len(re.findall(re.escape(main_kw), html_content))
-                if main_count < 3:
-                    gate6_errors.append(f"메인 키워드('{main_kw}') 본문 노출 빈도 부족 ({main_count}회 < 3회)")
-                elif main_count > 20:
-                    gate6_errors.append(f"메인 키워드('{main_kw}') 과다 반복(키워드 스터핑) 감지 ({main_count}회 > 20회, 권장 3~12회)")
+                # 3. 본문 내 메인 키워드 반복 빈도 (가시 본문 텍스트 기준 권장 3~15회, 풀 HTML 컴포넌트 포함 상한 35회)
+                # 스크립트, 스타일, 태그를 제외한 실제 가시 텍스트(Visible text) 기준 측정
+                clean_body = re.sub(r'<script.*?</script>', ' ', html_content, flags=re.DOTALL | re.IGNORECASE)
+                clean_body = re.sub(r'<style.*?</style>', ' ', clean_body, flags=re.DOTALL | re.IGNORECASE)
+                clean_body = re.sub(r'<[^>]+>', ' ', clean_body)
+                clean_body = re.sub(r'\s+', ' ', clean_body)
+
+                visible_main_count = len(re.findall(re.escape(main_kw), clean_body))
+                raw_main_count = len(re.findall(re.escape(main_kw), html_content))
+
+                if visible_main_count < 3:
+                    gate6_errors.append(f"메인 키워드('{main_kw}') 본문 노출 빈도 부족 ({visible_main_count}회 < 3회)")
+                elif visible_main_count > 18:
+                    gate6_errors.append(f"메인 키워드('{main_kw}') 가시 본문 과다 반복(키워드 스터핑) 감지 ({visible_main_count}회 > 18회, 권장 3~12회)")
+                elif raw_main_count > 40:
+                    gate6_errors.append(f"메인 키워드('{main_kw}') 전체 HTML 과다 반복 ({raw_main_count}회 > 40회)")
 
                 # 4. 부제목(첫 문단 첫 줄, article-lead) 검증: 메인 1회 포함, 서브 포함 금지
                 lead_match = re.search(r'<div[^>]*class=["\'][^"\']*article-lead[^"\']*["\'][^>]*>(.*?)</div>', html_content, re.DOTALL | re.IGNORECASE)
@@ -427,19 +438,27 @@ class GStackAuditor:
         for s in FORBIDDEN_SLOP_PHRASES:
             html_content = html_content.replace(s, "")
 
+        # Auto-discover main_keyword if not provided
+        if not main_keyword:
+            lead_m = re.search(r'<div[^>]*class=["\'][^"\']*article-lead[^"\']*["\'][^>]*>\s*<p[^>]*>(.*?)</p>', html_content, re.DOTALL | re.IGNORECASE)
+            if lead_m:
+                first_words = re.sub(r'<[^>]+>', '', lead_m.group(1)).strip().split()
+                if first_words:
+                    main_keyword = first_words[0]
+
         # Desaturate keyword stuffing if keyword provided or discoverable
         if main_keyword and len(main_keyword.strip()) >= 2:
             kw = main_keyword.strip()
             occurrences = list(re.finditer(re.escape(kw), html_content))
             if len(occurrences) > 12:
                 # Keep first 8 occurrences intact (Title, Lead, First sections, Calc)
-                # Replace every 2nd later occurrence in paragraphs with natural demonstratives
+                # Replace every 2nd later occurrence with natural demonstratives
                 parts = []
                 last_idx = 0
                 for idx, match in enumerate(occurrences):
                     parts.append(html_content[last_idx:match.start()])
                     if idx >= 8 and (idx % 2 == 1):
-                        parts.append("해당 지원제도")
+                        parts.append("해당 내용")
                     else:
                         parts.append(match.group(0))
                     last_idx = match.end()

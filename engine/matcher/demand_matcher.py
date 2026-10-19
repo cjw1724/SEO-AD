@@ -2,7 +2,26 @@ import json
 import os
 import random
 import re
+import sys
 from typing import Dict, Any, List, Optional
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from engine.matcher.domain_router import (
+    classify_domain,
+    DOMAIN_AUTO_INSURANCE,
+    DOMAIN_HEALTH_INSURANCE,
+    DOMAIN_SUBSIDY,
+    DOMAIN_TELECOM,
+    DOMAIN_CARDS_TRAVEL,
+    DOMAIN_SAVINGS,
+    DOMAIN_MEDICAL,
+    DOMAIN_CAREER,
+    DOMAIN_TECH
+)
+from engine.matcher.coupang_link_builder import resolve_cpa_type
 
 def load_niches_db() -> Dict[str, Any]:
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -95,44 +114,61 @@ def generate_sub_keywords(main_kw: str, category: str, sub_candidates: Optional[
                 cleaned.append(w)
         return " ".join(cleaned)
 
-    category_templates = {
-        "TECH": [
-            _combine_clean(base_stem, "실측 스펙 비교"),
-            _combine_clean(base_stem, "가격대별 가성비 추천"),
-            _combine_clean(base_stem, "실사용 단점 체크")
-        ],
-        "SUBSIDY": [
+    domain = classify_domain(clean_main, category)
+    if domain == DOMAIN_AUTO_INSURANCE:
+        fallback_pool = [
+            _combine_clean(base_stem, "보험료 할인 특약 비교"),
+            _combine_clean(base_stem, "마일리지 환급 조건"),
+            _combine_clean(base_stem, "다이렉트 견적 조회 팁")
+        ]
+    elif domain == DOMAIN_HEALTH_INSURANCE:
+        fallback_pool = [
+            _combine_clean(base_stem, "보장 범위 및 혜택 비교"),
+            _combine_clean(base_stem, "갱신 주기 및 보험료 계산"),
+            _combine_clean(base_stem, "실손 청구 서류 및 주의사항")
+        ]
+    elif domain == DOMAIN_SUBSIDY:
+        fallback_pool = [
             _combine_clean(base_stem, "신청 자격 조건"),
             _combine_clean(base_stem, "실수령액 모의계산"),
             _combine_clean(base_stem, "지급일 및 필수 서류")
-        ],
-        "SAVINGS": [
+        ]
+    elif domain == DOMAIN_TELECOM:
+        fallback_pool = [
             _combine_clean(base_stem, "요금제 혜택 비교"),
             _combine_clean(base_stem, "위약금 손익분기점 계산"),
-            _combine_clean(base_stem, "유심 셀프 개통 절차")
-        ],
-        "CASHFLOW": [
-            _combine_clean(base_stem, "요금제 혜택 비교"),
-            _combine_clean(base_stem, "위약금 손익분기점 계산"),
-            _combine_clean(base_stem, "유심 셀프 개통 절차")
-        ],
-        "MEDICAL": [
+            _combine_clean(base_stem, "셀프 개통 절차")
+        ]
+    elif domain == DOMAIN_CARDS_TRAVEL:
+        fallback_pool = [
+            _combine_clean(base_stem, "환전 수수료 우대 혜택"),
+            _combine_clean(base_stem, "해외 결제 캐시백 비교"),
+            _combine_clean(base_stem, "실물 카드 발급 팁")
+        ]
+    elif domain == DOMAIN_MEDICAL:
+        fallback_pool = [
             _combine_clean(base_stem, "비급여 실제 가격 비교"),
             _combine_clean(base_stem, "실손보험 실비 청구 기준"),
             _combine_clean(base_stem, "시술 전 필수 주의사항")
-        ],
-        "CAREER": [
+        ]
+    elif domain == DOMAIN_CAREER:
+        fallback_pool = [
             _combine_clean(base_stem, "시험 일정 및 응시 자격"),
             _combine_clean(base_stem, "국비지원 100% 환급 신청"),
             _combine_clean(base_stem, "단기 합격 공부 전략")
         ]
-    }
-
-    fallback_pool = category_templates.get(category, [
-        _combine_clean(base_stem, "핵심 기준 비교"),
-        _combine_clean(base_stem, "비용 절감 체크포인트"),
-        _combine_clean(base_stem, "필수 주의사항 및 팁")
-    ])
+    elif domain == DOMAIN_SAVINGS:
+        fallback_pool = [
+            _combine_clean(base_stem, "핵심 비용 비교"),
+            _combine_clean(base_stem, "고정 지출 절감 기준"),
+            _combine_clean(base_stem, "최적 가입 가이드")
+        ]
+    else:
+        fallback_pool = [
+            _combine_clean(base_stem, "실측 스펙 비교"),
+            _combine_clean(base_stem, "가격대별 가성비 추천"),
+            _combine_clean(base_stem, "실사용 단점 체크")
+        ]
 
     for fb in fallback_pool:
         if len(selected) >= 3:
@@ -149,49 +185,65 @@ def generate_optimized_title(main_kw: str, category: str, subs: Optional[List[st
     - 길이: 30~40자 내외 (엄격히 28~42자 준수)
     - 서브 키워드: 제목에 절대 넣지 않음!
     """
-    # 괄호 라벨([2026], (1편) 등) 완벽 제거 및 날짜 브래킷 소거
     clean_main = re.sub(r'^(\[|\()[\d\w\s\.\-]+(\]|\))\s*', '', main_kw).strip()
     clean_main = re.sub(r'\[\d{4}\]|\(\d{4}\)', '', clean_main).strip()
     subs = subs or []
 
-    templates_by_category = {
-        "TECH": [
-            f"{clean_main} 실사용 벤치마크 및 가성비 추천 모델 총정리",
-            f"{clean_main} 스펙 실측 분석 및 구매 전 필수 점검 가이드",
-            f"{clean_main} 최저가 혜택 조합 및 성능 비교 실전 가이드"
-        ],
-        "SUBSIDY": [
+    domain = classify_domain(clean_main, category)
+    if domain == DOMAIN_AUTO_INSURANCE:
+        pool = [
+            f"{clean_main} 보험료 비교 및 특약 할인 절감 노하우",
+            f"{clean_main} 견적 비교와 최저가 가입 팁 시뮬레이터",
+            f"{clean_main} 마일리지 환급 및 다이렉트 갱신 가이드"
+        ]
+    elif domain == DOMAIN_HEALTH_INSURANCE:
+        pool = [
+            f"{clean_main} 보장 조건 비교 및 보험료 절감 노하우",
+            f"{clean_main} 혜택 비교와 최저가 가입 팁 시뮬레이터",
+            f"{clean_main} 실비 청구 및 필수 특약 가이드 총정리"
+        ]
+    elif domain == DOMAIN_SUBSIDY:
+        pool = [
             f"{clean_main} 실수령액 모의계산 및 자격 조건 핵심 가이드",
             f"{clean_main} 조회 및 최대 혜택 확인과 간편 신청 절차 안내",
             f"{clean_main} 탈락 사유 방지 및 정부 지원금 신청 완벽 가이드"
-        ],
-        "SAVINGS": [
-            f"{clean_main} 무제한 요금 비교 및 연간 고정비 절감 노하우",
-            f"{clean_main} 수수료 혜택 비교와 최저가 가입 팁 시뮬레이터",
-            f"{clean_main} 통신비 반값 절약 및 셀프 신청 가이드 총정리"
-        ],
-        "CASHFLOW": [
-            f"{clean_main} 무제한 요금 비교 및 연간 고정비 절감 노하우",
-            f"{clean_main} 수수료 혜택 비교와 최저가 가입 팁 시뮬레이터",
-            f"{clean_main} 통신비 반값 절약 및 셀프 신청 가이드 총정리"
-        ],
-        "MEDICAL": [
-            f"{clean_main} 실제 가격 견적 및 실손보험 청구 기준 안내",
+        ]
+    elif domain == DOMAIN_TELECOM:
+        pool = [
+            f"{clean_main} 무제한 요금 비교 및 연간 통신비 절감 노하우",
+            f"{clean_main} 요금제 혜택 비교와 최저가 가입 팁 시뮬레이터",
+            f"{clean_main} 통신비 반값 절약 및 셀프 개통 가이드 총정리"
+        ]
+    elif domain == DOMAIN_CARDS_TRAVEL:
+        pool = [
+            f"{clean_main} 환전 수수료 비교 및 해외 결제 혜택 노하우",
+            f"{clean_main} 혜택 비교와 최저 수수료 가입 팁 시뮬레이터",
+            f"{clean_main} 수수료 면제 및 실물 카드 발급 가이드"
+        ]
+    elif domain == DOMAIN_MEDICAL:
+        pool = [
+            f"{clean_main} 실제 가격 견적 및 건강보험 지원 기준 안내",
             f"{clean_main} 평균 비용과 지원 기준 및 병원 선택 체크리스트",
             f"{clean_main} 실부담금 계산 및 부작용 예방 필수 체크 가이드"
-        ],
-        "CAREER": [
+        ]
+    elif domain == DOMAIN_CAREER:
+        pool = [
             f"{clean_main} 국비지원 100% 활용법 및 단기 합격 전략 총정리",
             f"{clean_main} 신청 자격과 한도 총정리 및 취업 환급 과정 추천",
             f"{clean_main} 내일배움카드 활용 및 직장인 환급 과정 완벽 가이드"
         ]
-    }
-
-    pool = templates_by_category.get(category, [
-        f"{clean_main} 공식 데이터 분석 및 실전 모의계산 완벽 가이드",
-        f"{clean_main} 핵심 혜택 비교 및 필수 주의사항 체크리스트",
-        f"{clean_main} 비용 절감 노하우 및 실시간 비교 분석 총정리"
-    ])
+    elif domain == DOMAIN_SAVINGS:
+        pool = [
+            f"{clean_main} 비용 실측 비교 및 연간 고정비 절감 노하우",
+            f"{clean_main} 수수료 혜택 비교와 최저가 가입 팁 시뮬레이터",
+            f"{clean_main} 고정비 절약 및 온라인 신청 가이드 총정리"
+        ]
+    else:
+        pool = [
+            f"{clean_main} 실사용 벤치마크 및 가성비 추천 모델 총정리",
+            f"{clean_main} 스펙 실측 분석 및 구매 전 필수 점검 가이드",
+            f"{clean_main} 최저가 혜택 조합 및 성능 비교 실전 가이드"
+        ]
 
     # 서브 키워드가 포함되지 않은 제목 템플릿 필터링
     valid_titles = []
@@ -348,8 +400,9 @@ def match_trends_with_demand(trends: List[Dict[str, Any]], feedback_loop: Option
 
         base_cpc = niche.get("base_cpc", 2500)
         avg_payout = niche.get("avg_payout", 30000)
-        cpa_type = niche.get("cpa_type", "CPS_COUPANG")
+        from engine.matcher.coupang_link_builder import resolve_cpa_type
         cat_code = niche.get("category_code", "TECH")
+        cpa_type = resolve_cpa_type(kw, cat_code)
 
         # 7티어 경쟁도 사전 판정: 허수(<=20), 벽(>=3000), 포화(<=0.1) 필터링
         est_docs = 650
@@ -447,7 +500,7 @@ class DemandMatcher:
             "cpc": matched.get("base_cpc", 2500),
             "pvs": matched.get("PVS_score", 5000),
             "avg_payout": matched.get("avg_payout", 30000),
-            "cpa_type": matched.get("cpa_type", "CPS_COUPANG")
+            "cpa_type": resolve_cpa_type(pkg["main"], cat_code)
         }
 
 if __name__ == "__main__":

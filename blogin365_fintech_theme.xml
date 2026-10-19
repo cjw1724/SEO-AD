@@ -12,8 +12,19 @@
   <link crossorigin='' href='https://fonts.gstatic.com' rel='preconnect'/>
   <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;display=swap' rel='stylesheet'/>
 
-  <!-- Google AdSense Official Script -->
-  <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2174726915215446'></script>
+  <!-- Google AdSense Official Script (Guarded: Never load on 404, search, archive, or empty screens without publisher content) -->
+  <b:if cond='data:view.isSingleItem and not data:view.isError and not data:view.isArchive and not data:view.isSearch'>
+    <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2174726915215446'></script>
+  </b:if>
+
+  <!-- AdSense Non-Content Screen Killswitch (Never allow adsbygoogle on 404, search, or archive) -->
+  <b:if cond='data:view.isError or data:view.isArchive or data:view.isSearch'>
+    <script type='text/javascript'>
+      /* <![CDATA[ */
+      window.adsbygoogle = { push: function() { console.log('AdSense suppressed on non-content screen'); } };
+      /* ]]> */
+    </script>
+  </b:if>
 
   <!-- Smart Search: Google CSE & AdSense for Search (AFS) Configuration Token -->
   <script type='text/javascript'>
@@ -280,6 +291,13 @@
       align-items: center;
       justify-content: center;
     }
+    .adsense-slot:empty, .b365-ad-slot:empty {
+      display: none !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
 
     /* Native Affiliate CTA Box */
     .editorial-affiliate-box {
@@ -536,15 +554,13 @@
                   </b:if>
                 </h1>
 
-                <!-- ADSENSE_SLOT: Title 직하단 -->
-                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_TOP --&gt;</div>
+                <!-- ADSENSE_SLOT: POST_TOP (Managed dynamically by CRO Monetizer) -->
 
                 <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id'>
                   <data:post.body/>
                 </div>
 
-                <!-- ADSENSE_SLOT: Post 하단 -->
-                <div class='b365-ad-slot'>&lt;!-- ADSENSE_SLOT: POST_BOTTOM --&gt;</div>
+                <!-- ADSENSE_SLOT: POST_BOTTOM (Managed dynamically by CRO Monetizer) -->
 
                 <b:if cond='data:blog.pageType != &quot;item&quot;'>
                   <div style='margin-top: 16px;'>
@@ -637,6 +653,15 @@
   <!-- Footer Section -->
   <footer class='b365-footer'>
     <div class='b365-site-wrapper b365-footer-inner'>
+      <div class='b365-footer-policy-links' style='display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px;'>
+        <a href='https://blogin365ai.blogspot.com/p/about-us-blogin-365-ai.html' style='color: #2563eb; text-decoration: none; font-weight: 700;'>블로그 소개 (About Us)</a>
+        <span style='color: #cbd5e1;'>|</span>
+        <a href='https://blogin365ai.blogspot.com/p/privacy-policy.html' style='color: #2563eb; text-decoration: none; font-weight: 700;'>개인정보처리방침 (Privacy Policy)</a>
+        <span style='color: #cbd5e1;'>|</span>
+        <a href='https://blogin365ai.blogspot.com/p/terms-of-service.html' style='color: #2563eb; text-decoration: none; font-weight: 700;'>이용약관 (Terms of Service)</a>
+        <span style='color: #cbd5e1;'>|</span>
+        <a href='https://blogin365ai.blogspot.com/p/contact-us.html' style='color: #2563eb; text-decoration: none; font-weight: 700;'>문의하기 (Contact Us)</a>
+      </div>
       <div>
         © <data:blog.title/> · 스마트 라이프 에디토리얼 팀 · All Rights Reserved.
       </div>

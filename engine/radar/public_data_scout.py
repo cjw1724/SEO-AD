@@ -33,10 +33,14 @@ STANDARD_HEADERS = {
 }
 
 
+from engine.radar.crawl4ai_scout import Crawl4AIScout
+
+
 class PublicDataScout:
     """
     Scouts live government welfare and subsidy opportunities,
     and provides verified official facts without API key requirements.
+    Powered by Crawl4AI zero-cost real-time extractor bridge.
     """
 
     OFFICIAL_FEEDS = [
@@ -127,11 +131,32 @@ class PublicDataScout:
             "direct_path": "소상공인24 > 정책자금 신청 및 희망리턴패키지",
             "official_law": "소상공인 보호 및 지원에 관한 법률",
             "verification_note": "경영애로 소상공인 저금리 대환 및 스마트 설비 지원금"
+        },
+        "자동차보험": {
+            "dept": "금융위원회 / 손해보험협회",
+            "portal_name": "보험다모아 (손해보험협회·생명보험협회)",
+            "portal_url": "https://e-insmarket.or.kr/",
+            "direct_path": "보험다모아 > 자동차보험 > 개인용 자동차보험 다이렉트 비교조회",
+            "official_law": "보험업법 및 자동차손해배상 보장법",
+            "verification_note": "금융당국 공식 통합 비교 포털을 통한 온라인 다이렉트 보험료 및 특약 할인율 공시 대조"
         }
     }
 
     def __init__(self):
-        pass
+        self.crawler = Crawl4AIScout()
+
+    def fetch_rich_policy_context(self, keyword: str, category: str = "SUBSIDY") -> Dict[str, Any]:
+        """
+        Fetches live markdown context and tables using Crawl4AI with full fallback chain.
+        """
+        matched_entry = None
+        clean_kw = keyword.strip()
+        for key, entry in self.GOVERNMENT_PORTAL_REGISTRY.items():
+            if key in clean_kw or clean_kw in key:
+                matched_entry = entry
+                break
+        portal_url = matched_entry["portal_url"] if matched_entry else "https://www.gov.kr/"
+        return self.crawler.extract_rich_policy_tables(keyword, portal_url=portal_url, category=category)
 
     def fetch_live_public_subsidies(self, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -202,10 +227,11 @@ class PublicDataScout:
 
         return results[:limit]
 
-    def verify_official_facts(self, keyword: str, category: str = "SUBSIDY") -> Dict[str, Any]:
+    def verify_official_facts(self, keyword: str, category: str = "SUBSIDY", fetch_live_table: bool = True) -> Dict[str, Any]:
         """
         Returns authoritative government portal, department, and verification facts
         for a given topic to ensure 100% information gain and zero hallucinations.
+        Enriched with Crawl4AI live policy tables and clean markdown.
         """
         clean_kw = keyword.strip()
 
@@ -213,7 +239,7 @@ class PublicDataScout:
         matched_entry = None
         for key, entry in self.GOVERNMENT_PORTAL_REGISTRY.items():
             if key in clean_kw or clean_kw in key:
-                matched_entry = entry
+                matched_entry = dict(entry)
                 matched_entry["matched_key"] = key
                 break
 
@@ -228,6 +254,13 @@ class PublicDataScout:
                 "verification_note": "정부 공식 누리집을 통한 실시간 간편인증 및 온라인 원스톱 접수 기준"
             }
 
+        live_policy = {}
+        if fetch_live_table:
+            try:
+                live_policy = self.fetch_rich_policy_context(clean_kw, category=category)
+            except Exception:
+                live_policy = {}
+
         return {
             "is_verified": True,
             "department": matched_entry["dept"],
@@ -236,7 +269,11 @@ class PublicDataScout:
             "direct_path": matched_entry["direct_path"],
             "official_law": matched_entry.get("official_law", "정부 관계법령 고시 기준"),
             "verification_note": matched_entry["verification_note"],
-            "disclaimer": "본 정보는 정부 부처 최신 공식 발표 및 누리집 공고 지침을 엄격히 준수하여 집필되었습니다."
+            "disclaimer": "본 정보는 정부 부처 최신 공식 발표 및 누리집 공고 지침을 엄격히 준수하여 집필되었습니다.",
+            "live_tables": live_policy.get("tables", []),
+            "primary_table": live_policy.get("primary_table", ""),
+            "live_markdown": live_policy.get("live_markdown", ""),
+            "crawl_method": live_policy.get("method", "deterministic_vault")
         }
 
     def _extract_core_keyword(self, text: str) -> str:

@@ -1,0 +1,29 @@
+{
+  "task_id": "MPT-1792388895",
+  "video_subject": "2026 청년도약계좌",
+  "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
+  "video_terms": [
+    "2026 청년도약계좌",
+    "SUBSIDY",
+    "2026",
+    "모의계산"
+  ],
+  "video_aspect": "9:16",
+  "video_concat_mode": "sequential",
+  "video_clip_duration": 5,
+  "voice_name": "ko-KR-SunHiNeural",
+  "voice_rate": 1.0,
+  "voice_volume": 1.0,
+  "bgm_type": "random",
+  "bgm_volume": 0.2,
+  "subtitle_enabled": true,
+  "font_name": "malgunbd.ttf",
+  "text_fore_color": "#FFFFFF",
+  "text_background_color": "transparent",
+  "stroke_color": "#000000",
+  "stroke_width": 1.5,
+  "status": "COMPLETED",
+  "rendered_file": "short_reel.mp4",
+  "audio_file": "voiceover.mp3",
+  "subtitles_file": "subtitles.srt"
+}

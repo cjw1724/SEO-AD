@@ -56,6 +56,32 @@ class AgencyStack:
         sub2 = subs[1] if len(subs) > 1 else f"{keyword} 주의 조건"
         sub3 = subs[2] if len(subs) > 2 else f"{keyword} 실전 전략"
 
+        domain_negative_prompt = ""
+        kw_lower_prompt = keyword.lower()
+        if any(k in kw_lower_prompt for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"]):
+            domain_negative_prompt = """
+6. 도메인 엄수 절대 규칙 (보험 전문 기사):
+   - 본 기사는 100% 자동차보험/다이렉트보험 관련 금융 기사입니다.
+   - 통신사, 알뜰폰, 유심(USIM), eSIM, 요금제, 통신비 등 일체의 통신 관련 단어는 절대 단 1회도 포함해서는 안 됩니다.
+   - 오직 다이렉트 할인율, 보장 한도(대인/대물/자상), 마일리지/블랙박스/티맵 안전운전 특약, 손해보험협회 공시 기준만 다루십시오.
+"""
+        elif any(k in kw_lower_prompt for k in ["알뜰폰", "요금제", "통신비", "유심", "esim"]):
+            domain_negative_prompt = """
+6. 도메인 엄수 절대 규칙 (통신비 전문 기사):
+   - 본 기사는 통신비/알뜰폰 요금제 관련 기사입니다.
+"""
+
+        live_facts_prompt = ""
+        factset = topic.get("factset", {})
+        if isinstance(factset, dict):
+            of = factset.get("official_facts", {})
+            if isinstance(of, dict):
+                primary_tbl = of.get("primary_table") or (of.get("live_tables", [""])[0] if of.get("live_tables") else "")
+                if primary_tbl:
+                    live_facts_prompt += f"\n[공식 공공데이터 실측 테이블 (Crawl4AI 실시간 수집)]:\n{primary_tbl}\n"
+                if of.get("live_markdown"):
+                    live_facts_prompt += f"\n[공식 고시 실시간 요약 (Crawl4AI)]:\n{of['live_markdown'][:600]}\n"
+
         user_prompt = f"""[네이버 골든 키워드 1:1 구조화 기사 집필 의뢰서]
 - 메인 키워드: {keyword}
 - 서브 키워드 1: {sub1}
@@ -64,7 +90,7 @@ class AgencyStack:
 - 카테고리: {category}
 - 검색 의도: {intent}
 - 타겟 기사 제목: {title}
-
+{live_facts_prompt}
 [핵심 배치 규칙 - 바이브 메이커 네이버 공식]
 1. 메인 키워드 ({keyword}):
    - 부제목(첫 문단 첫 줄): 통으로 1회 배치 (특정 상품/브랜드명 미노출).
@@ -84,6 +110,7 @@ class AgencyStack:
    - '{keyword}'를 검색하는 소비자가 실제로 가장 궁금해하는 3대 현실적 질문과 정확한 답변을 작성하십시오.
 5. 실측 비교표 데이터 (comparison_table):
    - 본문에 들어갈 핵심 사양/비용/조건 비교표 데이터를 함께 작성하십시오.
+{domain_negative_prompt}
 
 다음 형식의 유효한 JSON으로만 응답해 주세요. 마크다운 백틱(```json ... ```)을 포함해도 됩니다.
 {{
@@ -160,12 +187,14 @@ class AgencyStack:
                         "temperature": 0.4,
                         "max_tokens": 2048
                     }
+                    print(f" -> [AI 기자] OpenRouter ({target_model}) 심층 리서치 및 맞춤 본문 집필 중... (약 5~15초 소요)", flush=True)
                     resp = requests.post(self.endpoint, headers=headers, json=payload, timeout=30)
                     if resp.status_code == 200:
                         data = resp.json()
                         raw_text = data["choices"][0]["message"]["content"].strip()
                         parsed = self._parse_json_response(raw_text)
                         if parsed and "sections" in parsed:
+                            print(f" -> [AI 기자] OpenRouter ({target_model}) 팩트 기반 원고 생성 완료!", flush=True)
                             # Ensure H2 headings retain 1:1 sub-keywords cleanly
                             sections = parsed.get("sections", [])
                             for idx, target_sub in enumerate([sub1, sub2, sub3]):
@@ -209,6 +238,52 @@ class AgencyStack:
                 for v in violations:
                     s["content"] = s["content"].replace(v, "")
                     s["heading"] = s["heading"].replace(v, "")
+
+        kw_lower = keyword.lower()
+        is_insurance = any(k in kw_lower for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"])
+        is_telecom = any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim", "0원 요금제", "통신사"])
+
+        if is_insurance and not is_telecom:
+            # Purge accidental telecom hallucinations
+            telecom_replacements = [
+                ("통신사 상관없이", "스마트폰 기종과 무관하게"),
+                ("통신 3사", "기존 오프라인 보험사"),
+                ("통신사", "보험사"),
+                ("알뜰폰", "다이렉트 자동차보험"),
+                ("유심", "공동인증서"),
+                ("eSIM", "모바일 전자서명"),
+                ("esim", "모바일 전자서명"),
+                ("셀프 개통", "온라인 다이렉트 가입"),
+                ("개통", "가입"),
+                ("요금제", "보험 상품"),
+                ("통신비", "보험료"),
+            ]
+            def _clean_str(text: str) -> str:
+                if not isinstance(text, str):
+                    return text
+                res = text
+                for old_term, new_term in telecom_replacements:
+                    res = res.replace(old_term, new_term)
+                return res
+
+            if "subtitle" in data and isinstance(data["subtitle"], str):
+                data["subtitle"] = _clean_str(data["subtitle"])
+            if "takeaways" in data and isinstance(data["takeaways"], list):
+                data["takeaways"] = [_clean_str(t) for t in data["takeaways"]]
+            if "comparison_table" in data and isinstance(data["comparison_table"], dict):
+                ct = data["comparison_table"]
+                if "title" in ct: ct["title"] = _clean_str(ct["title"])
+                if "headers" in ct: ct["headers"] = [_clean_str(h) for h in ct["headers"]]
+                if "rows" in ct: ct["rows"] = [[_clean_str(cell) for cell in row] for row in ct["rows"]]
+            for s in data.get("sections", []):
+                s["heading"] = _clean_str(s.get("heading", ""))
+                s["content"] = _clean_str(s.get("content", ""))
+            for f in data.get("faq", []):
+                f["question"] = _clean_str(f.get("question", ""))
+                f["answer"] = _clean_str(f.get("answer", ""))
+            if "related_searches" in data and isinstance(data["related_searches"], list):
+                data["related_searches"] = [_clean_str(r) for r in data["related_searches"]]
+
         if "related_searches" in data and isinstance(data["related_searches"], list):
             data["related_searches"] = [
                 re.sub(r'[\r\n]+', ' ', s).strip() for s in data["related_searches"] if s and isinstance(s, str)
@@ -341,8 +416,58 @@ class AgencyStack:
                 }
             ]
 
-        # Savings / Telecom
-        elif category in ["CASHFLOW", "SAVINGS"] or any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비"]):
+        # Insurance (Auto Insurance, Driver, Health, etc.)
+        elif any(k in kw_lower for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"]):
+            takeaways = [
+                f"{clean_kw} 다이렉트 가입 시 오프라인 대비 평균 15~18% 보험료 즉각 절감",
+                "마일리지(주행거리) 및 안전운전 점수 특약 중복 적용으로 최대 30% 이상 환급 가능",
+                "대물 배상 10억 및 자동차상해(자상) 설정으로 보장 범위는 극대화 권장"
+            ]
+            comparison_table = {
+                "title": f"{clean_kw} 가입 채널별 보험료 및 혜택 비교표",
+                "headers": ["비교 항목", "오프라인 설계사 가입", "다이렉트 온라인 가입"],
+                "rows": [
+                    ["평균 보험료", "수수료 포함 표준 요율", "15~18% 즉시 할인 (수수료 0원)"],
+                    ["할인 특약 적용", "기본 마일리지 위주", "마일리지+티맵+블랙박스 중복 적용"],
+                    ["보상 긴급출동", "본사 보상망 24시간 출동", "동일 본사 보상망 24시간 출동 (100% 동일)"],
+                    ["가입 편의성", "대면 서류 접수 및 상담", "모바일 간편인증 10분 셀프 완료"]
+                ]
+            }
+            sections = [
+                {
+                    "heading": f"1. {sub1} 및 다이렉트 보험료 절감 효과",
+                    "content": f"<p>매년 갱신되는 자동차보험은 설계사 판매 수수료가 빠진 다이렉트 채널을 이용하는 것만으로 동일 담보 기준 약 15~18%의 납입액을 절감할 수 있습니다. {clean_kw} 가입 시 보장 조건은 동일하게 유지하면서 {sub1} 세부 항목을 점검하는 것이 고정비 절감의 핵심입니다.</p>"
+                },
+                {
+                    "heading": f"2. {sub2} 및 필수 할인 특약 조건",
+                    "content": f"<p>주행거리 마일리지 환급 특약(연 1.5만km 이하), 티맵/카카오내비 안전운전 점수 할인, 블랙박스 및 첨단 안전장치 장착 특약을 중복 구성하면 체감 할인율이 최대 35%에 달합니다. {sub2} 기준에 부합하는지 갱신 전에 확인하십시오.</p>"
+                },
+                {
+                    "heading": f"3. {sub3} 및 든든한 보장 설정 노하우",
+                    "content": f"<p>보험료를 아끼기 위해 대물 배상을 낮추기보다는, 최근 고가 차량 증가 추세를 감안하여 대물 5억~10억원 및 자기신체사고 대신 자동차상해(자상)로 설정하는 것이 실제 사고 시 결정적 안전판이 됩니다. {sub3} 가이드를 참조하여 본인에게 맞는 최적 담보를 구성하시기 바랍니다.</p>"
+                },
+                {
+                    "heading": "4. 다이렉트 갱신 전 비교 견적 이벤트 활용법",
+                    "content": "<p>만기 30일 전부터 주요 손해보험사 다이렉트 견적 조회 시 제공되는 포인트 혜택을 챙기면서, 동일 담보 조건으로 3개사 이상의 견적을 1:1 대조하는 것이 합리적인 소비의 기본입니다.</p>"
+                }
+            ]
+            faq = [
+                {
+                    "question": f"{clean_kw} 가입 시 오프라인과 비교해 사고 처리나 긴급출동에 차이가 있나요?",
+                    "answer": "아닙니다. 다이렉트 보험 역시 동일한 본사 보상센터와 긴급출동 네트워크를 100% 공유하므로 사고 접수, 현장 출동, 보상 처리는 오프라인 가입과 완벽히 동일합니다."
+                },
+                {
+                    "question": "자동차보험 갱신 시 가장 크게 할인받을 수 있는 필수 특약은 무엇인가요?",
+                    "answer": "연간 주행거리에 따라 만기 시 보험료를 돌려받는 마일리지 특약과 모바일 내비 안전운전 점수(통상 70~80점 이상) 특약이 가장 할인 폭이 큽니다."
+                },
+                {
+                    "question": "대인·대물 배상 한도는 어느 정도로 설정하는 것이 안전한가요?",
+                    "answer": "대물 배상은 최소 5억~10억원 이상, 신체 피해는 자기신체사고(자손)보다 보상 한도와 범위가 넓은 자동차상해(자상)를 선택하는 것을 적극 권장합니다."
+                }
+            ]
+
+        # Explicit Telecom / SIM
+        elif any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim", "0원 요금제", "통신사"]):
             takeaways = [
                 f"{clean_kw} 전환 시 기존 3사 대비 월 3만~5만원, 24개월 누적 100만원 이상 절약",
                 "동일 통신망 기지국을 사용하므로 통화 품질 및 데이터 속도 100% 동일",
@@ -388,6 +513,105 @@ class AgencyStack:
                 {
                     "question": "가입 후 약정 기간 도중 해지 시 위약금이 발생하나요?",
                     "answer": "알뜰폰은 대부분 무약정 요금제로 운영되므로 의무 사용 기간 없이 언제 해지하더라도 위약금이 전혀 발생하지 않습니다."
+                }
+            ]
+
+        # Cards / Travel / Foreign Exchange
+        elif any(k in kw_lower for k in ["카드", "트래블", "환전", "해외결제"]):
+            takeaways = [
+                f"{clean_kw} 이용 시 해외 결제 및 ATM 현지 출금 수수료 100% 면제",
+                "실시간 목표 환율 설정 자동 충전 기능으로 환전 비용 극대화 절감",
+                "전 세계 주요 통화 보유 지원으로 복수 국가 여행 시 카드 1장으로 해결"
+            ]
+            comparison_table = {
+                "title": f"{clean_kw} 환전 수수료 및 혜택 비교표",
+                "headers": ["비교 항목", "일반 시중은행 환전/카드", "전용 트래블 체크카드"],
+                "rows": [
+                    ["해외 이용 수수료", "건당 0.5$ + 이용액 1%", "해외 결제 수수료 0원 (전액 면제)"],
+                    ["현지 ATM 출금 수수료", "건당 3$ + 이용액 1%", "현지 ATM 인출 수수료 면제"],
+                    ["환전 우대율", "주요 통화 80~90% 우대", "100% 실시간 환전 수수료 무료"],
+                    ["연회비 부담", "연 1만 ~ 3만원 내외", "연회비 0원 (체크카드 기본)"]
+                ]
+            }
+            sections = [
+                {
+                    "heading": f"1. {sub1} 및 환전 수수료 절감 효과",
+                    "content": f"<p>{clean_kw} 활용 시 가장 큰 장점은 {sub1} 측면에서 기존 은행 대비 환전 수수료가 100% 면제된다는 점입니다. 은행 창구 환전이나 공항 환전소 이용 시 발생하는 1.5~2.5%의 환전 스프레드를 아낄 수 있습니다.</p>"
+                },
+                {
+                    "heading": f"2. {sub2} 및 현지 결제 유의사항",
+                    "content": f"<p>해외 가맹점 결제 시 반드시 현지 통화로 결제해야 {sub2} 원화 결제(DCC) 수수료 3~8%를 예방할 수 있습니다. {clean_kw} 모바일 앱에서 해외 원화 결제 차단 서비스를 활성화해두는 것을 권장합니다.</p>"
+                },
+                {
+                    "heading": f"3. {sub3} 및 스마트 잔액 관리",
+                    "content": f"<p>여행 후 남은 외화 잔액을 원화로 재환전할 때의 {sub3} 규정을 미리 숙지해야 합니다. 실시간 환율 우대 혜택과 귀국 후 환불 수수료 조건을 비교하여 최적의 환테크를 구성하십시오.</p>"
+                },
+                {
+                    "heading": "4. 안전한 해외 금융 결제를 위한 체크리스트",
+                    "content": "<p>분실 및 도난 방지를 위해 실물 카드와 모바일 앱 간편 결제를 이원화하고, ATM 출금 한도를 여행 일정에 맞추어 사전에 조정해두는 것이 안전합니다.</p>"
+                }
+            ]
+            faq = [
+                {
+                    "question": f"{clean_kw} 발급 시 연회비나 발급 수수료가 발생하나요?",
+                    "answer": "대부분의 트래블 체크카드는 연회비가 0원이며, 모바일 비대면 신청 시 자택으로 무료 배송됩니다."
+                },
+                {
+                    "question": "해외 현지 ATM에서 현금 인출할 때 수수료가 정말 무료인가요?",
+                    "answer": "카드사 인출 수수료는 100% 면제되나, 해외 현지 특정 사설 ATM 기기 자체 이용료(운용 수수료)가 부과될 수 있으므로 글로벌 대형 은행 ATM 이용을 권장합니다."
+                },
+                {
+                    "question": "여행 후 남은 외화 잔액은 원화로 어떻게 돌려받나요?",
+                    "answer": "연동된 모바일 앱에서 즉시 원화 환급 신청이 가능하며, 당일 고시 환율 기준 소정의 환급 수수료를 제외한 금액이 원화 계좌로 입금됩니다."
+                }
+            ]
+
+        # General Savings / Cashflow (Domain-neutral fixed costs)
+        elif category in ["CASHFLOW", "SAVINGS"]:
+            takeaways = [
+                f"{clean_kw} 고정비 정밀 점검 시 월 10만~20만원, 연간 150만원 이상 지출 절감",
+                "자동이체일 일괄 통합 및 결제 수단 최적화로 불필요한 누수 지출 완벽 차단",
+                "온라인 다이렉트 채널 및 결합 할인 교차 점검으로 실질 현금흐름 개선"
+            ]
+            comparison_table = {
+                "title": f"{clean_kw} 고정 지출 최적화 비교표",
+                "headers": ["항목 구분", "최적화 전 지출 상태", "스마트 고정비 다이어트 후"],
+                "rows": [
+                    ["월 고정 지출 규모", "불필요 구독 및 과다 요율 지출", "필수 항목 중심 20~30% 비용 절감"],
+                    ["자동이체 관리", "개별 일자 분산 (지출 누수)", "급여일 익일 일괄 통합 관리"],
+                    ["연간 절감 누적액", "지출 누수 지속", "연간 60만 ~ 150만원 잉여 자금 확보"]
+                ]
+            }
+            sections = [
+                {
+                    "heading": f"1. {sub1} 및 월 고정 지출 절감 효과",
+                    "content": f"<p>매달 지출되는 고정 비용 중 {clean_kw} 및 {sub1} 분석을 통해 월 10~20만원의 가계 유동성을 확보할 수 있습니다. 불필요하게 새어나가는 구독료와 과다 요금을 정밀 점검하십시오.</p>"
+                },
+                {
+                    "heading": f"2. {sub2} 및 실질 손익분기점",
+                    "content": f"<p>고정비 항목 변경 시 {sub2} 산정 공식을 적용해 보아야 합니다. {clean_kw} 전환 후 월 절감액으로 초기 변경 비용을 통상 3개월 이내에 회수할 수 있다면 즉시 실행하는 것이 유리합니다.</p>"
+                },
+                {
+                    "heading": f"3. {sub3} 및 자동이체 최적화",
+                    "content": f"<p>{sub3} 과정을 통해 지출 흐름을 일원화할 수 있습니다. 급여일 다음 날로 모든 고정 지출을 일괄 통합하여 가처분 소득을 명확히 파악하십시오.</p>"
+                },
+                {
+                    "heading": "4. 고정비 절감 지속 유지 및 정기 점검 팁",
+                    "content": "<p>전환 후 첫 달 고지서를 면밀히 검토하여 예상 감면액이 정상 반영되었는지 대조하십시오. 6개월 주기로 고정 지출 내역서를 재점검하는 습관이 장기적 재정 건전성을 유지하는 핵심입니다.</p>"
+                }
+            ]
+            faq = [
+                {
+                    "question": f"{clean_kw} 점검 시 가장 먼저 줄여야 할 고정비는 무엇인가요?",
+                    "answer": "매달 사용 빈도가 낮거나 자동 결제되고 있는 유료 구독 서비스 및 온라인 다이렉트 전환이 가능한 보험·통신 고정 지출이 최우선 대상입니다."
+                },
+                {
+                    "question": "고정비를 줄일 때 삶의 질이 떨어지지 않는 비결이 있나요?",
+                    "answer": "생활 필수 지출을 무리하게 깎기보다, 동일한 품질과 보장을 제공하면서 유통 마진이 빠진 다이렉트 서비스 및 제휴 할인으로 대체하는 것이 핵심입니다."
+                },
+                {
+                    "question": "통장 쪼개기는 몇 개로 분리하는 것이 가장 효율적인가요?",
+                    "answer": "급여 통장, 고정 지출 통장, 변동 생활비 통장, 비상금 통장 등 4개 체계로 분리하면 지출 통제와 잉여 저축이 가장 수월해집니다."
                 }
             ]
 

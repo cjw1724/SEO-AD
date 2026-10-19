@@ -87,7 +87,13 @@ class TestProductionPatches(unittest.TestCase):
         self.assertIn("공식 정책 가이드라인", article_html)
         self.assertIn("정보성 검증 리포트", article_html)
 
-        # 3. GStack 8대 게이트 무인 검수 통과 검증
+        # 3. 심사 방어 모드 (Ghost Mode): 광고 코드, 빈 광고 슬롯, CSE 광고 완전 숨김 확인
+        self.assertNotIn("adsbygoogle", article_html)
+        self.assertNotIn("adsense-slot", article_html)
+        self.assertNotIn("ADVERTISEMENT · B365 AD NETWORK", article_html)
+        self.assertNotIn("cse.google.com/cse.js", article_html)
+
+        # 4. GStack 8대 게이트 무인 검수 통과 검증
         audit_res = self.auditor.audit_post(
             title="2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
             html_content=article_html,

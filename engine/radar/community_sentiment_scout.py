@@ -18,6 +18,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
+from engine.matcher.domain_router import (
+    classify_domain,
+    DOMAIN_AUTO_INSURANCE,
+    DOMAIN_HEALTH_INSURANCE,
+    DOMAIN_SUBSIDY,
+    DOMAIN_TELECOM,
+    DOMAIN_CARDS_TRAVEL,
+    DOMAIN_SAVINGS,
+    DOMAIN_MEDICAL,
+    DOMAIN_CAREER,
+    DOMAIN_TECH
+)
+
 
 class CommunitySentimentScout:
     """
@@ -60,20 +73,20 @@ class CommunitySentimentScout:
             "debate_summary": "자격만 되면 무조건 이득이지만 소득 심사 반려와 우대금리 카드 실적 맞추기가 까다롭다는 여론"
         },
         "SAVINGS": {
-            "sources": ["뽐뿌 통신포럼", "클리앙 알뜰폰 게시판", "디시인사이드 스마트폰 갤러리"],
+            "sources": ["디시인사이드 재테크 갤러리", "뽐뿌 재테크포럼", "네이버 짠테크 카페"],
             "raw_opinions": [
-                "3사 무제한 8만원 내다가 알뜰폰 2만원대로 바꿨는데 왜 진작 안 바꿨나 후회함",
-                "지하철 출퇴근 시간대에 특정 망 알뜰폰은 데이터 속도 살짝 밀리는 느낌 있음",
-                "셀프 개통할 때 유심 배송 기다리지 말고 편의점에서 바로 사서 하는 게 속 편함",
-                "사은품 상품권은 개통 다음 달 말일에 들어오니까 사기 아니니 안심해도 됨"
+                "매달 빠져나가는 고정비 중에서 불필요한 구독이나 과다 요금만 정리해도 월 15만원은 세이브됨",
+                "온라인 다이렉트로 가입할 수 있는 건 전부 다이렉트로 전환하는 게 가장 확실한 재테크임",
+                "자동이체 통장 분리해서 고정비 빠져나가는 날짜를 하루로 모아야 가계부 정리가 편함",
+                "약정이나 프로모션 만기 시점 캘린더에 적어두고 주기적으로 재계약 혜택 챙기는 게 꿀팁임"
             ],
             "pain_points": [
-                "고객센터 통화 연결 대기 시간 (알뜰폰의 최대 단점)",
-                "해외 로밍 및 결합 할인 상실 시 가족 총 통신비 손익분기점",
-                "약정 위약금 남았을 때 갈아타는 게 이득인지 계산하는 방법"
+                "기존 결합 할인이나 약정 위약금 상실 시 손익분기점 계산",
+                "복잡한 약관과 특약 조건 중 본인에게 꼭 필요한 항목 선별",
+                "가입 채널별(오프라인 vs 온라인 다이렉트) 실질 체감 혜택 차이"
             ],
-            "colloquial_slang": ["통신비 다이어트", "셀프 개통", "유심칩 꿀팁", "손익분기점", "고정비 절약"],
-            "debate_summary": "연 60만원 이상 아끼는 건 팩트이나 고객센터 응대 불편과 가족결합 혜택 상실은 사전 계산 필수"
+            "colloquial_slang": ["고정비 다이어트", "다이렉트 절약", "손익분기점", "통장 쪼개기", "지출 방어"],
+            "debate_summary": "불필요한 고정 지출을 다이렉트 채널과 결합 혜택 점검을 통해 정기적으로 다이어트해야 한다는 실천적 여론"
         },
         "CASHFLOW": {
             "sources": ["디시인사이드 재테크 갤러리", "네이버 짠테크 카페"],
@@ -129,8 +142,86 @@ class CommunitySentimentScout:
         """
         Extracts community sentiment and authentic discussion nuances for the given keyword.
         """
-        cat_key = category.upper() if category.upper() in self.COMMUNITY_SENTIMENT_VAULT else "TECH"
-        vault = self.COMMUNITY_SENTIMENT_VAULT[cat_key]
+        domain = classify_domain(keyword, category)
+        if domain == DOMAIN_AUTO_INSURANCE:
+            vault = {
+                "sources": ["보배드림 교통/보험 게시판", "뽐뿌 재테크포럼", "클리앙 굴러간당"],
+                "raw_opinions": [
+                    "다이렉트 보험사 3~4곳 동시에 견적 돌려보니까 동일 조건인데도 18만원 차이 나더라",
+                    "마일리지 특약은 주행거리 사진 계기판 미리 찍어두고 만기 때 환급받는 게 무조건 이득임",
+                    "티맵 안전운전 점수 80점 넘겨서 11% 추가 할인받았는데 이거 은근 쏠쏠함",
+                    "대물 배상은 무조건 10억으로 올려라. 요즘 외제차 많아서 몇 천원 아끼려다 큰일 남"
+                ],
+                "pain_points": [
+                    "보험사별 다이렉트 견적 조회 시 개인정보 마케팅 동의 주의점",
+                    "대인·대물·자손 vs 자상(자기신체사고 vs 자동차상해) 필수 선택 기준",
+                    "사고 건수 요율 할증 피하기 위한 자차 소액 사고 처리 손익분기점"
+                ],
+                "colloquial_slang": ["다이렉트 견적", "마일리지 환급", "대물 10억", "자상 필수", "특약 할인", "보험료 다이어트"],
+                "debate_summary": "설계사 끼는 것보다 다이렉트 1:1 비교 견적과 자상/대물 10억 설정, 마일리지 특약 챙기기가 압도적으로 유리하다는 여론"
+            }
+        elif domain == DOMAIN_HEALTH_INSURANCE:
+            vault = {
+                "sources": ["뽐뿌 보험포럼", "네이버 건강보험/실비 카페", "디시인사이드 재테크 갤러리"],
+                "raw_opinions": [
+                    "실손보험 청구할 때 진료비 세부내역서 코드 제대로 안 찍혀 나오면 보완 서류 내라고 전화 옴",
+                    "비급여 항목 실비 비율 개정된 이후로 도수치료나 비급여 주사는 본인부담금 꽤 커짐",
+                    "다이렉트로 온라인 직접 설계하니까 설계사 수수료 빠져서 월 납입액 15% 정도 줄었음",
+                    "과거 병력 고지 누락하면 나중에 진짜 필요할 때 보상 거절당하니까 꼼꼼히 적어야 함"
+                ],
+                "pain_points": [
+                    "실손보험 4세대 전환 시 유불리 계산법",
+                    "비급여 치료 항목 보장 한도 및 면책 기간",
+                    "청구 서류 발급 비용 대비 실환급액 손익 대조"
+                ],
+                "colloquial_slang": ["실비 청구", "비급여 실손", "4세대 전환", "고지의무", "보험료 다이어트"],
+                "debate_summary": "불필요한 과다 특약을 정리하고 실손과 핵심 3대 질병 수술비 위주로 슬림화해야 한다는 여론"
+            }
+        elif domain == DOMAIN_SUBSIDY:
+            vault = self.COMMUNITY_SENTIMENT_VAULT["SUBSIDY"]
+        elif domain == DOMAIN_TELECOM:
+            vault = {
+                "sources": ["뽐뿌 통신포럼", "클리앙 알뜰폰 게시판", "디시인사이드 스마트폰 갤러리"],
+                "raw_opinions": [
+                    "3사 무제한 8만원 내다가 알뜰폰 2만원대로 바꿨는데 왜 진작 안 바꿨나 후회함",
+                    "지하철 출퇴근 시간대에 특정 망 알뜰폰은 데이터 속도 살짝 밀리는 느낌 있음",
+                    "셀프 개통할 때 유심 배송 기다리지 말고 편의점에서 바로 사서 하는 게 속 편함",
+                    "사은품 상품권은 개통 다음 달 말일에 들어오니까 사기 아니니 안심해도 됨"
+                ],
+                "pain_points": [
+                    "고객센터 통화 연결 대기 시간 (알뜰폰의 최대 단점)",
+                    "해외 로밍 및 결합 할인 상실 시 가족 총 통신비 손익분기점",
+                    "약정 위약금 남았을 때 갈아타는 게 이득인지 계산하는 방법"
+                ],
+                "colloquial_slang": ["통신비 다이어트", "셀프 개통", "유심칩 꿀팁", "손익분기점", "고정비 절약"],
+                "debate_summary": "연 60만원 이상 아끼는 건 팩트이나 고객센터 응대 불편과 가족결합 혜택 상실은 사전 계산 필수"
+            }
+        elif domain == DOMAIN_CARDS_TRAVEL:
+            vault = {
+                "sources": ["네이버 짠테크 카페", "뽐뿌 재테크포럼", "디시인사이드 여행 갤러리"],
+                "raw_opinions": [
+                    "트래블카드 쓰니까 현지 ATM 수수료 0원이라 환전소 줄 설 필요가 전혀 없음",
+                    "엔화나 달러 떨어질 때마다 미리 환전 충전해두는 게 쏠쏠함",
+                    "해외 결제할 때 원화 결제(DCC) 차단 신청 안 해두면 수수료 폭탄 맞으니 주의해야 함"
+                ],
+                "pain_points": [
+                    "카드사별 환전 및 현지 결제 수수료 면제 조건",
+                    "해외 현지 ATM 인출 한도 및 기기 자체 이용 수수료",
+                    "귀국 후 잔여 외화 재환전 시 환급 수수료율"
+                ],
+                "colloquial_slang": ["환전 수수료 0원", "트래블카드", "DCC 차단", "현지 인출", "환테크"],
+                "debate_summary": "해외 여행 및 결제 시 전용 트래블 카드를 통한 수수료 100% 면제 활용이 필수라는 여론"
+            }
+        elif domain == DOMAIN_MEDICAL:
+            vault = self.COMMUNITY_SENTIMENT_VAULT["MEDICAL"]
+        elif domain == DOMAIN_CAREER:
+            vault = self.COMMUNITY_SENTIMENT_VAULT["CAREER"]
+        elif domain == DOMAIN_SAVINGS:
+            vault = self.COMMUNITY_SENTIMENT_VAULT["SAVINGS"]
+        else:
+            cat_safe = (category or "TECH").upper()
+            cat_key = cat_safe if cat_safe in self.COMMUNITY_SENTIMENT_VAULT else "TECH"
+            vault = self.COMMUNITY_SENTIMENT_VAULT[cat_key]
 
         # Select representative opinions
         opinions = random.sample(vault["raw_opinions"], min(3, len(vault["raw_opinions"])))
@@ -139,7 +230,7 @@ class CommunitySentimentScout:
 
         return {
             "keyword": keyword,
-            "category": cat_key,
+            "category": category or "TECH",
             "community_sources": vault["sources"],
             "raw_opinions": opinions,
             "core_pain_points": pain_points,

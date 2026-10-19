@@ -55,6 +55,15 @@
   <!-- Link canonical -->
   <link expr:href='data:blog.url.canonical' rel='canonical'/>
 
+  <!-- AdSense Non-Content Screen Killswitch (Never allow adsbygoogle on 404, search, or archive) -->
+  <b:if cond='data:view.isError or data:view.isArchive or data:view.isSearch'>
+    <script type='text/javascript'>
+      /* <![CDATA[ */
+      window.adsbygoogle = { push: function() { console.log('AdSense suppressed on non-content screen'); } };
+      /* ]]> */
+    </script>
+  </b:if>
+
   <b:if cond='!data:view.isError'>
     <!--[ Description and keyword ]-->
     <b:if cond='data:blog.metaDescription'>
@@ -582,6 +591,11 @@
 }
 
 /* WhatsApp Button Removed */
+
+/* AdSense Review Ghost Mode: Hide any empty ad slots and suppress placeholder borders */
+.adsense-slot:empty, .b365-ad-slot:empty, ins.adsbygoogle:empty {
+  display: none !important;
+}
 
     /*]]></b:skin>
 
@@ -1814,10 +1828,12 @@ h1, h2, h3, h4, h5, h6 {
       
       <!--[ Default markups (applies to all widgets) ]-->
       
-      <!--[ Ad unit ]-->
+      <!--[ Ad unit (Guarded: Never load on 404, search, archive, or empty screens) ]-->
       <b:includable id='defaultAdUnit'>
-        <ins class='adsbygoogle' data-ad-format='auto' expr:data-ad-client='data:adClientId ?: data:blog.adsenseClientId' expr:data-ad-host='data:blog.adsenseHostId' expr:data-analytics-uacct='data:blog.analyticsAccountNumber' expr:style='data:style ?: &quot;display: block;&quot;'/>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <b:if cond='data:view.isSingleItem and not data:view.isError and not data:view.isArchive and not data:view.isSearch'>
+          <ins class='adsbygoogle' data-ad-format='auto' expr:data-ad-client='data:adClientId ?: data:blog.adsenseClientId' expr:data-ad-host='data:blog.adsenseHostId' expr:data-analytics-uacct='data:blog.analyticsAccountNumber' expr:style='data:style ?: &quot;display: block;&quot;'/>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </b:if>
       </b:includable>
       
       <!--[ In-feed ad ]-->
@@ -5862,6 +5878,10 @@ class TableOfContents { constructor({ from, to }) { this.fromElement = from; thi
                               <li><a href='/search/label/재테크'>테크 재테크</a></li>
                               <li><a href='/search/label/계산기'>Micro-SaaS 도구</a></li>
                               <li><a href='/search/label/비교분석'>비교 분석</a></li>
+                              <li><a href='https://blogin365ai.blogspot.com/p/about-us-blogin-365-ai.html'>소개</a></li>
+                              <li><a href='https://blogin365ai.blogspot.com/p/privacy-policy.html'>개인정보</a></li>
+                              <li><a href='https://blogin365ai.blogspot.com/p/terms-of-service.html'>이용약관</a></li>
+                              <li><a href='https://blogin365ai.blogspot.com/p/contact-us.html'>문의</a></li>
                               <li><a href='/search'>전체 검색</a></li>
                             </ul>
                           </b:includable>
@@ -5971,6 +5991,17 @@ class TableOfContents { constructor({ from, to }) { this.fromElement = from; thi
             <footer class='mainF cInherit u noPrint'>
               <b:tag class='maxC' name='div'>
             
+                <!--[ Mandatory AdSense Trust & Policy Links ]-->
+                <div class='b365-footer-policy-links' style='display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; font-size: 13px; align-items: center;'>
+                  <a href='https://blogin365ai.blogspot.com/p/about-us-blogin-365-ai.html' style='color: var(--themeLink, #2563eb); text-decoration: none; font-weight: 700;'>블로그 소개 (About Us)</a>
+                  <span style='color: var(--themeBd-color, #cbd5e1);'>|</span>
+                  <a href='https://blogin365ai.blogspot.com/p/privacy-policy.html' style='color: var(--themeLink, #2563eb); text-decoration: none; font-weight: 700;'>개인정보처리방침 (Privacy Policy)</a>
+                  <span style='color: var(--themeBd-color, #cbd5e1);'>|</span>
+                  <a href='https://blogin365ai.blogspot.com/p/terms-of-service.html' style='color: var(--themeLink, #2563eb); text-decoration: none; font-weight: 700;'>이용약관 (Terms of Service)</a>
+                  <span style='color: var(--themeBd-color, #cbd5e1);'>|</span>
+                  <a href='https://blogin365ai.blogspot.com/p/contact-us.html' style='color: var(--themeLink, #2563eb); text-decoration: none; font-weight: 700;'>문의하기 (Contact Us)</a>
+                </div>
+
                 <b:comment><!--[ Credit ]--></b:comment>
                 <b:section class='credits flex' id='credit-widget' maxwidgets='2' showaddelement='false'>
                   <b:widget id='HTML88' locked='true' title='Credit' type='HTML' version='2' visible='true'>

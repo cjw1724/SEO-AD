@@ -1,9 +1,10 @@
-﻿# ==============================================================================
+# ==============================================================================
 # Blogin 365 AI Holdings - Autonomous Enterprise Control Center (v6.0)
 # ==============================================================================
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
+$env:PYTHONUNBUFFERED = "1"
 
 $ProjectDir = $PSScriptRoot
 Set-Location $ProjectDir

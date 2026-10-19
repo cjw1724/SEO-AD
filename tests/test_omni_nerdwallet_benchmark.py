@@ -91,7 +91,7 @@ class TestOmniNerdWalletBenchmark(unittest.TestCase):
             ]
         }
 
-        article_html = assemble_world_class_article(sample_topic, sample_editorial)
+        article_html = assemble_world_class_article(sample_topic, sample_editorial, is_adsense_approved=True)
 
         # 1. Bento Hero Card
         self.assertIn("bento-hero", article_html)

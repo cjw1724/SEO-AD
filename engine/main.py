@@ -177,6 +177,9 @@ class BloginMasterHarness:
         print("\n[Phase 6/7] Lazyowen 바이럴 그로스 패키지 생성 & 멀티 채널 소셜 배포...")
         growth_pkg = self.growth.generate_hooks(matched_topic, pub_result.get("url", ""))
         print(f" -> 릴스 후킹 대본: \"{growth_pkg['reel_script']['0-3초_후킹'][:40]}...\"")
+        if growth_pkg.get("video_package"):
+            vp = growth_pkg["video_package"]
+            print(f" -> [MoneyPrinterTurbo] 15초 숏폼 비디오 패키지 생성 완료 [상태: {vp.get('status')} | Batch: {vp.get('batch_id')}]")
         print(f" -> 그로스 큐 저장 완료: data/viral_growth_queue.json")
 
         dist_res = self.distributor.dispatch_to_channels(growth_pkg, dry_run=dry_run)

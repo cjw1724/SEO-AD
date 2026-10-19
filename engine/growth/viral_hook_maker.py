@@ -12,7 +12,28 @@ Generates:
 import os
 import re
 import json
+import sys
 from datetime import datetime
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from engine.matcher.domain_router import (
+    classify_domain,
+    DOMAIN_AUTO_INSURANCE,
+    DOMAIN_HEALTH_INSURANCE,
+    DOMAIN_SUBSIDY,
+    DOMAIN_TELECOM,
+    DOMAIN_CARDS_TRAVEL,
+    DOMAIN_SAVINGS,
+    DOMAIN_MEDICAL,
+    DOMAIN_CAREER,
+    DOMAIN_TECH
+)
+
+
+from engine.growth.money_printer_bridge import MoneyPrinterBridge
 
 
 class ViralHookMaker:
@@ -23,8 +44,9 @@ class ViralHookMaker:
             self.output_dir = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
         self.queue_file = os.path.join(self.output_dir, "viral_growth_queue.json")
+        self.money_printer = MoneyPrinterBridge()
 
-    def generate_hooks(self, topic: dict, post_url: str = "") -> dict:
+    def generate_hooks(self, topic: dict, post_url: str = "", render_video: bool = True) -> dict:
         """
         Creates the complete social growth package for a published article.
         topic dict contains: keyword, category, title, pain_point, hook_summary, etc.
@@ -36,27 +58,44 @@ class ViralHookMaker:
         kw_clean = re.sub(r'^(20\d\d년?|\d{4}년?)\s*', '', keyword).strip()
         kw_display = f"2026년 {kw_clean}" if not keyword.startswith("20") else keyword
 
-        # Category-tailored hooks
-        if category == "TECH":
-            hook_lead = f"아직도 {keyword} 제값 다 주고 구매하시나요?"
-            savings_stat = "체감 할인율 최대 28%"
-            action_desc = "스펙 비교표와 최저가 혜택 조합"
-        elif category == "SUBSIDY":
+        domain = classify_domain(keyword, category)
+        # Category & domain-tailored hooks
+        if domain == DOMAIN_AUTO_INSURANCE:
+            hook_lead = f"매년 내는 {keyword}, 설계사 수수료 다 주고 계신가요?"
+            savings_stat = "다이렉트 특약 최대 35% 할인"
+            action_desc = "다이렉트 보험료 및 특약 할인 비교표"
+        elif domain == DOMAIN_HEALTH_INSURANCE:
+            hook_lead = f"{keyword}, 매달 새어나가는 보험료 다이어트하고 계신가요?"
+            savings_stat = "불필요 특약 정리 시 연간 수십만원 절감"
+            action_desc = "실손·보장 비교표와 필수 특약 체크리스트"
+        elif domain == DOMAIN_TELECOM:
+            hook_lead = f"매달 새어나가는 통신비, {keyword} 하나로 월 5만원 아낍니다."
+            savings_stat = "연간 통신비 60만원 절감"
+            action_desc = "통신비·요금제 즉시 최적화 계산표"
+        elif domain == DOMAIN_CARDS_TRAVEL:
+            hook_lead = f"해외 가기 전 {keyword} 수수료 혜택 아직 확인 안 하셨나요?"
+            savings_stat = "환전 및 현지 결제 수수료 100% 면제"
+            action_desc = "실시간 환율 및 수수료 비교표"
+        elif domain == DOMAIN_SUBSIDY:
             hook_lead = f"{kw_display}, 신청 안 하면 전액 소멸됩니다."
             savings_stat = "1인당 평균 42만원 환급"
             action_desc = "30초 간편 자격 모의 조회기"
-        elif category == "CASHFLOW":
+        elif domain == DOMAIN_SAVINGS:
             hook_lead = f"매달 새어나가는 고정비, {keyword} 하나로 월 10만원 아낍니다."
             savings_stat = "연간 고정비 120만원 절감"
-            action_desc = "통신비·구독료 즉시 최적화 계산표"
-        elif category == "WELLNESS":
-            hook_lead = f"약국 가기 전 {keyword} 실구매자 후기부터 꼭 보세요."
-            savings_stat = "핵심 성분 함량 대조 완료"
-            action_desc = "식약처 기준 부작용 체크리스트"
+            action_desc = "고정 지출 즉시 최적화 계산표"
+        elif domain == DOMAIN_MEDICAL:
+            hook_lead = f"병원 가기 전 {keyword} 비급여 실제 견적부터 꼭 확인하세요."
+            savings_stat = "비급여 수가 대조 및 건강보험 지원 기준"
+            action_desc = "의료기관별 실측 비교표와 지원 기준"
+        elif domain == DOMAIN_CAREER:
+            hook_lead = f"{keyword}, 내일배움카드로 국비지원 100% 받고 계신가요?"
+            savings_stat = "1인당 최대 500만원 국비 한도 지원"
+            action_desc = "국비지원 자격 확인 및 단기 취업 로드맵"
         else:
-            hook_lead = f"{kw_display}, 지금 모르면 손해 보는 3가지."
-            savings_stat = "비용 절감 및 효율 극대화"
-            action_desc = "공식 기준 대조 분석 보고서"
+            hook_lead = f"아직도 {keyword} 제값 다 주고 구매하시나요?"
+            savings_stat = "체감 할인율 최대 28%"
+            action_desc = "스펙 비교표와 최저가 혜택 조합"
 
         reel_script = {
             "0-3초_후킹": f"[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"{hook_lead}\"",
@@ -85,6 +124,21 @@ class ViralHookMaker:
 
 (본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)"""
 
+        # MoneyPrinterTurbo 15-30s Reels/Shorts Package Generation
+        video_package = {}
+        try:
+            video_package = self.money_printer.create_video_package(
+                topic=topic,
+                reel_script=reel_script,
+                render_video=render_video
+            )
+        except Exception as e:
+            video_package = {
+                "status": "QUEUED",
+                "error": str(e),
+                "batch_id": f"MPT-FALLBACK-{int(datetime.now().timestamp())}"
+            }
+
         growth_package = {
             "keyword": keyword,
             "category": category,
@@ -93,7 +147,10 @@ class ViralHookMaker:
             "created_at": datetime.now().isoformat(),
             "reel_script": reel_script,
             "sns_caption": sns_caption,
-            "dm_copy": dm_copy
+            "dm_copy": dm_copy,
+            "video_package": video_package,
+            "video_batch_id": video_package.get("batch_id"),
+            "video_path": video_package.get("video_path")
         }
 
         self._save_to_queue(growth_package)
