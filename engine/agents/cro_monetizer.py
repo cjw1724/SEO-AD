@@ -35,6 +35,7 @@ from engine.visuals.canvas_renderer import render_spec_comparison_chart, render_
 from engine.matcher.coupang_link_builder import render_affiliate_cta_box
 from engine.visuals.handcrafted_annotation_renderer import HandcraftedAnnotationRenderer
 from engine.matcher.experiential_verifier import ExperientialVerifier
+from engine.visuals.thumbnail_maker import ThumbnailMaker
 
 
 def _build_clean_search_query(base_keyword: str, pill_intent: str) -> str:
@@ -357,6 +358,9 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
         cons=factset.get("cons_unfiltered", [])
     )
     
+    # 0. High-Converting 3D Editorial Hero Thumbnail (Feeds Blogger's featuredImage & SNS Cards)
+    hero_thumbnail_html = ThumbnailMaker.generate_hero_thumbnail_html(keyword, category)
+
     # 1. Bento Hero Card (Clean Consumer Takeaways, No Artificial PVS / Fake Scores)
     raw_takeaways = editorial_data.get("takeaways")
     if not raw_takeaways or not isinstance(raw_takeaways, list):
@@ -571,6 +575,7 @@ def assemble_world_class_article(topic: dict, editorial_data: dict, is_adsense_a
     complete_html = f"""
 <!-- Blogin 365 AI Editorial Layout -->
 <div class="article-container" style="max-width: 760px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', Roboto, sans-serif; color: #0f172a; line-height: 1.7;">
+  {hero_thumbnail_html}
   {hero_bento}
   {ad_slot_1}
   {calc_html}

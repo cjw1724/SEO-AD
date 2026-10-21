@@ -291,6 +291,8 @@ class SequentialMediaPipeline:
     ) -> Phase3_AssemblyResult:
         assembled_html = assemble_world_class_article(phase1.raw_topic, phase2.editorial_dict)
         components = ["bento-hero", "saas-calculator", "adsense-slots", "faq-accordion"]
+        if "b365-hero-thumbnail" in assembled_html:
+            components.append("hero-thumbnail")
         if "b365-search-nav" in assembled_html:
             components.append("b365-search-nav")
 
