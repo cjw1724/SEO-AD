@@ -83,19 +83,20 @@ class TestCompanyRuntime(unittest.TestCase):
         auditor = GStackAuditor()
         
         # Test fake journalist violation
-        fake_content = "<div class='bento-hero'>Hero</div><div class='saas-calculator'>Calc</div><div class='adsense-slot'>Ad</div><details><summary>FAQ</summary>A</details><p>작성자: 금융 전문 기자 김재현</p>" + ("<p>데이터...</p>" * 80)
+        facts_dummy = "<p>지원 기준은 월 70만원 한도이며 연 4.5% 금리와 24개월 만기 조건으로 총 5000명 대상입니다.</p>" * 20
+        fake_content = "<div class='bento-hero'>Hero</div><div class='saas-calculator'>Calc</div><div class='adsense-slot'>Ad</div><details><summary>FAQ</summary>A</details><p>작성자: 금융 전문 기자 김재현</p>" + facts_dummy
         bad_res = auditor.audit_post("기사 제목", fake_content)
         self.assertFalse(bad_res["passed"], "Must fail when fake persona '김재현' is present")
 
         # Test broken entity detection & sanitization
-        entity_content = "<div class='bento-hero'>Hero</div><div class='saas-calculator'>Calc</div><div class='adsense-slot'>Ad</div><details><summary>FAQ</summary>A</details><p>체크: &#10003; 완료</p>" + ("<p>데이터...</p>" * 80)
+        entity_content = "<div class='bento-hero'>Hero</div><div class='saas-calculator'>Calc</div><div class='adsense-slot'>Ad</div><details><summary>FAQ</summary>A</details><p>체크: &#10003; 완료</p>" + facts_dummy
         entity_res = auditor.audit_post("기사 제목", entity_content)
         self.assertFalse(entity_res["passed"], "Must detect &#10003; as broken entity")
         
         sanitized = auditor.sanitize_if_possible(entity_content)
         self.assertNotIn("&#10003;", sanitized)
         re_res = auditor.audit_post("기사 제목", sanitized)
-        self.assertTrue(re_res["passed"], "Sanitized content must pass all gates")
+        self.assertTrue(re_res["passed"], f"Sanitized content must pass all gates: {re_res.get('errors')}")
 
     def test_05_keyword_7tier_classification(self):
         from engine.matcher.demand_matcher import classify_keyword_tier
@@ -203,7 +204,7 @@ class TestCompanyRuntime(unittest.TestCase):
             <p>{pkg['main']} 신청 절차입니다. {pkg['subs'][2]} 목록입니다.</p>
         </div>
         <details><summary>FAQ</summary><p>답변</p></details>
-        """ + ("<p>데이터 본문...</p>" * 80)
+        """ + ("<p>기준 금리 4.5%, 지원금 70만원, 기간 24개월, 신청 100건 확인</p>" * 20)
 
         res = auditor.audit_post(valid_title, valid_html, keyword_package=pkg)
         self.assertTrue(res["passed"], f"Expected PASS but got errors: {res.get('errors')}")

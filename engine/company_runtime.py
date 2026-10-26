@@ -343,7 +343,7 @@ class SelfHealingPipeline:
             from engine.matcher.demand_matcher import build_keyword_package, generate_optimized_title
             fb_main = "2026 청년도약계좌"
             fb_cat = "SUBSIDY"
-            fb_pkg = build_keyword_package(fb_main, fb_cat, search_vol=60000, doc_count=650, monthly_pub=120)
+            fb_pkg = build_keyword_package(fb_main, fb_cat, search_vol=60000)
             fb_title = generate_optimized_title(fb_main, fb_cat, subs=fb_pkg["subs"])
             matched_topic = {
                 "keyword": fb_pkg["main"],

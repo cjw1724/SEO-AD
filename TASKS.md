@@ -1,72 +1,48 @@
-# TASKS.md - AI 미디어 지주회사 전면 정상화 & 범용 토픽 엔진(Universal Topic Engine) 대개혁
+# TASKS.md - 하드코딩 템플릿 및 가짜 검색 지표 영구 박멸 & 100% 실시간 서제스트 레이더 대개혁
 
-## 📌 핵심 문제점 및 사용자 비판 정밀 분석
-1. **하드코딩 파이썬 파일 안티패턴 영구 박멸**:
-   - `engine/matcher/topic_clusters/` 내 `hair.py`, `medical.py`, `savings.py`, `subsidy.py`, `career.py` 존재.
-   - 키워드 하나마다 개발자가 `.py` 파일을 짜는 것은 AI 회사가 아니라 하드코딩 노가다 봇.
-   - 임의의 어떤 키워드(생활, 건강, 세금, 금융, 복지, 소비 등)든 8인 AI 직원이 동적으로 1차 팩트 리서치 -> 8-Block 아폴리아 기사 집필 -> 동적 2x2 계산기 생성 -> SVG 차트 -> 카테고리 태깅까지 무인 처리하는 `UniversalTopicEngine`으로 전면 개혁.
-2. **블로그 카테고리 및 GNB 네비게이션 대수술**:
-   - 기존의 파편화된 영문/난삽 태그(`SUBSIDY`, `SAVINGS`, `HAIR`, `#popular`, `#policy`) 제거.
-   - 대한민국 대형 수익형 미디어 표준 4대 핵심 필라(Pillars) 확립:
-     * 💰 **경제·금융** (`/search/label/경제·금융`): 세무, 예적금, 대출, 환급금, 해외주식, 퀀트
-     * 🏥 **생활·건강** (`/search/label/생활·건강`): 비급여 시술, 탈모/피부, 병원비, 건강정보
-     * 🏛️ **정책·복지** (`/search/label/정책·복지`): 정부지원금, 청년정책, 기초연금, 고용/국비지원
-     * 💡 **생활·소비** (`/search/label/생활·소비`): 알뜰폰/통신비, 공과금/에너지, 스마트 절약, IT가전
-     * 🔥 **VIBE TRADING** (`/p/vibe-trading.html`): 상설 실시간 모의투자 프로 스테이션
-3. **기존 46개 발행 글 카테고리 라벨 마이그레이션**:
-   - 기존 글들을 4대 표준 필라 라벨로 자동 재분류/태그 업데이트하여, 독자가 카테고리 클릭 시 즉각 포스트들이 격자형으로 보이도록 정상화.
-4. **'매일 글을 뽑아내는 무인 회사' 배치 파이프라인 검증**:
-   - 범용 키워드 1회 즉시 실행 및 배치 생성 검증 (Exit Code 0).
+## 📌 문제점 및 사용자 지적 분석
+1. **하드코딩 템플릿의 잔재 (`fallback_pool`)**:
+   - `engine/matcher/demand_matcher.py`에 도메인별로 `비급여 실제 가격 비교`, `실손보험 실비 청구 기준`, `시술 전 필수 주의사항` 등을 뒤에 무조건 덧붙이는 하드코딩 템플릿이 남아있었음.
+   - 이로 인해 실제 검색어 분석이 아니라 매드립스(Mad-Libs) 기계적 조합 문자열이 H2 소제목으로 출력되는 심각한 결함 발생.
+2. **가짜 지표 날조 로직 (`est_docs = 650`, `ratio = 76.92`)**:
+   - `trend_scout.py`에서 단어 수에 따라 `32000`, `8500`, `1400`을 임의로 날조하고,
+   - `demand_matcher.py`에서 `est_docs = 650`을 하드코딩하여 `50000 / 650 = 76.92`라는 가짜 '최적 골든비율'을 출력하던 기만 로직 존재.
+3. **무작위 더미 추출 (`random.choice`)**:
+   - 트렌드 매칭 실패 시 `random.choice(list(niches.keys()))`로 특정 키워드를 무작위로 뽑아내어 실시간성 상실.
 
 ---
 
-## 🏗️ 아키텍처 다이어그램 (Universal Dynamic Pipeline)
+## 🏗️ 개혁 아키텍처 (100% Real Live Search Radar)
 ```mermaid
 flowchart TD
-    KW[임의의 키워드 입력 / Google Trends / Naver Datalab] --> DR[Domain Router & 4대 필라 분류기]
-    DR --> Pillar1[💰 경제·금융]
-    DR --> Pillar2[🏥 생활·건강]
-    DR --> Pillar3[🏛️ 정책·복지]
-    DR --> Pillar4[💡 생활·소비]
+    RawKW[타겟 키워드 / 실시간 트렌드] --> Decomp[지능적 어절/시드 분해기]
+    Decomp --> GSuggest[Google Suggest API 실시간 쿼리]
+    Decomp --> NSuggest[Naver Search Suggest API 실시간 쿼리]
     
-    Pillar1 & Pillar2 & Pillar3 & Pillar4 --> UTE[Universal Topic Intelligence Engine]
+    GSuggest & NSuggest --> RealQueries[실제 국민 실시간 롱테일 검색어 집계]
+    RealQueries --> Filter[의도별 상위 3대 검색어 추출: 비용 / 위험사고 / 실제후기]
+    Filter --> H2Alloc[1:1 H2 소제목 할당 (하드코딩 0%)]
     
-    subgraph AgencyStack [8인 AI 직원 자율 협업]
-        S01[01 Chief of Staff: 파이프라인 지휘]
-        S02[02 Product Planner: 검색 의도 & H2 결론 스니펫]
-        S03[03 Researcher: 1차 원천 데이터 공공/학회 수집]
-        S04[04 UI Designer: 인라인 SVG 비교표 생성]
-        S05[05 Developer: 동적 2x2 반응형 계산기 생성]
-        S06[06 QA Tester: 6대 게이트 & WCAG AAA 검증]
-        S07[07 Marketer: 15초 바이럴 릴스 대본]
-        S08[08 Publisher: Blogger v3 카테고리 라벨 발행]
-    end
-    
-    UTE --> AgencyStack
-    AgencyStack --> LiveBlog[Blogger 포털: 4대 카테고리 GNB 즉시 노출]
+    RawKW --> CleanEval[정직한 실측 지표 평가: 가짜 650/76.92 날조 완전 제거]
+    CleanEval --> PVS[실제 검색 의도 & 도메인 기준 PVS v2.0 산출]
 ```
 
 ---
 
 ## 📋 원자적 체크리스트 (Atomic Checklist)
 
-### [Phase 1] 하드코딩 niche .py 파일 폐기 & Universal Topic Engine 구축
-- [x] **Task 1.1**: `engine/matcher/topic_clusters/*.py` 하드코딩 파일들의 데이터를 범용 JSON (`data/universal_clusters.json`)으로 추출 및 파일 영구 삭제 (`career.py`, `hair.py`, `medical.py`, `savings.py`, `subsidy.py`)
-- [x] **Task 1.2**: `engine/matcher/universal_topic_engine.py` 구축 (임의의 어떤 키워드가 들어와도 동적으로 30일 지식 그래프와 스포크를 즉각 생성)
-- [x] **Task 1.3**: `engine/matcher/topic_cluster_engine.py` 리팩토링 (UniversalTopicEngine과 연동하여 기존 호출부 100% 하위 호환 보장)
-- [x] **Task 1.4**: 단위 테스트(`tests/test_v8_apex_architecture.py` & `tests/test_v9_apex_architecture.py`) 실행 및 통과 (Exit Code 0)
+### [Phase 1] `trend_scout.py` 실시간 지능형 서제스트 개편 & 가짜 수식 삭제
+- [x] **Task 1.1**: 단어 수 기반 가짜 검색량 조작(`word_count == 1: 32000`) 완전 삭제
+- [x] **Task 1.2**: 복합 검색어를 어절/핵심 명사 조합으로 분해하여 Google Suggest & Naver Suggest를 실시간 교차 수집하는 `expand_smart_suggestions()` 구현
+- [x] **Task 1.3**: `expand_autocomplete()`를 `expand_smart_suggestions()`로 완전 대체
 
-### [Phase 2] 블로그 GNB 네비게이션 및 테마 전면 개편
-- [x] **Task 2.1**: `blogin365_apex_master_theme.xml` 및 `blogin365_fintech_theme.xml` 상단 헤더 GNB 및 스티키 카테고리 알약 바에 4대 표준 필라(`경제·금융`, `생활·건강`, `정책·복지`, `생활·소비`, `VIBE TRADING`) 링크 구축
-- [x] **Task 2.2**: 테마 XML 문법 및 플레이라이트 다중 뷰포트(375px 모바일, 768px 태블릿, 1280px 데스크톱) 무결점 검증 (Exit Code 0)
-- [x] **Task 2.3**: Playwright 검증으로 메인 홈 상단 네비게이션 정상 렌더링 확인
+### [Phase 2] `demand_matcher.py` 하드코딩 `fallback_pool` & 가짜 650/76.92 영구 박멸
+- [x] **Task 2.1**: 도메인별 3줄 기계적 문자열 템플릿(`fallback_pool`) 완전 삭제
+- [x] **Task 2.2**: `generate_sub_keywords()`가 실시간 Google/Naver 서제스트에서 추출된 실제 검색어(`수면 임플란트 비용`, `수면 임플란트 사고`, `수면 임플란트 후기` 등)를 100% 우선 할당하도록 리팩토링
+- [x] **Task 2.3**: `est_docs = 650`, `est_pub = 120` 하드코딩 및 가짜 76.92 비율 날조 제거 -> 실측 의도 및 구글 트렌드 실제 지표 기반으로 정직한 평가 출력
+- [x] **Task 2.4**: `random.choice` 더미 키워드 강제 주입 로직 제거
 
-### [Phase 3] 기존 발행 글 46건 라벨 4대 필라 마이그레이션
-- [x] **Task 3.1**: 기존 포스트의 영문 코드(`HAIR`, `MEDICAL`, `SUBSIDY`, `SAVINGS`, `TECH`, `CAREER`)를 4대 표준 한글 카테고리로 1:1 매핑 스크립트 작성 (`scripts/migrate_all_post_labels.py`)
-- [x] **Task 3.2**: Blogger API `patch_labels`를 통해 46개 포스트 전수 패치 완료 (경제·금융 12건, 생활·소비 19건, 생활·건강 9건, 정책·복지 6건)
-- [x] **Task 3.3**: 실제 블로그 `/search/label/생활·건강`, `/search/label/경제·금융`, `/search/label/정책·복지`, `/search/label/생활·소비` 접속 시 정상 필터링 확인 및 스크린샷 증빙 (`live_cat_*.png`)
-
-### [Phase 4] 범용 키워드 동적 생성 & 무인 자율 파이프라인 기계적 증명
-- [x] **Task 4.1**: `engine/company_runtime.py`가 하드코딩 없이 임의의 키워드(`임플란트 수면치료 가격`)로 8인 AI 직원 협업 글을 정상 생성하고 6대 게이트를 자가치유 통과함을 증명 (소요시간 30.33초, Exit Code 0)
-- [x] **Task 4.2**: 전체 테스트 스위트 전수 통과 (Exit Code 0, v8/v9/테마 전수 패스)
-- [x] **Task 4.3**: 최종 완료 및 사용자 보고
+### [Phase 3] 기계적 검증 및 실시간 검색어 할당 증명
+- [x] **Task 3.1**: 단위 테스트 스위트 통과 (Exit Code 0)
+- [x] **Task 3.2**: `company_runtime.py`를 실행하여 가짜 76.92와 하드코딩 템플릿이 완전히 사라지고, Google/Naver의 실제 실시간 검색어가 H2 소제목으로 1:1 매핑됨을 기계적으로 증명
+- [x] **Task 3.3**: 사용자에게 투명하게 원인 고백 및 개혁 결과 보고
