@@ -91,9 +91,9 @@
     },
     "strategy_description": "전일 고가와 저가의 변동폭(Range)에 상수 K(0.5)를 곱한 가격을 당일 시가에서 돌파하는 순간 매수 진입하여 익일 시가까지 보유하는 정통 모멘텀 돌파 기법.",
     "callout_text": "변동성 돌파 전략은 횡보장에서는 잦은 손절을 유발하지만, 비트코인 특유의 폭발적인 대추세가 터지는 구간에서는 단 한 번의 거래로 월간 목표 수익률을 단숨에 초과 달성하는 강력한 우상향 퀀트 엔진입니다.",
-    "status": "PENDING",
-    "published_url": null,
-    "published_at": null
+    "status": "PUBLISHED",
+    "published_url": "https://blogin365ai.blogspot.com/2026/10/2026-volatility-breakout_01096134865.html",
+    "published_at": "2026-10-26T21:00:29.000317"
   },
   {
     "strategy_id": "turtle_donchian_breakout",
