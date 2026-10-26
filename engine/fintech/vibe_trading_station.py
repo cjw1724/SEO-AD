@@ -1332,15 +1332,20 @@ class VibeTradingStation:
 
     <!-- Left: Positions & Trade History Center -->
     <div class="vibe-panel-card">
-      <div class="vibe-panel-tabs">
-        <button class="vibe-panel-tab active" id="tab-open-pos" onclick="VibeEngine.switchLowerTab('open')">
-          💼 보유 포지션 (<span id="pos-count">0</span>)
-        </button>
-        <button class="vibe-panel-tab" id="tab-closed-pos" onclick="VibeEngine.switchLowerTab('closed')">
-          📜 체결 & 청산 일지 (<span id="closed-count">0</span>)
-        </button>
-        <button class="vibe-panel-tab" id="tab-analytics" onclick="VibeEngine.switchLowerTab('analytics')">
-          📊 퀀트 성적표
+      <div class="vibe-panel-tabs" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; gap:6px;">
+          <button class="vibe-panel-tab active" id="tab-open-pos" onclick="VibeEngine.switchLowerTab('open')">
+            💼 보유 포지션 (<span id="pos-count">0</span>)
+          </button>
+          <button class="vibe-panel-tab" id="tab-closed-pos" onclick="VibeEngine.switchLowerTab('closed')">
+            📜 체결 & 청산 일지 (<span id="closed-count">0</span>)
+          </button>
+          <button class="vibe-panel-tab" id="tab-analytics" onclick="VibeEngine.switchLowerTab('analytics')">
+            📊 퀀트 성적표
+          </button>
+        </div>
+        <button class="vibe-btn-action" id="btn-close-all-pos" onclick="VibeEngine.closeAllPositions()" style="background:#b91c1c; border-color:#ef4444; color:#ffffff; font-size:11px; font-weight:800; padding:4px 10px; display:inline-flex; align-items:center; gap:4px;">
+          🚨 전체 포지션 일괄 청산
         </button>
       </div>
 
@@ -1583,6 +1588,29 @@ const VibeEngine = (function() {{
         state.traderName = parsed.traderName || state.traderName;
         state.activeBots = parsed.activeBots || {{}};
         if (parsed.leverage) state.leverage = parsed.leverage;
+
+        // Auto-heal legacy duplicate bot positions from previous stacking bug
+        const seenBots = new Set();
+        const validPositions = [];
+        let refundedCash = 0;
+        for (const p of state.positions) {{
+          if (p.botSource) {{
+            const key = p.botId || p.botSource;
+            if (!seenBots.has(key)) {{
+              seenBots.add(key);
+              validPositions.push(p);
+            }} else {{
+              refundedCash += (p.margin || 1000);
+            }}
+          }} else {{
+            validPositions.push(p);
+          }}
+        }}
+        if (refundedCash > 0) {{
+          state.cash += refundedCash;
+          state.positions = validPositions;
+          saveState();
+        }}
       }}
     }} catch(e) {{}}
   }}
@@ -1926,6 +1954,16 @@ const VibeEngine = (function() {{
   // Execute Order
   function executeOrder(customParams) {{
     const isBot = customParams && customParams.botSource;
+
+    // Strict 1-Position Gate for Bots: A bot can NEVER have more than 1 active position
+    if (isBot) {{
+      const existing = state.positions.find(p => (customParams.botId && p.botId === customParams.botId) || p.botSource === customParams.botSource);
+      if (existing) {{
+        console.log(`[Bot Engine] Bot ${{customParams.botSource}} already holds an active position. Duplicate entry blocked.`);
+        return;
+      }}
+    }}
+
     const margin = isBot ? customParams.margin : (parseFloat(document.getElementById('input-order-margin').value) || 0);
 
     if (margin <= 0 || margin > state.cash) {{
@@ -1958,7 +1996,9 @@ const VibeEngine = (function() {{
       tpPct: tpPct,
       slPct: slPct,
       liqPrice: liqPrice,
+      botId: isBot ? customParams.botId : null,
       botSource: isBot ? customParams.botSource : null,
+      openedAt: Date.now(),
       createdAt: new Date().toLocaleTimeString()
     }};
 
@@ -1966,6 +2006,7 @@ const VibeEngine = (function() {{
     playSound('order');
     saveState();
     recalcPositions();
+    renderMarketplace();
 
     const tag = isBot ? `🤖 [${{customParams.botSource}}]` : `🚀 [${{state.traderName}}]`;
     addFeedItem(`${{tag}} ${{asset}} ${{leverage}}x ${{side}} 진입 (TP +${{tpPct}}%, SL -${{slPct}}%)`);
@@ -2013,88 +2054,115 @@ const VibeEngine = (function() {{
     saveState();
     recalcPositions();
     updateHistoryTable();
+    updateAnalytics();
+    renderMarketplace();
 
     const sign = pnl >= 0 ? '+' : '';
     const src = pos.botSource ? `🤖 [${{pos.botSource}}]` : `💰 [${{state.traderName}}]`;
-    addFeedItem(`${{src}} ${{pos.asset}} ${{reason}}: ${{sign}}$${{pnl.toFixed(2)}} (${{sign}}${{returnPct.toFixed(1)}}%)`);
+    addFeedItem(`${{src}} ${{pos.asset}} ${{reason}}: ${{sign}}$${{pnl.toFixed(2)}} (${{sign}}$${{returnPct.toFixed(1)}}%)`);
+  }}
+
+  // Close All Positions (Emergency / One-Click Flush)
+  function closeAllPositions() {{
+    if (!state.positions || state.positions.length === 0) {{
+      alert('현재 보유 중인 포지션이 없습니다.');
+      return;
+    }}
+    const cnt = state.positions.length;
+    while (state.positions.length > 0) {{
+      closePosition(state.positions[0].id, '🚨 사용자 일괄 시장가 청산');
+    }}
+    addFeedItem(`🚨 [일괄 청산] 총 ${{cnt}}개 포지션이 전량 시장가로 안전하게 청산되었습니다.`);
   }}
 
   // Recalculate Open Positions & Auto OCO Bracket
+  let isRecalculating = false;
   function recalcPositions() {{
-    let unrealizedPnl = 0;
-    const tbody = document.getElementById('tbody-positions');
-    const posCount = document.getElementById('pos-count');
-    if (posCount) posCount.textContent = state.positions.length;
+    if (isRecalculating) return;
+    isRecalculating = true;
 
-    for (let i = state.positions.length - 1; i >= 0; i--) {{
-      const pos = state.positions[i];
-      const currPrice = state.prices[pos.asset] || pos.entryPrice;
+    try {{
+      let unrealizedPnl = 0;
+      const tbody = document.getElementById('tbody-positions');
+      const posCount = document.getElementById('pos-count');
+      if (posCount) posCount.textContent = state.positions.length;
 
-      if ((pos.side === 'LONG' && currPrice <= pos.liqPrice) || (pos.side === 'SHORT' && currPrice >= pos.liqPrice)) {{
-        closePosition(pos.id, '💥 강제 청산');
-        return;
-      }}
-      if (pos.tpPrice && ((pos.side === 'LONG' && currPrice >= pos.tpPrice) || (pos.side === 'SHORT' && currPrice <= pos.tpPrice))) {{
-        closePosition(pos.id, '🎯 TP 익절');
-        return;
-      }}
-      if (pos.slPrice && ((pos.side === 'LONG' && currPrice <= pos.slPrice) || (pos.side === 'SHORT' && currPrice >= pos.slPrice))) {{
-        closePosition(pos.id, '🚨 SL 손절');
-        return;
-      }}
-    }}
-
-    if (state.positions.length === 0) {{
-      if (tbody) {{
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:32px;">현재 보유 중인 포지션이 없습니다. 상단에서 주문을 실행하거나 AI 전략봇을 켜보세요!</td></tr>';
-      }}
-    }} else {{
-      let rowsHtml = '';
-      for (const pos of state.positions) {{
+      let hasClosedAny = false;
+      for (let i = state.positions.length - 1; i >= 0; i--) {{
+        const pos = state.positions[i];
         const currPrice = state.prices[pos.asset] || pos.entryPrice;
-        let posPnl = pos.side === 'LONG' ? (currPrice - pos.entryPrice) * pos.size : (pos.entryPrice - currPrice) * pos.size;
 
-        unrealizedPnl += posPnl;
-        const pnlPct = (posPnl / pos.margin) * 100;
-        const pnlClass = posPnl >= 0 ? 'color:var(--vibe-green-light);' : 'color:var(--vibe-red-light);';
-        const sign = posPnl >= 0 ? '+' : '';
-        const sideColor = pos.side === 'LONG' ? 'var(--vibe-green-light)' : 'var(--vibe-red-light)';
-
-        const botBadge = pos.botSource ? `<span style="display:inline-block; margin-left:4px; padding:2px 5px; border-radius:4px; font-size:10px; font-weight:800; background:rgba(56,189,248,0.2); color:#38bdf8;">🤖 ${{pos.botSource.replace(' 봇', '')}}</span>` : '';
-
-        rowsHtml += `<tr>
-          <td><strong style="color:#ffffff;">${{pos.asset}}</strong>${{botBadge}}</td>
-          <td><span style="display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; background:${{pos.side === 'LONG' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}}; color:${{sideColor}};">${{pos.leverage}}x ${{pos.side}}</span></td>
-          <td>$${{pos.entryPrice.toLocaleString('en-US', {{minimumFractionDigits: 1}})}}</td>
-          <td>$${{currPrice.toLocaleString('en-US', {{minimumFractionDigits: 1}})}}</td>
-          <td style="font-size:11px;"><span style="color:var(--vibe-green-light);">+$${{pos.tpPrice ? pos.tpPrice.toFixed(0) : '--'}}</span> / <span style="color:var(--vibe-red-light);">-$${{pos.slPrice ? pos.slPrice.toFixed(0) : '--'}}</span></td>
-          <td style="${{pnlClass}} font-weight:800;">${{sign}}$${{posPnl.toFixed(2)}} (${{sign}}${{pnlPct.toFixed(2)}}%)</td>
-          <td><button class="vibe-btn-action" style="padding:4px 8px; font-size:11px;" onclick="VibeEngine.closePosition('${{pos.id}}')">청산</button></td>
-        </tr>`;
+        if ((pos.side === 'LONG' && currPrice <= pos.liqPrice) || (pos.side === 'SHORT' && currPrice >= pos.liqPrice)) {{
+          closePosition(pos.id, '💥 강제 청산');
+          hasClosedAny = true;
+          continue;
+        }}
+        if (pos.tpPrice && ((pos.side === 'LONG' && currPrice >= pos.tpPrice) || (pos.side === 'SHORT' && currPrice <= pos.tpPrice))) {{
+          closePosition(pos.id, '🎯 TP 익절');
+          hasClosedAny = true;
+          continue;
+        }}
+        if (pos.slPrice && ((pos.side === 'LONG' && currPrice <= pos.slPrice) || (pos.side === 'SHORT' && currPrice >= pos.slPrice))) {{
+          closePosition(pos.id, '🚨 SL 손절');
+          hasClosedAny = true;
+          continue;
+        }}
       }}
-      if (tbody) tbody.innerHTML = rowsHtml;
+
+      if (state.positions.length === 0) {{
+        if (tbody) {{
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:32px;">현재 보유 중인 포지션이 없습니다. 상단에서 주문을 실행하거나 AI 전략봇을 켜보세요!</td></tr>';
+        }}
+      }} else {{
+        let rowsHtml = '';
+        for (const pos of state.positions) {{
+          const currPrice = state.prices[pos.asset] || pos.entryPrice;
+          let posPnl = pos.side === 'LONG' ? (currPrice - pos.entryPrice) * pos.size : (pos.entryPrice - currPrice) * pos.size;
+
+          unrealizedPnl += posPnl;
+          const pnlPct = (posPnl / pos.margin) * 100;
+          const pnlClass = posPnl >= 0 ? 'color:var(--vibe-green-light);' : 'color:var(--vibe-red-light);';
+          const sign = posPnl >= 0 ? '+' : '';
+          const sideColor = pos.side === 'LONG' ? 'var(--vibe-green-light)' : 'var(--vibe-red-light)';
+
+          const botBadge = pos.botSource ? `<span style="display:inline-block; margin-left:4px; padding:2px 5px; border-radius:4px; font-size:10px; font-weight:800; background:rgba(56,189,248,0.2); color:#38bdf8;">🤖 ${{pos.botSource.replace(' 봇', '')}}</span>` : '';
+
+          rowsHtml += `<tr>
+            <td><strong style="color:#ffffff;">${{pos.asset}}</strong>${{botBadge}}</td>
+            <td><span style="display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; background:${{pos.side === 'LONG' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}}; color:${{sideColor}};">${{pos.leverage}}x ${{pos.side}}</span></td>
+            <td>$${{pos.entryPrice.toLocaleString('en-US', {{minimumFractionDigits: 1}})}}</td>
+            <td>$${{currPrice.toLocaleString('en-US', {{minimumFractionDigits: 1}})}}</td>
+            <td style="font-size:11px;"><span style="color:var(--vibe-green-light);">+$${{pos.tpPrice ? pos.tpPrice.toFixed(0) : '--'}}</span> / <span style="color:var(--vibe-red-light);">-$${{pos.slPrice ? pos.slPrice.toFixed(0) : '--'}}</span></td>
+            <td style="${{pnlClass}} font-weight:800;">${{sign}}$${{posPnl.toFixed(2)}} (${{sign}}${{pnlPct.toFixed(2)}}%)</td>
+            <td><button class="vibe-btn-action" style="padding:4px 8px; font-size:11px; background:#b91c1c; border-color:#ef4444; color:#fff;" onclick="VibeEngine.closePosition('${{pos.id}}', '사용자 개별 청산')">청산</button></td>
+          </tr>`;
+        }}
+        if (tbody) tbody.innerHTML = rowsHtml;
+      }}
+
+      // Update HUD
+      const totalMarginInUse = state.positions.reduce((acc, p) => acc + p.margin, 0);
+      const totalEquity = state.cash + totalMarginInUse + unrealizedPnl;
+      const totalReturnPct = ((totalEquity - state.initialCash) / state.initialCash) * 100;
+
+      const hudEquity = document.getElementById('hud-equity');
+      const hudCash = document.getElementById('hud-cash');
+      const hudPnl = document.getElementById('hud-pnl');
+
+      if (hudEquity) hudEquity.textContent = '$' + totalEquity.toLocaleString('en-US', {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
+      if (hudCash) hudCash.textContent = '$' + state.cash.toLocaleString('en-US', {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
+
+      if (hudPnl) {{
+        const pnlSign = totalReturnPct >= 0 ? '+' : '';
+        hudPnl.textContent = pnlSign + totalReturnPct.toFixed(2) + '% ($' + (totalEquity - state.initialCash).toFixed(2) + ')';
+        hudPnl.className = 'vibe-hud-val ' + (totalReturnPct >= 0 ? 'pos' : 'neg');
+      }}
+
+      updateLeaderboard(totalReturnPct, totalEquity);
+      updateAnalytics();
+    }} finally {{
+      isRecalculating = false;
     }}
-
-    // Update HUD
-    const totalMarginInUse = state.positions.reduce((acc, p) => acc + p.margin, 0);
-    const totalEquity = state.cash + totalMarginInUse + unrealizedPnl;
-    const totalReturnPct = ((totalEquity - state.initialCash) / state.initialCash) * 100;
-
-    const hudEquity = document.getElementById('hud-equity');
-    const hudCash = document.getElementById('hud-cash');
-    const hudPnl = document.getElementById('hud-pnl');
-
-    if (hudEquity) hudEquity.textContent = '$' + totalEquity.toLocaleString('en-US', {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
-    if (hudCash) hudCash.textContent = '$' + state.cash.toLocaleString('en-US', {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
-
-    if (hudPnl) {{
-      const pnlSign = totalReturnPct >= 0 ? '+' : '';
-      hudPnl.textContent = pnlSign + totalReturnPct.toFixed(2) + '% ($' + (totalEquity - state.initialCash).toFixed(2) + ')';
-      hudPnl.className = 'vibe-hud-val ' + (totalReturnPct >= 0 ? 'pos' : 'neg');
-    }}
-
-    updateLeaderboard(totalReturnPct, totalEquity);
-    updateAnalytics();
   }}
 
   // Update Trade History Table
@@ -2230,20 +2298,31 @@ const VibeEngine = (function() {{
     }} else {{
       myBotsHtml = '<div class="vibe-market-grid">';
       activeList.forEach(bot => {{
-        myBotsHtml += `<div class="vibe-market-card" style="border-color:#10b981;">
+        const botTitle = bot.title.slice(0, 14) + '...';
+        const openPos = state.positions.find(p => p.botId === bot.strategy_id || p.botSource === botTitle);
+        const statusBadge = openPos
+          ? `<span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:rgba(16,185,129,0.25); color:var(--vibe-green-light);">● 포지션 운용 중 (${{openPos.leverage}}x ${{openPos.side}})</span>`
+          : `<span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:rgba(56,189,248,0.2); color:#38bdf8;">⏳ 타점 대기 중 (1봇 1포지션)</span>`;
+
+        const actionBtns = openPos
+          ? `<button class="vibe-btn-action" style="background:#b91c1c; border-color:#ef4444; color:#fff; font-size:11px; padding:4px 8px; margin-right:4px;" onclick="VibeEngine.closePosition('${{openPos.id}}', '사용자 봇 포지션 청산')">포지션 청산</button>
+             <button class="vibe-btn-action" style="background:#475569; border-color:#64748b; color:#fff; font-size:11px; padding:4px 8px;" onclick="VibeEngine.toggleBot('${{bot.strategy_id}}')">추종 해제</button>`
+          : `<button class="vibe-btn-action" style="background:#ef4444; border-color:#dc2626; color:#fff; font-size:11px; padding:4px 8px;" onclick="VibeEngine.toggleBot('${{bot.strategy_id}}')">추종 중단</button>`;
+
+        myBotsHtml += `<div class="vibe-market-card" style="border-color:${{openPos ? '#10b981' : '#38bdf8'}};">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:rgba(16,185,129,0.2); color:var(--vibe-green-light);">● 실시간 자동 매매 중</span>
+              ${{statusBadge}}
               <span style="font-size:11px; color:#94a3b8;">${{bot.interval}}</span>
             </div>
             <strong style="color:#ffffff; font-size:14px; display:block; margin-bottom:6px;">${{bot.title}}</strong>
             <p style="font-size:11px; color:#94a3b8; line-height:1.5; margin-bottom:8px;">${{bot.summary}}</p>
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1f2d47; padding-top:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1f2d47; padding-top:10px; flex-wrap:wrap; gap:6px;">
             <span style="font-size:11px; color:#10b981;">익절: +${{bot.default_params.tp_percent}}% | 손절: -${{bot.default_params.sl_percent}}%</span>
-            <button class="vibe-btn-action" style="background:#ef4444; border-color:#dc2626; color:#fff; font-size:11px; padding:4px 8px;" onclick="VibeEngine.toggleBot('${{bot.strategy_id}}')">
-              추종 중단
-            </button>
+            <div style="display:flex; align-items:center;">
+              ${{actionBtns}}
+            </div>
           </div>
         </div>`;
       }});
@@ -2298,26 +2377,64 @@ const VibeEngine = (function() {{
     renderMarketplace();
   }}
 
-  // Periodic Bot Execution Loop for Active Subscriptions
+  // Periodic Bot Execution & Intelligent Position Management Loop
   function checkBotAutomations() {{
     const now = Date.now();
     for (const botId in state.activeBots) {{
       const sub = state.activeBots[botId];
-      if (sub && sub.active && now - (sub.lastTrigger || 0) > 30000) {{
-        const botMeta = STRATEGY_CATALOG.find(b => b.strategy_id === botId);
-        if (!botMeta) continue;
+      if (!sub || !sub.active) continue;
 
-        // Simulated trigger check against live volatility
-        if (Math.random() < 0.3) {{
+      const botMeta = STRATEGY_CATALOG.find(b => b.strategy_id === botId);
+      if (!botMeta) continue;
+
+      const botTitle = botMeta.title.slice(0, 14) + '...';
+
+      // 1. Check if this bot ALREADY has an active position (Strict 1-Position Guard)
+      const existingPos = state.positions.find(p => p.botId === botId || p.botSource === botTitle);
+
+      if (existingPos) {{
+        // Position already open: perform smart exit & scalp management
+        const currPrice = state.prices[existingPos.asset] || existingPos.entryPrice;
+        const pnl = existingPos.side === 'LONG'
+          ? (currPrice - existingPos.entryPrice) * existingPos.size
+          : (existingPos.entryPrice - currPrice) * existingPos.size;
+        const returnPct = (pnl / existingPos.margin) * 100;
+        const holdingTimeMs = now - (existingPos.openedAt || now);
+
+        // A. Dynamic Scalping Take-Profit (+0.8% ~ +1.0% quick profit lock)
+        if (returnPct >= 0.8 && holdingTimeMs > 20000) {{
+          closePosition(existingPos.id, '🎯 AI 스캘핑 익절 확정');
           sub.lastTrigger = now;
+          continue;
+        }}
+
+        // B. Stagnant Time-Cut: After 2 minutes, if fluctuating within ±0.3%, close to preserve capital and wait for fresh signal
+        if (holdingTimeMs > 120000 && Math.abs(returnPct) < 0.3) {{
+          closePosition(existingPos.id, '⏱️ 횡보 타임아웃 청산');
+          sub.lastTrigger = now;
+          continue;
+        }}
+
+        continue; // STRICT GUARD: DO NOT OPEN MULTIPLE POSITIONS
+      }}
+
+      // 2. No open position: check if cool-down (min 30s) passed to enter new trade
+      if (now - (sub.lastTrigger || 0) > 30000) {{
+        if (Math.random() < 0.4) {{
+          sub.lastTrigger = now;
+          const side = Math.random() > 0.45 ? 'LONG' : 'SHORT';
+          const tpPct = botMeta.default_params.tp_percent || 0.8;
+          const slPct = botMeta.default_params.sl_percent || 0.5;
+
           executeOrder({{
             asset: 'BTCUSDT',
-            side: Math.random() > 0.45 ? 'LONG' : 'SHORT',
+            side: side,
             leverage: botMeta.default_params.leverage || 5,
             margin: 1000,
-            tpPct: botMeta.default_params.tp_percent || 2.0,
-            slPct: botMeta.default_params.sl_percent || 1.0,
-            botSource: botMeta.title.slice(0, 14) + '...'
+            tpPct: tpPct,
+            slPct: slPct,
+            botId: botId,
+            botSource: botTitle
           }});
         }}
       }}
@@ -2452,6 +2569,7 @@ const VibeEngine = (function() {{
     calculateOrderPreview,
     executeOrder,
     closePosition,
+    closeAllPositions,
     saveTraderName,
     shareRank,
     resetAccount,

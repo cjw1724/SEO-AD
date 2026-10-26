@@ -142,3 +142,20 @@
 - [x] **Task 16.3**: Playwright E2E 및 WCAG 2.1 AAA 명도비 검증 통과 (`tests.test_vibe_trading_station`, Exit Code 0)
 - [x] **Task 16.4**: 데스크톱(1280px, 1440px) 및 모바일(375px) 실측 스크린샷 캡처 및 레이아웃 검증 (가로형 4컬럼 독 완벽 렌더링 확인)
 - [x] **Task 16.5**: Git 커밋 및 원격 저장소(`origin main`) 푸시 후 사용자 완료 보고
+
+---
+
+### [Phase 17] AI 봇 추종(카피트레이딩) 중복 포지션 무한 생성 버그 척결 & 청산 사이클 정상화
+- [x] **Task 17.1**: `engine/fintech/vibe_trading_station.py` 봇 포지션 엄격 단일화(Strict 1-Position-per-Bot Gate):
+  1. `checkBotAutomations()` 및 `executeOrder()`에서 봇당 동시 보유 포지션 최대 1개 엄격 제한 (이미 보유 중이면 추가 진입 차단)
+  2. 봇별 쿨다운(최소 30~45초) 및 현실적인 1분봉 스캘핑 TP(0.8%) / SL(0.5%) 브래킷 적용
+  3. 트레일링 익절 및 횡보 타임아웃(2분 무방향성 시 본전 청산) 자율 포지션 관리 탑재
+- [x] **Task 17.2**: 포지션 청산 엔진 버그 수정:
+  1. `recalcPositions()` 내 TP/SL 감지 시 조기 `return;` 버그를 `continue;`로 수정하여 다중 포지션 동시 평가 및 렌더링 정상화
+  2. `isRecalculating` 재귀 방어 가드로 안정성 확보
+  3. "🚨 전체 포지션 일괄 청산 (Close All)" 버튼 탑재로 사용자 기존 5개 누적 포지션 원클릭 정리 지원
+  4. 웹앱 로드 시 기존 중복 포지션 안전 정리 로직 탑재
+- [x] **Task 17.3**: Blogger Pages API 라이브 배포 (`engine/fintech/deploy_vibe_station.py`)
+- [x] **Task 17.4**: Playwright E2E 및 WCAG 2.1 AAA 검증 통과 (`tests.test_vibe_trading_station`, Exit Code 0)
+- [x] **Task 17.5**: 실물 스크린샷 캡처 및 검증 (포지션 1개 제한 및 정상 청산 사이클 확인)
+- [x] **Task 17.6**: Git 커밋/푸시 및 사용자 완료 보고
