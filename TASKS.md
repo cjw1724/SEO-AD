@@ -89,3 +89,12 @@
 - [x] **Task 11.3**: `engine/fintech/vibe_trading_station.py`에 전략 봇 자동 체결 포지션(`bot_`) 감지 및 UI 뱃지(`🤖 [AI 전략봇]`) 표시 지원
 - [x] **Task 11.4**: 단위 테스트 실행 및 라이브 블로그 포스트 2건 & Vibe Trading 독립 페이지 Blogger API 라이브 배포
 - [x] **Task 11.5**: Playwright E2E 검증 (차트 위 손절선 시각 표시 및 Vibe Trading 모의투자 자동매매 연동 실측 캡처) 및 사용자 보고
+
+---
+
+### [Phase 12] `TP 0.0%` 슬롭 영구 박멸 & TradingView 공식 프로 차트 듀얼 탭 탑재
+- [x] **Task 12.1**: `hitBand` 제거 및 순수 브래킷 OCO(고정 TP vs SL) 모델로 리팩토링하여 `TP 0.0%` 마커 영구 박멸
+- [x] **Task 12.2**: 차트 상단에 `🌐 트레이딩뷰 공식 프로 차트` (TradingView Advanced Real-Time Widget) 탭 장착하여 듀얼 엔진 체계 구축
+- [x] **Task 12.3**: 단위 테스트 실행 및 통과 (Exit Code 0)
+- [x] **Task 12.4**: 라이브 블로그 포스트 2건에 Blogger API 라이브 패치 배포
+- [x] **Task 12.5**: Playwright E2E 검증 (`TP 0.0%` 부재 확인, 깔끔한 마커 렌더링, 트레이딩뷰 공식 위젯 전환 확인) 및 최종 보고

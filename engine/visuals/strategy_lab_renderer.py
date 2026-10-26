@@ -212,8 +212,23 @@ class StrategyLabRenderer:
     </div>
   </div>
 
-  <!-- 4. Interactive TradingView Lightweight Chart Container -->
-  <div style="position: relative; background: #0d131f; border: 1px solid #1f2d47; border-radius: 14px; overflow: hidden; margin-bottom: 20px;">
+  <!-- 4. Dual Engine Header: Quant Lab vs TradingView Official Pro -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;">
+    <div style="display: flex; gap: 6px; background: #111827; padding: 4px; border-radius: 10px; border: 1px solid #1f2d47;">
+      <button id="btn-mode-lab" style="background: #2563eb; border: 1px solid #3b82f6; color: #ffffff; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+        <span>⚡</span> 퀀트 팩트체크 랩
+      </button>
+      <button id="btn-mode-tv-pro" style="background: transparent; border: 1px solid transparent; color: #94a3b8; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+        <span>🌐</span> 트레이딩뷰 공식 프로 차트
+      </button>
+    </div>
+    <div style="font-size: 11px; color: #64748b; font-weight: 600;">
+      * 바이낸스 공식 실시간 틱 데이터 기반
+    </div>
+  </div>
+
+  <!-- Chart Viewports Container -->
+  <div id="quant-lab-viewport" style="position: relative; background: #0d131f; border: 1px solid #1f2d47; border-radius: 14px; overflow: hidden; margin-bottom: 20px;">
     <!-- Chart Top Legend HUD -->
     <div style="position: absolute; top: 12px; left: 16px; z-index: 10; display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; pointer-events: none;">
       <span style="color: #f8fafc; font-weight: 700;">{symbol}</span>
@@ -231,6 +246,11 @@ class StrategyLabRenderer:
 
     <!-- The Actual Canvas Target -->
     <div id="tv-strategy-chart" style="width: 100%; height: 420px; box-sizing: border-box;"></div>
+  </div>
+
+  <!-- 4-B. TradingView Official Advanced Real-Time Chart Viewport (Official Embed) -->
+  <div id="tv-official-viewport" style="display: none; background: #0d131f; border: 1px solid #1f2d47; border-radius: 14px; overflow: hidden; margin-bottom: 20px; height: 460px;">
+    <div id="tradingview_official_embed" style="width: 100%; height: 100%;"></div>
   </div>
 
   <!-- 5. Interactive Parameter Tuning Sliders (0.01s Instant Recalc) -->
@@ -703,34 +723,26 @@ class StrategyLabRenderer:
         const tpPrice = entryPrice * (1 + tpPct);
         const slPrice = entryPrice * (1 - slPct);
 
-        // 1. 봉 내부 최악 시나리오(SL 우선) 원칙: 저가가 손절가 터치 시 즉시 손절
+        // 순수 브래킷 OCO 모델: 저가가 손절가 터치 시 최우선 손절, 고가가 목표가 도달 시 익절
         const hitSl = c.low <= slPrice;
         const hitTp = c.high >= tpPrice;
-        const hitBand = ind.upper[i] !== null && c.high >= ind.upper[i];
 
-        if (hitSl || hitTp || hitBand) {{
+        if (hitSl || hitTp) {{
           let exitPrice = c.close;
           let rawPnl = 0;
           let exitReason = 'TP';
 
           if (hitSl) {{
-            // 손절가 터치 (보수적 최우선 손실 처리)
             exitPrice = slPrice;
             rawPnl = -slPct;
             exitReason = 'SL';
           }} else if (hitTp) {{
-            // 목표 익절가 돌파
             exitPrice = tpPrice;
             rawPnl = tpPct;
             exitReason = 'TP';
-          }} else if (hitBand) {{
-            // 상단 볼린저 밴드 반전 실측가 청산
-            exitPrice = Math.min(c.high, ind.upper[i]);
-            rawPnl = (exitPrice - entryPrice) / entryPrice;
-            exitReason = 'BAND';
           }}
 
-          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 정밀 순수익률
+          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 순수익률 (TP 0.0% 슬롭 원천 차단)
           const netPnlPct = (rawPnl - feeRate) * lev;
           const isWin = netPnlPct > 0;
           const tradePnl = (balance * 0.3) * netPnlPct;
@@ -761,34 +773,26 @@ class StrategyLabRenderer:
         const tpPrice = entryPrice * (1 - tpPct);
         const slPrice = entryPrice * (1 + slPct);
 
-        // 1. 봉 내부 최악 시나리오(SL 우선) 원칙: 고가가 손절가 터치 시 즉시 손절
+        // 순수 브래킷 OCO 모델: 고가가 손절가 터치 시 최우선 손절, 저가가 목표가 도달 시 익절
         const hitSl = c.high >= slPrice;
         const hitTp = c.low <= tpPrice;
-        const hitBand = ind.lower[i] !== null && c.low <= ind.lower[i];
 
-        if (hitSl || hitTp || hitBand) {{
+        if (hitSl || hitTp) {{
           let exitPrice = c.close;
           let rawPnl = 0;
           let exitReason = 'TP';
 
           if (hitSl) {{
-            // 손절가 터치 (보수적 최우선 손실 처리)
             exitPrice = slPrice;
             rawPnl = -slPct;
             exitReason = 'SL';
           }} else if (hitTp) {{
-            // 목표 익절가 돌파
             exitPrice = tpPrice;
             rawPnl = tpPct;
             exitReason = 'TP';
-          }} else if (hitBand) {{
-            // 하단 볼린저 밴드 반전 실측가 청산
-            exitPrice = Math.max(c.low, ind.lower[i]);
-            rawPnl = (entryPrice - exitPrice) / entryPrice;
-            exitReason = 'BAND';
           }}
 
-          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 정밀 순수익률
+          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 순수익률 (TP 0.0% 슬롭 원천 차단)
           const netPnlPct = (rawPnl - feeRate) * lev;
           const isWin = netPnlPct > 0;
           const tradePnl = (balance * 0.3) * netPnlPct;
@@ -1185,6 +1189,74 @@ class StrategyLabRenderer:
     }});
 
     // Follow Toggle (Unified Vibe Trading Cross-Page Synchronization)
+    // TradingView Official Pro Chart Mode Switcher
+    const btnModeLab = document.getElementById('btn-mode-lab');
+    const btnModeTv = document.getElementById('btn-mode-tv-pro');
+    const labViewport = document.getElementById('quant-lab-viewport');
+    const tvViewport = document.getElementById('tv-official-viewport');
+    let tvOfficialWidget = null;
+
+    function initTradingViewOfficial() {{
+      if (tvOfficialWidget) return;
+      function createTv() {{
+        if (!window.TradingView) return;
+        tvOfficialWidget = new TradingView.widget({{
+          autosize: true,
+          symbol: 'BINANCE:' + SYMBOL,
+          interval: '1',
+          timezone: 'Asia/Seoul',
+          theme: 'dark',
+          style: '1',
+          locale: 'kr',
+          toolbar_bg: '#0d131f',
+          enable_publishing: false,
+          allow_symbol_change: true,
+          container_id: 'tradingview_official_embed',
+          studies: [
+            'BB@tv-basicstudies',
+            'RSI@tv-basicstudies'
+          ]
+        }});
+      }}
+
+      if (!window.TradingView) {{
+        const s = document.createElement('script');
+        s.src = 'https://s3.tradingview.com/tv.js';
+        s.onload = createTv;
+        document.head.appendChild(s);
+      }} else {{
+        createTv();
+      }}
+    }}
+
+    if (btnModeLab && btnModeTv) {{
+      btnModeLab.addEventListener('click', () => {{
+        btnModeLab.style.background = '#2563eb';
+        btnModeLab.style.borderColor = '#3b82f6';
+        btnModeLab.style.color = '#ffffff';
+        btnModeTv.style.background = 'transparent';
+        btnModeTv.style.borderColor = 'transparent';
+        btnModeTv.style.color = '#94a3b8';
+        labViewport.style.display = 'block';
+        tvViewport.style.display = 'none';
+        if (chart && chartContainer) {{
+          chart.applyOptions({{ width: chartContainer.clientWidth }});
+        }}
+      }});
+
+      btnModeTv.addEventListener('click', () => {{
+        btnModeTv.style.background = '#2563eb';
+        btnModeTv.style.borderColor = '#3b82f6';
+        btnModeTv.style.color = '#ffffff';
+        btnModeLab.style.background = 'transparent';
+        btnModeLab.style.borderColor = 'transparent';
+        btnModeLab.style.color = '#94a3b8';
+        labViewport.style.display = 'none';
+        tvViewport.style.display = 'block';
+        initTradingViewOfficial();
+      }});
+    }}
+
     toggleFollow.addEventListener('change', (e) => {{
       isFollowing = e.target.checked;
       let vibe = {{}};
