@@ -393,25 +393,35 @@ class VibeTradingStation:
       color: var(--vibe-red-light);
     }}
 
-    /* Main Grid: Chart (2/3) + Order Panel (1/3) */
-    .vibe-grid {{
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
+    /* Standalone Webapp Full Widescreen Breakout (Blogger Theme Override) */
+    .apex-main-wrapper:has(.vibe-terminal-container),
+    body:has(.vibe-terminal-container) .apex-main-wrapper,
+    body:has(.vibe-terminal-container) .apex-card.apex-post,
+    body:has(.vibe-terminal-container) .main.section {{
+      max-width: 1360px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
     }}
 
-    @media (max-width: 992px) {{
-      .vibe-grid {{
-        grid-template-columns: 1fr;
-      }}
+    body:has(.vibe-terminal-container) .apex-card.apex-post {{
+      padding: 16px !important;
+    }}
+
+    /* Main Stack: Full-Width Chart (100%) + Horizontal Order Dock Underneath */
+    .vibe-grid {{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+      width: 100%;
     }}
 
     .vibe-chart-card {{
+      width: 100%;
       background: var(--vibe-bg-surface);
       border: 1px solid var(--vibe-border-card);
       border-radius: 16px;
-      padding: 16px;
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
@@ -422,8 +432,8 @@ class VibeTradingStation:
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 14px;
     }}
 
     .vibe-chart-tabs {{
@@ -450,7 +460,7 @@ class VibeTradingStation:
     }}
 
     .vibe-chart-viewport {{
-      height: 540px;
+      height: 560px;
       width: 100%;
       border-radius: 10px;
       overflow: hidden;
@@ -458,12 +468,13 @@ class VibeTradingStation:
       position: relative;
     }}
 
-    /* Order Execution Panel (Binance / Bybit Pro Homage) */
+    /* Order Execution Panel (Horizontal Pro Bar below chart) */
     .vibe-order-panel {{
+      width: 100%;
       background: var(--vibe-bg-surface);
       border: 1px solid var(--vibe-border-card);
       border-radius: 16px;
-      padding: 18px;
+      padding: 16px 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -473,6 +484,54 @@ class VibeTradingStation:
     .vibe-order-header-pro {{
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }}
+
+    /* 4-Column Horizontal Dock Grid */
+    .vibe-dock-grid {{
+      display: grid;
+      grid-template-columns: 1.05fr 1.35fr 1.3fr 1.3fr;
+      gap: 14px;
+      align-items: stretch;
+    }}
+
+    @media (max-width: 1100px) {{
+      .vibe-dock-grid {{
+        grid-template-columns: repeat(2, 1fr);
+      }}
+    }}
+
+    @media (max-width: 680px) {{
+      .vibe-dock-grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
+
+    .vibe-dock-col {{
+      background: #0a0e17;
+      border: 1px solid var(--vibe-border-card);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }}
+
+    .vibe-dock-col-title {{
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 6px;
+    }}
       align-items: center;
       border-bottom: 1px solid var(--vibe-border-card);
       padding-bottom: 10px;
@@ -1042,10 +1101,10 @@ class VibeTradingStation:
     </button>
   </div>
 
-  <!-- Main Trading Area: Chart (2/3) + Order Execution (1/3) -->
+  <!-- Main Trading Area: 100% Full-Width Chart + Horizontal Order Execution Dock Below -->
   <div class="vibe-grid">
 
-    <!-- Chart Card -->
+    <!-- 100% Full-Width Chart Card -->
     <div class="vibe-chart-card">
       <div class="vibe-chart-header">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -1062,126 +1121,164 @@ class VibeTradingStation:
         <!-- TradingView Widget -->
         <div id="tv_chart_container" style="height:100%; width:100%;"></div>
         <!-- Canvas Fallback -->
-        <canvas id="canvas_chart_viewport" width="800" height="540" style="display:none; width:100%; height:100%;"></canvas>
+        <canvas id="canvas_chart_viewport" width="1200" height="560" style="display:none; width:100%; height:100%;"></canvas>
       </div>
     </div>
 
-    <!-- Order Execution Panel (Binance / Bybit Pro Homage) -->
+    <!-- Order Execution Panel: Horizontal Pro Dock (Directly below chart) -->
     <div class="vibe-order-panel">
-      <!-- Order Header: Margin Mode + Order Type -->
+      <!-- Order Header: Live status + Mode selectors -->
       <div class="vibe-order-header-pro">
-        <div class="vibe-sub-tabs">
-          <button class="vibe-sub-tab active" id="btn-mode-cross" onclick="VibeEngine.setMarginMode('cross')">교차 (Cross)</button>
-          <button class="vibe-sub-tab" id="btn-mode-isolated" onclick="VibeEngine.setMarginMode('isolated')">격리 (Isolated)</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:14px;">⚡</span>
+          <strong style="color:#ffffff; font-size:13px; font-weight:800;">실시간 주문 체결독 (Live Order Execution Dock)</strong>
+          <span style="font-size:11px; color:#38bdf8; background:rgba(56,189,248,0.12); padding:2px 8px; border-radius:6px; font-weight:700;">PRO TRADING DESK</span>
         </div>
-        <div class="vibe-sub-tabs">
-          <button class="vibe-sub-tab active" id="btn-type-market" onclick="VibeEngine.setOrderType('market')">시장가 (Market)</button>
-          <button class="vibe-sub-tab" id="btn-type-limit" onclick="VibeEngine.setOrderType('limit')">지정가 (Limit)</button>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div class="vibe-sub-tabs">
+            <button class="vibe-sub-tab active" id="btn-mode-cross" onclick="VibeEngine.setMarginMode('cross')">교차 (Cross)</button>
+            <button class="vibe-sub-tab" id="btn-mode-isolated" onclick="VibeEngine.setMarginMode('isolated')">격리 (Isolated)</button>
+          </div>
+          <div class="vibe-sub-tabs">
+            <button class="vibe-sub-tab active" id="btn-type-market" onclick="VibeEngine.setOrderType('market')">시장가 (Market)</button>
+            <button class="vibe-sub-tab" id="btn-type-limit" onclick="VibeEngine.setOrderType('limit')">지정가 (Limit)</button>
+          </div>
         </div>
       </div>
 
-      <!-- Long / Short Switch -->
-      <div class="vibe-side-switch">
-        <button class="vibe-side-btn long active" id="btn-side-long" onclick="VibeEngine.setSide('LONG')">🟢 BUY / LONG (롱)</button>
-        <button class="vibe-side-btn short" id="btn-side-short" onclick="VibeEngine.setSide('SHORT')">🔴 SELL / SHORT (숏)</button>
-      </div>
+      <!-- Horizontal 4-Column Execution Grid -->
+      <div class="vibe-dock-grid">
 
-      <!-- Continuous 1x - 100x Leverage Slider (Binance Futures Standard) -->
-      <div class="vibe-leverage-box">
-        <div class="vibe-lev-header">
-          <span style="color:#94a3b8; font-weight:700;">레버리지 조정 (1x ~ 100x)</span>
-          <div class="vibe-lev-stepper">
-            <button onclick="VibeEngine.stepLeverage(-1)">-</button>
-            <input type="number" id="input-leverage-val" min="1" max="100" value="10" oninput="VibeEngine.setLeverageDirect(this.value)">
-            <span style="color:#38bdf8; font-weight:800; font-size:11px;">x</span>
-            <button onclick="VibeEngine.stepLeverage(1)">+</button>
+        <!-- Col 1: Side & Limit Price -->
+        <div class="vibe-dock-col">
+          <div class="vibe-dock-col-title">
+            <span>1️⃣ 주문 방향 선택</span>
+            <span style="color:#38bdf8; font-size:10px;">LONG / SHORT</span>
+          </div>
+
+          <!-- Long / Short Switch -->
+          <div class="vibe-side-switch">
+            <button class="vibe-side-btn long active" id="btn-side-long" onclick="VibeEngine.setSide('LONG')">🟢 BUY / LONG (롱)</button>
+            <button class="vibe-side-btn short" id="btn-side-short" onclick="VibeEngine.setSide('SHORT')">🔴 SELL / SHORT (숏)</button>
+          </div>
+
+          <!-- Limit Price Input (Toggled if Limit) -->
+          <div class="vibe-form-group" id="group-limit-price" style="display:none; margin-top:2px;">
+            <div class="vibe-form-label">
+              <span>지정가 주문 가격 (USDT)</span>
+              <button class="vibe-btn-action" style="padding:1px 6px; font-size:10px;" onclick="VibeEngine.fillCurrentPrice()">현재가 적용</button>
+            </div>
+            <input type="number" class="vibe-input" id="input-limit-price" value="80410.0" step="0.1" oninput="VibeEngine.calculateOrderPreview()">
+          </div>
+
+          <div id="group-market-info" style="font-size:10px; color:#94a3b8; background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:6px;">
+            <span>⚡ 최유리 시장가 즉시 체결 (체결 슬리피지 &lt; 0.01%)</span>
           </div>
         </div>
 
-        <input type="range" class="vibe-lev-slider" id="slider-leverage" min="1" max="100" step="1" value="10" oninput="VibeEngine.setLeverageDirect(this.value)">
-
-        <div class="vibe-lev-presets">
-          <button onclick="VibeEngine.setLeverageDirect(1)">1x</button>
-          <button onclick="VibeEngine.setLeverageDirect(5)">5x</button>
-          <button class="active" id="btn-preset-10" onclick="VibeEngine.setLeverageDirect(10)">10x</button>
-          <button onclick="VibeEngine.setLeverageDirect(25)">25x</button>
-          <button onclick="VibeEngine.setLeverageDirect(50)">50x</button>
-          <button onclick="VibeEngine.setLeverageDirect(75)">75x</button>
-          <button onclick="VibeEngine.setLeverageDirect(100)">100x</button>
-        </div>
-
-        <!-- Risk Tier Badge -->
-        <div class="vibe-lev-risk-tier" id="lev-risk-badge" style="background:rgba(16,185,129,0.15); color:var(--vibe-green-light); border:1px solid rgba(16,185,129,0.3);">
-          🟢 안전 수준 (권장 퀀트 운용 | 청산 거리 &gt; 9.5%)
-        </div>
-      </div>
-
-      <!-- Limit Price Input (Hidden if Market) -->
-      <div class="vibe-form-group" id="group-limit-price" style="display:none;">
-        <div class="vibe-form-label">
-          <span>지정가 주문 가격 (USDT)</span>
-          <button class="vibe-btn-action" style="padding:1px 6px; font-size:10px;" onclick="VibeEngine.fillCurrentPrice()">현재가 적용</button>
-        </div>
-        <input type="number" class="vibe-input" id="input-limit-price" value="80410.0" step="0.1" oninput="VibeEngine.calculateOrderPreview()">
-      </div>
-
-      <!-- Margin Input & 0%~100% Slider -->
-      <div class="vibe-form-group">
-        <div class="vibe-form-label">
-          <span>투입 증거금 (Margin USDT)</span>
-          <span id="label-max-margin" style="color:#94a3b8;">최대: $10,000.00</span>
-        </div>
-        <input type="number" class="vibe-input" id="input-order-margin" value="2000" min="10" step="10" oninput="VibeEngine.calculateOrderPreview()">
-        <div style="display:flex; gap:6px; margin-top:4px;">
-          <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:4px;" onclick="VibeEngine.setMarginPercent(0.10)">10%</button>
-          <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:4px;" onclick="VibeEngine.setMarginPercent(0.25)">25%</button>
-          <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:4px;" onclick="VibeEngine.setMarginPercent(0.50)">50%</button>
-          <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:4px;" onclick="VibeEngine.setMarginPercent(0.75)">75%</button>
-          <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:4px;" onclick="VibeEngine.setMarginPercent(1.00)">100%</button>
-        </div>
-      </div>
-
-      <!-- Bracket Orders (TP/SL) -->
-      <div class="vibe-bracket-grid">
-        <div class="vibe-bracket-box">
-          <div class="vibe-bracket-header">
-            <span style="color:var(--vibe-green-light);">🎯 익절 목표 (TP %)</span>
-            <strong style="color:var(--vibe-green-light);" id="label-tp-target">+2.0%</strong>
+        <!-- Col 2: Leverage Control (1x ~ 100x) -->
+        <div class="vibe-dock-col">
+          <div class="vibe-dock-col-title">
+            <span>2️⃣ 레버리지 조절</span>
+            <div class="vibe-lev-stepper">
+              <button onclick="VibeEngine.stepLeverage(-1)">-</button>
+              <input type="number" id="input-leverage-val" min="1" max="100" value="10" oninput="VibeEngine.setLeverageDirect(this.value)">
+              <span style="color:#38bdf8; font-weight:800; font-size:11px;">x</span>
+              <button onclick="VibeEngine.stepLeverage(1)">+</button>
+            </div>
           </div>
-          <input type="number" class="vibe-input" id="input-tp-pct" value="2.0" step="0.1" min="0.1" max="50" style="padding:6px 10px; font-size:12px;" oninput="VibeEngine.calculateOrderPreview()">
-          <span style="font-size:10px; color:#94a3b8;" id="desc-tp-price">목표가: 계산 중...</span>
-        </div>
 
-        <div class="vibe-bracket-box">
-          <div class="vibe-bracket-header">
-            <span style="color:var(--vibe-red-light);">🚨 손절 한도 (SL %)</span>
-            <strong style="color:var(--vibe-red-light);" id="label-sl-target">-1.0%</strong>
+          <input type="range" class="vibe-lev-slider" id="slider-leverage" min="1" max="100" step="1" value="10" oninput="VibeEngine.setLeverageDirect(this.value)">
+
+          <div class="vibe-lev-presets">
+            <button onclick="VibeEngine.setLeverageDirect(1)">1x</button>
+            <button onclick="VibeEngine.setLeverageDirect(5)">5x</button>
+            <button class="active" id="btn-preset-10" onclick="VibeEngine.setLeverageDirect(10)">10x</button>
+            <button onclick="VibeEngine.setLeverageDirect(25)">25x</button>
+            <button onclick="VibeEngine.setLeverageDirect(50)">50x</button>
+            <button onclick="VibeEngine.setLeverageDirect(75)">75x</button>
+            <button onclick="VibeEngine.setLeverageDirect(100)">100x</button>
           </div>
-          <input type="number" class="vibe-input" id="input-sl-pct" value="1.0" step="0.1" min="0.1" max="25" style="padding:6px 10px; font-size:12px;" oninput="VibeEngine.calculateOrderPreview()">
-          <span style="font-size:10px; color:#94a3b8;" id="desc-sl-price">손절가: 계산 중...</span>
+
+          <!-- Risk Tier Badge -->
+          <div class="vibe-lev-risk-tier" id="lev-risk-badge" style="background:rgba(16,185,129,0.15); color:var(--vibe-green-light); border:1px solid rgba(16,185,129,0.3);">
+            🟢 안전 수준 (권장 퀀트 운용 | 청산 거리 &gt; 9.5%)
+          </div>
         </div>
+
+        <!-- Col 3: Margin & TP/SL Brackets -->
+        <div class="vibe-dock-col">
+          <div class="vibe-dock-col-title">
+            <span>3️⃣ 투입 증거금 &amp; 브래킷</span>
+            <span id="label-max-margin" style="color:#94a3b8; font-size:10px;">최대: $10,000.00</span>
+          </div>
+
+          <div>
+            <div style="margin-bottom:5px;">
+              <input type="number" class="vibe-input" id="input-order-margin" value="2000" min="10" step="10" style="padding:6px 10px; font-size:12px; width:100%; box-sizing:border-box;" oninput="VibeEngine.calculateOrderPreview()">
+            </div>
+            <div style="display:flex; gap:3px;">
+              <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:3px 2px; font-size:10px;" onclick="VibeEngine.setMarginPercent(0.10)">10%</button>
+              <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:3px 2px; font-size:10px;" onclick="VibeEngine.setMarginPercent(0.25)">25%</button>
+              <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:3px 2px; font-size:10px;" onclick="VibeEngine.setMarginPercent(0.50)">50%</button>
+              <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:3px 2px; font-size:10px;" onclick="VibeEngine.setMarginPercent(0.75)">75%</button>
+              <button class="vibe-btn-action" style="flex:1; justify-content:center; padding:3px 2px; font-size:10px;" onclick="VibeEngine.setMarginPercent(1.00)">MAX</button>
+            </div>
+          </div>
+
+          <!-- Bracket Orders (TP/SL) Mini Grid -->
+          <div class="vibe-bracket-grid" style="padding:6px; gap:6px; margin:0;">
+            <div class="vibe-bracket-box">
+              <div class="vibe-bracket-header">
+                <span style="color:var(--vibe-green-light); font-size:10px; white-space:nowrap;">🎯 익절 (TP %)</span>
+                <strong style="color:var(--vibe-green-light); font-size:10px;" id="label-tp-target">+2.0%</strong>
+              </div>
+              <input type="number" class="vibe-input" id="input-tp-pct" value="2.0" step="0.1" min="0.1" max="50" style="padding:4px 6px; font-size:11px;" oninput="VibeEngine.calculateOrderPreview()">
+              <span style="font-size:9px; color:#94a3b8; white-space:nowrap;" id="desc-tp-price">목표가: 계산 중...</span>
+            </div>
+
+            <div class="vibe-bracket-box">
+              <div class="vibe-bracket-header">
+                <span style="color:var(--vibe-red-light); font-size:10px; white-space:nowrap;">🚨 손절 (SL %)</span>
+                <strong style="color:var(--vibe-red-light); font-size:10px;" id="label-sl-target">-1.0%</strong>
+              </div>
+              <input type="number" class="vibe-input" id="input-sl-pct" value="1.0" step="0.1" min="0.1" max="25" style="padding:4px 6px; font-size:11px;" oninput="VibeEngine.calculateOrderPreview()">
+              <span style="font-size:9px; color:#94a3b8; white-space:nowrap;" id="desc-sl-price">손절가: 계산 중...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 4: Preview & Execution Button -->
+        <div class="vibe-dock-col" style="justify-content:space-between;">
+          <div class="vibe-dock-col-title">
+            <span>4️⃣ 주문 요약 &amp; 실행</span>
+            <span style="color:var(--vibe-green-light); font-size:10px;">READY</span>
+          </div>
+
+          <!-- Order Preview Metrics -->
+          <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:6px 10px; font-size:11px; display:flex; flex-direction:column; gap:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#94a3b8; white-space:nowrap;">포지션 규모:</span>
+              <strong style="color:#ffffff; white-space:nowrap;" id="preview-notional">$20,000.00</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#94a3b8; white-space:nowrap;">강제 청산가:</span>
+              <strong style="color:var(--vibe-red-light); white-space:nowrap;" id="preview-liq">$72,720.00 (-9.5%)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#94a3b8; white-space:nowrap;">손익비 (R:R):</span>
+              <strong style="color:#38bdf8; white-space:nowrap;" id="preview-rr">2.0 : 1 (우수)</strong>
+            </div>
+          </div>
+
+          <!-- Submit Order Button -->
+          <button class="vibe-exec-btn long-mode" id="btn-submit-order" onclick="VibeEngine.executeOrder()" style="margin:0; padding:12px; font-size:13px; line-height:1.35; text-align:center;">
+            🚀 BTC 10x 롱 포지션 진입 (주문 실행)
+          </button>
+        </div>
+
       </div>
 
-      <!-- Order Preview Metrics -->
-      <div style="background:#0a0e17; border:1px solid #1f2d47; border-radius:10px; padding:10px 12px; font-size:11px; display:flex; flex-direction:column; gap:5px;">
-        <div style="display:flex; justify-content:space-between;">
-          <span style="color:#94a3b8;">포지션 규모:</span>
-          <strong style="color:#ffffff;" id="preview-notional">$20,000.00</strong>
-        </div>
-        <div style="display:flex; justify-content:space-between;">
-          <span style="color:#94a3b8;">강제 청산가:</span>
-          <strong style="color:var(--vibe-red-light);" id="preview-liq">$72,720.00 (-9.5%)</strong>
-        </div>
-        <div style="display:flex; justify-content:space-between;">
-          <span style="color:#94a3b8;">손익비 (Risk-Reward):</span>
-          <strong style="color:#38bdf8;" id="preview-rr">2.0 : 1 (우수)</strong>
-        </div>
-      </div>
-
-      <!-- Submit Order Button -->
-      <button class="vibe-exec-btn long-mode" id="btn-submit-order" onclick="VibeEngine.executeOrder()">
-        🚀 BTC 10x 롱 포지션 진입 (주문 실행)
-      </button>
     </div>
 
   </div>
@@ -1707,6 +1804,8 @@ const VibeEngine = (function() {{
     document.getElementById('btn-type-market').classList.toggle('active', type === 'market');
     document.getElementById('btn-type-limit').classList.toggle('active', type === 'limit');
     document.getElementById('group-limit-price').style.display = type === 'limit' ? 'flex' : 'none';
+    const mktInfo = document.getElementById('group-market-info');
+    if (mktInfo) mktInfo.style.display = type === 'market' ? 'flex' : 'none';
     calculateOrderPreview();
   }}
 
@@ -2298,6 +2397,16 @@ const VibeEngine = (function() {{
 
   // Init
   function init() {{
+    try {{
+      // Expand Blogger theme wrapper for Widescreen Bloomberg View
+      const wrappers = document.querySelectorAll('.apex-main-wrapper, .apex-card.apex-post, .main.section, #Blog1');
+      wrappers.forEach(w => {{
+        w.style.setProperty('max-width', '1380px', 'important');
+        w.style.setProperty('width', '100%', 'important');
+        w.style.setProperty('box-sizing', 'border-box', 'important');
+      }});
+    }} catch(e) {{}}
+
     loadState();
     startClock();
     const nameInput = document.getElementById('input-trader-name');

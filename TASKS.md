@@ -129,3 +129,16 @@
 - [x] **Task 15.2**: Blogger Pages API(`deploy_vibe_station.py`) 원격 패치 배포 완료 (`https://blogin365ai.blogspot.com/p/vibe-trading.html`)
 - [x] **Task 15.3**: Playwright E2E 및 WCAG 2.1 AAA 명도비 감사 통과 (`tests.test_vibe_trading_station`, Exit Code 0, 결함 0건)
 - [x] **Task 15.4**: 풀스크린 캡처 증빙 및 사용자 보고 완료
+
+---
+
+### [Phase 16] 차트 100% 풀 와이드스크린 확장 & 차트 하단 가로형 주문 실행독(Order Dock) 전면 개편
+- [x] **Task 16.1**: `engine/fintech/vibe_trading_station.py` CSS/HTML 레이아웃 개편:
+  1. 차트를 기존 2/3 분할에서 100% 전폭(Full Width, 높이 560px) 와이드스크린으로 확장하여 시인성 극대화
+  2. 차트 우측에 있던 주문창을 차트 직하단 '가로형 체결독(Horizontal Order Dock)'으로 이동 배치
+  3. 내용 구성(1x~100x 레버리지, 교차/격리, 시장가/지정가, 증거금, TP/SL 브래킷, 주문요약, 체결버튼) 및 모든 DOM ID 100% 보존
+  4. 4컬럼 반응형 그리드 탑재 (데스크톱 4열, 태블릿 2열, 모바일 1열 스택)
+- [x] **Task 16.2**: Blogger Pages API 라이브 배포 (`engine/fintech/deploy_vibe_station.py`)
+- [x] **Task 16.3**: Playwright E2E 및 WCAG 2.1 AAA 명도비 검증 통과 (`tests.test_vibe_trading_station`, Exit Code 0)
+- [x] **Task 16.4**: 데스크톱(1280px, 1440px) 및 모바일(375px) 실측 스크린샷 캡처 및 레이아웃 검증 (가로형 4컬럼 독 완벽 렌더링 확인)
+- [x] **Task 16.5**: Git 커밋 및 원격 저장소(`origin main`) 푸시 후 사용자 완료 보고
