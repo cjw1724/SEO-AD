@@ -73,9 +73,19 @@
 
 ---
 
-### [Phase 9] 한국 표준시(KST) 100% 동기화 및 실시간 거래량(Volume) 펄스 엔진 장착
-- [x] **Task 9.1**: 바이낸스 글로벌 UTC 타임스탬프를 한국 표준시(KST UTC+9)로 변환하는 오프셋(`+ 9 * 3600`) 일괄 적용 (과거 500캔들 + 웹소켓 실시간 캔들)
-- [x] **Task 9.2**: `activeWs.onmessage`에 `volumeSeries.update(...)` 장착하여 실시간 틱마다 거래량 막대 동적 반응 구현 및 우측 Y축 가격 겹침 클린업
-- [x] **Task 9.3**: 차트 상단 HUD에 `거래량: <span id="chart-legend-vol">` 실시간 수치 표시 및 마우스 호버(Crosshair Move) 반응형 연동
-- [x] **Task 9.4**: 단위 테스트 및 라이브 포스트 2건에 즉시 Blogger API 라이브 패치 배포
-- [x] **Task 9.5**: Playwright E2E 검증 실행 (한국 시간 18:xx 표시 및 거래량 HUD 수치 확인) 및 실물 캡처 보고
+### [Phase 10] 기관급 보수적 퀀트 백테스팅 수학 엔진 전면 개편 (리얼리스틱 체결 & 수수료 반영 & 조작 의혹 영구 박멸)
+- [x] **Task 10.1**: 4대 치명적 계산 왜곡 요인(장중 저가 무시, 밴드 상단 스침 시 무조건 100% TP 인정, SL/TP 동시 발생 시 TP 우선 편향, 수수료 0% 무비용 가정) 분석 및 TASKS.md 수립
+- [x] **Task 10.2**: `engine/visuals/strategy_lab_renderer.py` 백테스팅 엔진 리팩토링 (Intra-bar High/Low 기반 체결, 최악 상황(SL 우선) 체결 원칙, 바이낸스 선물 왕복 수수료 0.10% + 슬리피지 0.02% 반영, 정밀 순수익 계산)
+- [x] **Task 10.3**: 단위 테스트 `tests/test_strategy_lab_renderer.py` 실행 및 통과 (Exit Code 0)
+- [x] **Task 10.4**: 라이브 포스트 2건(워뇨띠 1호, 슈퍼트렌드 2호)에 정통 퀀트 엔진 Blogger API 라이브 패치 배포
+- [x] **Task 10.5**: Playwright 헤드리스 검증으로 라이브 블로그에서 비현실적인 100% 승률 대신 정밀하고 현실적인 승률/손실 거래/PF/MDD 렌더링 확인 및 스크린샷 증빙
+- [x] **Task 10.6**: 사용자에게 계산 결함 원인 및 개선 결과 투명하게 최종 보고
+
+---
+
+### [Phase 11] 차트 위 실시간 손절선(SL)/익절선(TP) 시각화 & VIBE TRADING 모의투자 100% 자동매매 연동
+- [x] **Task 11.1**: `engine/visuals/strategy_lab_renderer.py`에 TradingView `createPriceLine` 기반 손절선(🔴 SL -0.5%), 익절선(🟢 TP +0.8%), 진입선(🟡 Entry) 실시간 수평 가격선 동적 렌더러 탑재
+- [x] **Task 11.2**: 실시간 모의투자 추종 엔진(`checkLivePaperTradeSignal`)에 롱/숏 양방향 진입 로직 및 VIBE TRADING 표준 스키마(`asset: BTC/USDT`, `margin`, `size`, `botSource`) 완전 결합
+- [x] **Task 11.3**: `engine/fintech/vibe_trading_station.py`에 전략 봇 자동 체결 포지션(`bot_`) 감지 및 UI 뱃지(`🤖 [AI 전략봇]`) 표시 지원
+- [x] **Task 11.4**: 단위 테스트 실행 및 라이브 블로그 포스트 2건 & Vibe Trading 독립 페이지 Blogger API 라이브 배포
+- [x] **Task 11.5**: Playwright E2E 검증 (차트 위 손절선 시각 표시 및 Vibe Trading 모의투자 자동매매 연동 실측 캡처) 및 사용자 보고

@@ -619,6 +619,7 @@ class StrategyLabRenderer:
     const tpPct = parseFloat(params.tp_percent) / 100.0;
     const slPct = parseFloat(params.sl_percent) / 100.0;
     const lev = parseFloat(params.leverage);
+    const feeRate = 0.0010; // Binance Futures 0.05% taker fee * 2 (roundtrip)
 
     const ind = computeIndicators(rawCandles, bbPeriod, bbStd);
 
@@ -699,14 +700,40 @@ class StrategyLabRenderer:
           }});
         }}
       }} else if (position === 'LONG') {{
-        // Exit check for LONG: Price rises by tpPct (Win) or falls by slPct (Loss)
-        const change = (c.close - entryPrice) / entryPrice;
-        const hitTp = change >= tpPct || c.high >= (ind.upper[i] || 999999);
-        const hitSl = change <= -slPct;
+        const tpPrice = entryPrice * (1 + tpPct);
+        const slPrice = entryPrice * (1 - slPct);
 
-        if (hitTp || hitSl) {{
-          const pnlPct = (hitTp ? tpPct : -slPct) * lev;
-          const tradePnl = (balance * 0.3) * pnlPct;
+        // 1. 봉 내부 최악 시나리오(SL 우선) 원칙: 저가가 손절가 터치 시 즉시 손절
+        const hitSl = c.low <= slPrice;
+        const hitTp = c.high >= tpPrice;
+        const hitBand = ind.upper[i] !== null && c.high >= ind.upper[i];
+
+        if (hitSl || hitTp || hitBand) {{
+          let exitPrice = c.close;
+          let rawPnl = 0;
+          let exitReason = 'TP';
+
+          if (hitSl) {{
+            // 손절가 터치 (보수적 최우선 손실 처리)
+            exitPrice = slPrice;
+            rawPnl = -slPct;
+            exitReason = 'SL';
+          }} else if (hitTp) {{
+            // 목표 익절가 돌파
+            exitPrice = tpPrice;
+            rawPnl = tpPct;
+            exitReason = 'TP';
+          }} else if (hitBand) {{
+            // 상단 볼린저 밴드 반전 실측가 청산
+            exitPrice = Math.min(c.high, ind.upper[i]);
+            rawPnl = (exitPrice - entryPrice) / entryPrice;
+            exitReason = 'BAND';
+          }}
+
+          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 정밀 순수익률
+          const netPnlPct = (rawPnl - feeRate) * lev;
+          const isWin = netPnlPct > 0;
+          const tradePnl = (balance * 0.3) * netPnlPct;
           balance += tradePnl;
           if (balance > peakBalance) peakBalance = balance;
           const dd = ((peakBalance - balance) / peakBalance) * 100;
@@ -715,29 +742,56 @@ class StrategyLabRenderer:
           trades.push({{
             side: 'LONG',
             entryPrice,
-            exitPrice: c.close,
-            pnlPct,
-            isWin: hitTp
+            exitPrice,
+            pnlPct: netPnlPct,
+            isWin,
+            reason: exitReason
           }});
 
           markers.push({{
             time: c.time,
             position: 'aboveBar',
-            color: hitTp ? '#38bdf8' : '#ef4444',
+            color: isWin ? '#38bdf8' : '#ef4444',
             shape: 'arrowDown',
-            text: hitTp ? `TP (롱) +${{(tpPct * 100 * lev).toFixed(1)}}%` : `SL (롱) -${{(slPct * 100 * lev).toFixed(1)}}%`
+            text: isWin ? `TP (롱) +${{(netPnlPct * 100).toFixed(1)}}%` : `SL (롱) ${{(netPnlPct * 100).toFixed(1)}}%`
           }});
           position = null;
         }}
       }} else if (position === 'SHORT') {{
-        // Exit check for SHORT: Price falls by tpPct (Win) or rises by slPct (Loss)
-        const change = (entryPrice - c.close) / entryPrice;
-        const hitTp = change >= tpPct || c.low <= (ind.lower[i] || 0);
-        const hitSl = change <= -slPct;
+        const tpPrice = entryPrice * (1 - tpPct);
+        const slPrice = entryPrice * (1 + slPct);
 
-        if (hitTp || hitSl) {{
-          const pnlPct = (hitTp ? tpPct : -slPct) * lev;
-          const tradePnl = (balance * 0.3) * pnlPct;
+        // 1. 봉 내부 최악 시나리오(SL 우선) 원칙: 고가가 손절가 터치 시 즉시 손절
+        const hitSl = c.high >= slPrice;
+        const hitTp = c.low <= tpPrice;
+        const hitBand = ind.lower[i] !== null && c.low <= ind.lower[i];
+
+        if (hitSl || hitTp || hitBand) {{
+          let exitPrice = c.close;
+          let rawPnl = 0;
+          let exitReason = 'TP';
+
+          if (hitSl) {{
+            // 손절가 터치 (보수적 최우선 손실 처리)
+            exitPrice = slPrice;
+            rawPnl = -slPct;
+            exitReason = 'SL';
+          }} else if (hitTp) {{
+            // 목표 익절가 돌파
+            exitPrice = tpPrice;
+            rawPnl = tpPct;
+            exitReason = 'TP';
+          }} else if (hitBand) {{
+            // 하단 볼린저 밴드 반전 실측가 청산
+            exitPrice = Math.max(c.low, ind.lower[i]);
+            rawPnl = (entryPrice - exitPrice) / entryPrice;
+            exitReason = 'BAND';
+          }}
+
+          // 바이낸스 선물 왕복 수수료(0.10%) 차감 후 정밀 순수익률
+          const netPnlPct = (rawPnl - feeRate) * lev;
+          const isWin = netPnlPct > 0;
+          const tradePnl = (balance * 0.3) * netPnlPct;
           balance += tradePnl;
           if (balance > peakBalance) peakBalance = balance;
           const dd = ((peakBalance - balance) / peakBalance) * 100;
@@ -746,17 +800,18 @@ class StrategyLabRenderer:
           trades.push({{
             side: 'SHORT',
             entryPrice,
-            exitPrice: c.close,
-            pnlPct,
-            isWin: hitTp
+            exitPrice,
+            pnlPct: netPnlPct,
+            isWin,
+            reason: exitReason
           }});
 
           markers.push({{
             time: c.time,
             position: 'belowBar',
-            color: hitTp ? '#38bdf8' : '#ef4444',
+            color: isWin ? '#38bdf8' : '#ef4444',
             shape: 'arrowUp',
-            text: hitTp ? `TP (숏) +${{(tpPct * 100 * lev).toFixed(1)}}%` : `SL (숏) -${{(slPct * 100 * lev).toFixed(1)}}%`
+            text: isWin ? `TP (숏) +${{(netPnlPct * 100).toFixed(1)}}%` : `SL (숏) ${{(netPnlPct * 100).toFixed(1)}}%`
           }});
           position = null;
         }}
@@ -764,6 +819,18 @@ class StrategyLabRenderer:
     }}
 
     candleSeries.setMarkers(markers);
+
+    // Render Visual Target Lines (Stop-Loss & Take-Profit)
+    if (position !== null) {{
+      // Currently open position at end of chart
+      renderTargetLines(position, entryPrice, tpPct, slPct, lev, true);
+    }} else if (trades.length > 0) {{
+      // Show target bracket of the latest trade
+      const lastT = trades[trades.length - 1];
+      renderTargetLines(lastT.side, lastT.entryPrice, tpPct, slPct, lev, false);
+    }} else {{
+      clearTargetLines();
+    }}
 
     // Compute KPIs
     const totalTrades = trades.length;
@@ -811,6 +878,57 @@ class StrategyLabRenderer:
       }}
       legendSignals.innerHTML = `▲ 롱 ${{longWins}}/${{longTrades.length}} · ▼ 숏 ${{shortWins}}/${{shortTrades.length}} (총 ${{totalTrades}})`;
     }}
+  }}
+
+  // Visual Target Lines (Stop-Loss & Take-Profit Horizontal Price Lines)
+  let activePriceLines = [];
+  function clearTargetLines() {{
+    if (!candleSeries) return;
+    activePriceLines.forEach(l => {{
+      try {{ candleSeries.removePriceLine(l); }} catch(e) {{}}
+    }});
+    activePriceLines = [];
+  }}
+
+  function renderTargetLines(side, entryPrice, tpPct, slPct, lev, isOpen) {{
+    clearTargetLines();
+    if (!candleSeries || !entryPrice) return;
+
+    const tpPrice = side === 'LONG' ? entryPrice * (1 + tpPct) : entryPrice * (1 - tpPct);
+    const slPrice = side === 'LONG' ? entryPrice * (1 - slPct) : entryPrice * (1 + slPct);
+
+    // 1. Entry Line (Yellow Dotted)
+    const entryLine = candleSeries.createPriceLine({{
+      price: entryPrice,
+      color: '#f59e0b',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dotted,
+      axisLabelVisible: true,
+      title: `${{side}} 진입: $${{entryPrice.toFixed(1)}}`
+    }});
+    activePriceLines.push(entryLine);
+
+    // 2. TP Line (Green Dashed)
+    const tpLine = candleSeries.createPriceLine({{
+      price: tpPrice,
+      color: '#10b981',
+      lineWidth: 2,
+      lineStyle: LightweightCharts.LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: `🟢 익절선 (TP +${{(tpPct * 100 * lev).toFixed(1)}}%): $${{tpPrice.toFixed(1)}}`
+    }});
+    activePriceLines.push(tpLine);
+
+    // 3. SL Line (Red Solid)
+    const slLine = candleSeries.createPriceLine({{
+      price: slPrice,
+      color: '#ef4444',
+      lineWidth: 2,
+      lineStyle: LightweightCharts.LineStyle.Solid,
+      axisLabelVisible: true,
+      title: `🚨 손절선 (SL -${{(slPct * 100 * lev).toFixed(1)}}%): $${{slPrice.toFixed(1)}}`
+    }});
+    activePriceLines.push(slLine);
   }}
 
   // 5. Binance Real-Time WebSocket Streaming
@@ -882,51 +1000,111 @@ class StrategyLabRenderer:
     const ind = computeIndicators(rawCandles, parseInt(params.bb_period), parseFloat(params.bb_std));
     const lastIdx = rawCandles.length - 1;
     const lowerVal = ind.lower[lastIdx];
+    const upperVal = ind.upper[lastIdx];
     const avgVol = ind.volSma[lastIdx];
     const rsiVal = ind.rsi[lastIdx] || 50;
 
+    const volMult = parseFloat(params.vol_mult);
+    const rsiTh = parseFloat(params.rsi_threshold);
+    const tpPct = parseFloat(params.tp_percent) / 100.0;
+    const slPct = parseFloat(params.sl_percent) / 100.0;
+    const lev = parseFloat(params.leverage);
+
     const isLowerTouch = candle.low <= lowerVal;
-    const isVolSurge = avgVol ? (candle.volume >= avgVol * parseFloat(params.vol_mult)) : true;
-    const isRsiOversold = rsiVal <= parseFloat(params.rsi_threshold);
+    const isUpperTouch = candle.high >= upperVal;
+    const isVolSurge = avgVol ? (candle.volume >= avgVol * volMult) : true;
+    const isRsiOversold = rsiVal <= rsiTh;
+    const isRsiOverbought = rsiVal >= (100 - rsiTh);
 
-    if (!currentPosition && isLowerTouch && isVolSurge && isRsiOversold) {{
-      // Enter Long Position
-      currentPosition = {{
-        type: 'LONG',
-        entryPrice: candle.close,
-        time: candle.time,
-        size: virtualBalance * 0.3 * parseFloat(params.leverage)
-      }};
-      livePosDesc.innerHTML = `<span style="color: #10b981; font-weight: 800;">LONG @ $${{candle.close.toFixed(1)}}</span> (진입가 도달! Vibe Trading 계좌 반영)`;
-      console.log('🤖 [AUTO-PAPER] Strategy Signal Triggered: LONG', currentPosition);
+    if (!currentPosition) {{
+      let enterSide = null;
+      if (isLowerTouch && isVolSurge && isRsiOversold) {{
+        enterSide = 'LONG';
+      }} else if (isUpperTouch && isVolSurge && isRsiOverbought) {{
+        enterSide = 'SHORT';
+      }}
 
-      // Sync to shared Vibe Trading Account State
-      try {{
-        let vibe = JSON.parse(localStorage.getItem('blogin_vibe_state')) || {{}};
-        if (!vibe.positions) vibe.positions = [];
-        vibe.positions.push({{
+      if (enterSide) {{
+        const margin = 3000.0; // $10k 가상자본금의 30% 격리 증거금
+        const coinSize = (margin * lev) / candle.close;
+        const tpPrice = enterSide === 'LONG' ? candle.close * (1 + tpPct) : candle.close * (1 - tpPct);
+        const slPrice = enterSide === 'LONG' ? candle.close * (1 - slPct) : candle.close * (1 + slPct);
+        const liqPrice = enterSide === 'LONG' ? candle.close * (1 - 0.9 / lev) : candle.close * (1 + 0.9 / lev);
+
+        currentPosition = {{
           id: 'bot_' + Date.now(),
-          symbol: SYMBOL,
-          side: 'LONG',
+          type: enterSide,
           entryPrice: candle.close,
-          size: currentPosition.size,
-          leverage: parseFloat(params.leverage),
-          timestamp: Date.now(),
-          botSource: STRATEGY_CONFIG.title
-        }});
-        localStorage.setItem('blogin_vibe_state', JSON.stringify(vibe));
-      }} catch(e) {{}}
-    }} else if (currentPosition) {{
-      const change = (candle.close - currentPosition.entryPrice) / currentPosition.entryPrice;
-      const tp = parseFloat(params.tp_percent) / 100.0;
-      const sl = parseFloat(params.sl_percent) / 100.0;
+          time: candle.time,
+          margin: margin,
+          size: coinSize,
+          tpPrice: tpPrice,
+          slPrice: slPrice,
+          leverage: lev
+        }};
 
-      if (change >= tp || change <= -sl) {{
-        const isWin = change >= tp;
-        const pnl = currentPosition.size * change;
-        virtualBalance += pnl;
-        livePosDesc.innerHTML = `청산 완료: <strong style="color: ${{isWin ? '#10b981' : '#ef4444'}};">${{isWin ? '익절 성공' : '손절 컷'}} (${{pnl >= 0 ? '+' : ''}}$${{pnl.toFixed(2)}})</strong>`;
+        renderTargetLines(enterSide, candle.close, tpPct, slPct, lev, true);
+
+        livePosDesc.innerHTML = `<span style="color: ${{enterSide === 'LONG' ? '#10b981' : '#f43f5e'}}; font-weight: 800;">${{enterSide}} @ $${{candle.close.toFixed(1)}}</span> (익절: $${{tpPrice.toFixed(0)}}, 손절: $${{slPrice.toFixed(0)}}) · Vibe Trading 자동체결 완료`;
+        console.log('🤖 [AUTO-PAPER] Strategy Signal Triggered:', enterSide, currentPosition);
+
+        // Sync to shared Vibe Trading Account State
+        try {{
+          let vibe = JSON.parse(localStorage.getItem('blogin_vibe_state')) || {{}};
+          if (!vibe.positions) vibe.positions = [];
+          // Remove previous bot positions
+          vibe.positions = vibe.positions.filter(p => !p.id || !p.id.startsWith('bot_'));
+          vibe.positions.push({{
+            id: currentPosition.id,
+            asset: 'BTC/USDT',
+            side: enterSide,
+            entryPrice: candle.close,
+            margin: margin,
+            size: coinSize,
+            leverage: lev,
+            liqPrice: liqPrice,
+            tpPrice: tpPrice,
+            slPrice: slPrice,
+            createdAt: new Date().toLocaleTimeString(),
+            botSource: STRATEGY_CONFIG.title
+          }});
+          localStorage.setItem('blogin_vibe_state', JSON.stringify(vibe));
+        }} catch(e) {{}}
+      }}
+    }} else if (currentPosition) {{
+      const enterSide = currentPosition.type;
+      const entryPrice = currentPosition.entryPrice;
+      const tpPrice = currentPosition.tpPrice;
+      const slPrice = currentPosition.slPrice;
+      const feeRate = 0.0010;
+
+      let hitSl = enterSide === 'LONG' ? candle.low <= slPrice : candle.high >= slPrice;
+      let hitTp = enterSide === 'LONG' ? candle.high >= tpPrice : candle.low <= tpPrice;
+
+      if (hitSl || hitTp) {{
+        let isWin = false;
+        let exitPrice = candle.close;
+        let rawPnl = 0;
+
+        if (hitSl) {{
+          exitPrice = slPrice;
+          rawPnl = -slPct;
+          isWin = false;
+        }} else if (hitTp) {{
+          exitPrice = tpPrice;
+          rawPnl = tpPct;
+          isWin = true;
+        }}
+
+        const netPnlPct = (rawPnl - feeRate) * currentPosition.leverage;
+        const pnlDollars = currentPosition.margin * netPnlPct;
+        virtualBalance += pnlDollars;
+
+        livePosDesc.innerHTML = `청산 완료: <strong style="color: ${{isWin ? '#10b981' : '#ef4444'}};">${{isWin ? '익절 성공' : '손절 컷'}} (${{pnlDollars >= 0 ? '+' : ''}}$${{pnlDollars.toFixed(2)}})</strong>`;
         currentPosition = null;
+
+        // Keep last bracket on chart
+        renderTargetLines(enterSide, entryPrice, tpPct, slPct, lev, false);
 
         // Update shared Vibe Trading Account Balance
         try {{
@@ -934,7 +1112,7 @@ class StrategyLabRenderer:
           if (vibe.positions) {{
             vibe.positions = vibe.positions.filter(p => !p.id || !p.id.startsWith('bot_'));
           }}
-          vibe.cash = (vibe.cash !== undefined ? vibe.cash : 10000.0) + pnl;
+          vibe.cash = (vibe.cash !== undefined ? vibe.cash : 10000.0) + pnlDollars;
           localStorage.setItem('blogin_vibe_state', JSON.stringify(vibe));
         }} catch(e) {{}}
       }}

@@ -1199,7 +1199,7 @@ const VibeEngine = (function() {
 
         rowsHtml += `<tr>
           <td>
-            <strong style="color:#ffffff;">${pos.asset}</strong>
+            <strong style="color:#ffffff;">${pos.asset}</strong>${pos.botSource ? '<span style="display:inline-block; margin-left:4px; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; background:rgba(56,189,248,0.2); color:#38bdf8;" title="' + pos.botSource + '">🤖 AI봇</span>' : ''}
             <span style="display:inline-block; margin-left:4px; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; background:${pos.side === 'LONG' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}; color:${sideColor};">${pos.leverage}x ${pos.side}</span>
           </td>
           <td>$${pos.entryPrice.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
