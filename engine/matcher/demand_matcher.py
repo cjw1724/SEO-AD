@@ -18,6 +18,7 @@ from engine.matcher.domain_router import (
     DOMAIN_CARDS_TRAVEL,
     DOMAIN_SAVINGS,
     DOMAIN_MEDICAL,
+    DOMAIN_HAIR_TRANSPLANT,
     DOMAIN_CAREER,
     DOMAIN_TECH
 )
@@ -145,6 +146,12 @@ def generate_sub_keywords(main_kw: str, category: str, sub_candidates: Optional[
             _combine_clean(base_stem, "해외 결제 캐시백 비교"),
             _combine_clean(base_stem, "실물 카드 발급 팁")
         ]
+    elif domain == DOMAIN_HAIR_TRANSPLANT:
+        fallback_pool = [
+            _combine_clean(base_stem, "비절개 절개 비용 실측 비교"),
+            _combine_clean(base_stem, "모수 모낭수 단가 계산법"),
+            _combine_clean(base_stem, "2주 생착 골든타임 주의사항")
+        ]
     elif domain == DOMAIN_MEDICAL:
         fallback_pool = [
             _combine_clean(base_stem, "비급여 실제 가격 비교"),
@@ -219,6 +226,12 @@ def generate_optimized_title(main_kw: str, category: str, subs: Optional[List[st
             f"{clean_main} 환전 수수료 비교 및 해외 결제 혜택 노하우",
             f"{clean_main} 혜택 비교와 최저 수수료 가입 팁 시뮬레이터",
             f"{clean_main} 수수료 면제 및 실물 카드 발급 가이드"
+        ]
+    elif domain == DOMAIN_HAIR_TRANSPLANT:
+        pool = [
+            f"{clean_main} 비용 비교 및 3000모 견적 숨은 함정 분석",
+            f"{clean_main} 비절개 절개 가격 차이와 2주 생착 가이드",
+            f"{clean_main} 실제 가격 및 모낭수 단가 계산 노하우"
         ]
     elif domain == DOMAIN_MEDICAL:
         pool = [
@@ -389,11 +402,30 @@ def match_trends_with_demand(trends: List[Dict[str, Any]], feedback_loop: Option
                 break
 
         if not matched_niche_key:
-            # 트렌드에서 상업성이 떨어지는 단순 인물/사건은 패스하고 황금 니치 대표 키워드 선택
-            matched_niche_key = random.choice(list(niches.keys()))
-            niche = niches.get(matched_niche_key, {})
-            kw = random.choice(niche.get("keywords", ["가성비 로봇청소기"]))
-            is_direct_match = False
+            if t.get("source") in ("topic_cluster_30day", "keyword_override") or t.get("category"):
+                # 토픽 클러스터 또는 직접 지정 키워드는 원본 키워드를 100% 보존
+                from engine.matcher.domain_router import classify_domain
+                dom = classify_domain(kw)
+                if dom == "HAIR_TRANSPLANT":
+                    matched_niche_key = "hair_transplant"
+                elif dom == "SUBSIDY":
+                    matched_niche_key = "government_subsidy"
+                elif dom in ("TELECOM", "SAVINGS", "CARDS_TRAVEL", "AUTO_INSURANCE"):
+                    matched_niche_key = "cashflow_hacks"
+                elif dom == "MEDICAL":
+                    matched_niche_key = "medical_wellness"
+                elif dom == "CAREER":
+                    matched_niche_key = "career_cert"
+                else:
+                    matched_niche_key = "tech_gadgets"
+                niche = niches.get(matched_niche_key, {})
+                is_direct_match = True
+            else:
+                # 트렌드에서 상업성이 떨어지는 단순 인물/사건은 패스하고 황금 니치 대표 키워드 선택
+                matched_niche_key = random.choice(list(niches.keys()))
+                niche = niches.get(matched_niche_key, {})
+                kw = random.choice(niche.get("keywords", ["가성비 로봇청소기"]))
+                is_direct_match = False
         else:
             niche = niches.get(matched_niche_key, {})
             is_direct_match = True

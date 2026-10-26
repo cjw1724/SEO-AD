@@ -24,7 +24,12 @@ if base_dir not in sys.path:
 
 load_dotenv(os.path.join(base_dir, "SEO.env"))
 
-from engine.agents.prompts_chat_pack import get_investigative_prompt, validate_anti_slop
+from engine.agents.prompts_chat_pack import (
+    get_investigative_prompt,
+    validate_anti_slop,
+    APEX_STAFF_PROMPTS,
+    get_staff_prompt
+)
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
@@ -35,6 +40,11 @@ class AgencyStack:
         self.endpoint = "https://openrouter.ai/api/v1/chat/completions"
         self.model = "google/gemini-2.5-flash"
         self.fallback_model = "google/gemini-2.5-flash-lite"
+        self.staff_prompts = APEX_STAFF_PROMPTS
+        self.chief_prompt = get_staff_prompt("01_ChiefOfStaff")
+        self.planner_prompt = get_staff_prompt("02_ProductPlanner")
+        self.researcher_prompt = get_staff_prompt("03_MarketResearcher")
+        self.qa_prompt = get_staff_prompt("06_QATester")
 
     def write_editorial_content(self, topic: dict) -> dict:
         """
@@ -69,6 +79,13 @@ class AgencyStack:
             domain_negative_prompt = """
 6. 도메인 엄수 절대 규칙 (통신비 전문 기사):
    - 본 기사는 통신비/알뜰폰 요금제 관련 기사입니다.
+"""
+        elif any(k in kw_lower_prompt for k in ["모발이식", "모발 이식", "모낭", "모수", "헤어라인", "m자 탈모", "정수리 탈모", "동반탈락", "3000모", "2000모"]):
+            domain_negative_prompt = """
+6. 도메인 엄수 절대 규칙 (모발이식 & 탈모 팩트체크 기사 - 철칙 2 엄수):
+   - 본 기사는 100% 모발이식/탈모 관련 전문 리포트입니다.
+   - 임플란트, 치과, 도수치료, 라식, 라섹, 스마일라식, 치아, 보철, 골이식, 알뜰폰, 유심, 자동차보험 등 타 분야의 단어는 단 1단어도 포함해서는 안 됩니다.
+   - 반드시 심평원 비급여 공시가(FUE 비절개 1모낭당 4,500원 vs FUT 절개 3,200원), 소득세법 제59조의4 의료비 세액공제 제외 팩트(미용 목적 불인정), ISHRS(국제모발이식학회) 2주 생착 수칙(스쿼트 등 고강도 무산소 운동 및 혈압 상승 금지), 동반탈락(암흑기) 주기 및 1~3년 탈모약(피나스테리드/두타스테리드) 유지비만 사실에 근거하여 작성하십시오.
 """
 
         live_facts_prompt = ""
@@ -242,6 +259,38 @@ class AgencyStack:
         kw_lower = keyword.lower()
         is_insurance = any(k in kw_lower for k in ["보험", "자동차보험", "운전자보험", "실비보험", "치아보험", "암보험"])
         is_telecom = any(k in kw_lower for k in ["알뜰폰", "요금제", "통신비", "유심", "esim", "0원 요금제", "통신사"])
+        is_hair = any(k in kw_lower for k in ["모발이식", "모발 이식", "모낭", "모수", "헤어라인", "m자 탈모", "정수리 탈모", "동반탈락", "3000모", "2000모"])
+
+        if is_hair:
+            # Strictly purge accidental dental/implant/chiropractic contamination (철칙 2 엄수)
+            forbidden_medical_terms = [
+                "임플란트", "치과", "도수치료", "라식", "라섹", "스마일라식", "치아",
+                "보철", "골이식", "틀니", "상악동", "치조골", "체외충격파", "도수 치료",
+                "알뜰폰", "유심", "자동차보험"
+            ]
+            def _clean_hair_str(text: str) -> str:
+                if not isinstance(text, str):
+                    return text
+                res = text
+                for bad_term in forbidden_medical_terms:
+                    res = res.replace(bad_term, "모발이식" if "치" in bad_term or "플란트" in bad_term else "")
+                return res
+
+            if "subtitle" in data and isinstance(data["subtitle"], str):
+                data["subtitle"] = _clean_hair_str(data["subtitle"])
+            if "takeaways" in data and isinstance(data["takeaways"], list):
+                data["takeaways"] = [_clean_hair_str(t) for t in data["takeaways"]]
+            if "comparison_table" in data and isinstance(data["comparison_table"], dict):
+                ct = data["comparison_table"]
+                if "title" in ct: ct["title"] = _clean_hair_str(ct["title"])
+                if "headers" in ct: ct["headers"] = [_clean_hair_str(h) for h in ct["headers"]]
+                if "rows" in ct: ct["rows"] = [[_clean_hair_str(cell) for cell in row] for row in ct["rows"]]
+            for s in data.get("sections", []):
+                s["heading"] = _clean_hair_str(s.get("heading", ""))
+                s["content"] = _clean_hair_str(s.get("content", ""))
+            for f in data.get("faq", []):
+                f["question"] = _clean_hair_str(f.get("question", ""))
+                f["answer"] = _clean_hair_str(f.get("answer", ""))
 
         if is_insurance and not is_telecom:
             # Purge accidental telecom hallucinations
@@ -315,8 +364,59 @@ class AgencyStack:
         kw_lower = clean_kw.lower()
         subtitle = f"{clean_kw} 공식 공시 데이터 및 실측 지표를 바탕으로 심층 분석한 리포트입니다."
 
+        # Hair Transplant & Hair Restoration (Strict domain isolation - 철칙 2 엄수)
+        if any(k in kw_lower for k in ["모발이식", "모발 이식", "모낭", "모수", "헤어라인", "m자 탈모", "정수리 탈모", "동반탈락", "3000모", "2000모", "4000모"]) or category in ["HAIR", "HAIR_TRANSPLANT"]:
+            takeaways = [
+                f"{clean_kw} 비절개(FUE) 3,000모 평균 650만~950만원(1모낭당 약 4,500원), 절개(FUT) 평균 480만~680만원 수준",
+                "수술비 외 1~3년 탈모약(피나스테리드/두타스테리드 연 28만원) 및 두피 관리 등 숨은 비용 120만~150만원 추가 발생",
+                "소득세법 제59조의4에 따라 미용 목적 모발이식은 세액공제 제외 팩트 및 ISHRS 기준 2주 생착 골든타임 고강도 운동 금지"
+            ]
+            comparison_table = {
+                "title": f"{clean_kw} 주요 수술 기법별 실측 견적 및 회복 조건 비교표",
+                "headers": ["비교 항목", "비절개 (FUE)", "절개 (FUT)", "무삭발 비절개"],
+                "rows": [
+                    ["1모낭당 평균 단가", "4,200원 ~ 5,500원", "2,800원 ~ 3,800원", "6,800원 ~ 9,000원"],
+                    ["3,000모 (약 1,400모낭) 견적", "600만 ~ 950만원", "450만 ~ 680만원", "950만 ~ 1,400만원"],
+                    ["후두부 흉터 형태", "미세 점상 흉터 (육안 비노출)", "가로 선상 흉터 (실밥 발사 필요)", "채취 흔적 전무 (완전 무삭발)"],
+                    ["사회 복귀 가능일", "수술 후 2~3일 내", "실밥 제거 후 10~14일", "수술 다음 날 즉시 복귀"],
+                    ["모낭 손상률 / 생착률", "집도의 숙련도별 90~95%", "스트립 분리 기준 92~96%", "최고 난이도 시술로 88~93%"]
+                ]
+            }
+            sections = [
+                {
+                    "heading": f"1. {sub1} 기법별 실측 단가 및 견적서 분석",
+                    "content": f"<p>{clean_kw} 진행 시 가장 큰 비용 편차는 모낭을 채취하는 수술 방식(FUE 비절개 vs FUT 절개)과 1모낭당 단가 책정에서 발생합니다. 심평원 비급여 공시 기준 {sub1} 내역을 대조하면 비절개 FUE는 1모낭당 4,200원~5,500원 선에 형성되어 있으며, 3,000모(약 1,400모낭) 이식 시 평균 650만~950만 원의 실부담금이 발생합니다.</p>"
+                },
+                {
+                    "heading": f"2. {sub2} 및 모수 vs 모낭수 단가 뻥튀기 감별",
+                    "content": f"<p>견적 상담 시 가장 주의해야 할 함정은 모수(모발 개수)와 모낭수(Graft)의 혼용입니다. 한국인은 1모낭당 평균 2.14개의 모발이 자라므로 3,000모는 약 1,400모낭에 불과합니다. {sub2} 기준을 적용할 때 병원이 3,000모를 3,000모낭 가격으로 둔갑시키지 않는지 '1모낭당 산정 공식'을 계약서에 명시해야 바가지 피해를 막을 수 있습니다.</p>"
+                },
+                {
+                    "heading": f"3. {sub3} 및 수술 후 2주차 스쿼트 운동 금지 수칙",
+                    "content": f"<p>ISHRS(국제모발이식학회) 가이드라인에 따르면 수술 후 14일은 모낭이 두피 혈관망에 안착하는 절대적 생착 골든타임입니다. {sub3} 지침상 벤치프레스나 스쿼트처럼 혈압을 급격히 높이는 고강도 무산소 헬스는 이식된 모낭이 튀어나오거나 모세혈관 파열을 부를 수 있으므로 최소 2주간 철저히 금지됩니다.</p>"
+                },
+                {
+                    "heading": "4. 숨은 유지비와 소득세법 제59조의4 세액공제 판례",
+                    "content": "<p>수술비 외에도 수술 후 최소 1~3년간 피나스테리드나 두타스테리드 탈모약을 꾸준히 복용해야 기존 모발의 탈락을 막을 수 있으며, 연간 약 28만~45만 원의 약값이 추가됩니다. 아울러 소득세법 제59조의4 제1항에 따라 미용 목적 모발이식은 의료비 세액공제(15%) 대상에서 원칙적으로 제외되므로 전액 본인 부담으로 자금을 계획해야 합니다.</p>"
+                }
+            ]
+            faq = [
+                {
+                    "question": f"{clean_kw} 수술 후 2주차인데 스쿼트나 헬스 운동을 해도 되나요?",
+                    "answer": "ISHRS(국제모발이식학회) 공식 가이드라인에 따르면 수술 후 14일은 모낭 생착의 결정적 골든타임입니다. 스쿼트처럼 복압과 두부 혈압을 급상승시키는 무산소 운동은 모낭 돌출 및 출혈을 유발할 수 있으므로 가벼운 산책 외 고강도 헬스는 최소 14일 이후로 미루셔야 합니다."
+                },
+                {
+                    "question": "모발이식 3000모와 3000모낭의 실제 비용 차이는 얼마나 나나요?",
+                    "answer": "1모낭(Graft)에서 평균 2~2.3개의 모발이 자라므로 3,000모는 약 1,300~1,450모낭입니다. 만약 병원에서 모수와 모낭수를 교묘히 섞어 3,000모를 3,000모낭 단가로 결제하게 할 경우 수백만 원의 비용 차이가 발생하므로 반드시 '모낭수 기준 견적'인지 확인해야 합니다."
+                },
+                {
+                    "question": "모발이식 비용은 연말정산 의료비 세액공제(소득세법 제59조의4)가 가능한가요?",
+                    "answer": "소득세법 제59조의4 및 국세청 판례에 따라 미용 목적의 탈모 치료 및 모발이식은 의료비 세액공제(15%) 대상에서 제외됩니다. 실손보험 역시 미용 목적 비급여 수술로 면책 처리되므로 전액 자부담 항목입니다."
+                }
+            ]
+
         # Medical & Dental (Implant, LASIK, etc.)
-        if any(k in kw_lower for k in ["임플란트", "치과", "치아", "라식", "라섹", "병원", "비급여"]) or category in ["MEDICAL", "CLINIC"]:
+        elif any(k in kw_lower for k in ["임플란트", "치과", "치아", "라식", "라섹", "병원", "비급여"]) or category in ["MEDICAL", "CLINIC"]:
             takeaways = [
                 f"{clean_kw} 국산 표준형 평균 100만~125만원, 외산 프리미엄 160만~210만원 수준",
                 "만 65세 이상 건강보험 적용 시 평생 2개까지 본인부담금 30%(약 38~42만원) 지원",

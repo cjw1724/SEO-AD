@@ -32,6 +32,16 @@ htmlcov/
 # ==========================================
 data/*.json
 !data/high_cpc_keywords.json
+!data/strategy_topics_queue.json
+!data/company_logs.json
+scratch/
+data/debug/
+data/video_render_queue/
+data/thumbnails/
+data/*.png
+data/*.jpg
+data/*.webp
+data/*.html
 
 # ==========================================
 # 💻 IDE & OS Specific Files

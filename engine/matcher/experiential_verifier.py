@@ -28,6 +28,7 @@ from engine.matcher.domain_router import (
     DOMAIN_CARDS_TRAVEL,
     DOMAIN_SAVINGS,
     DOMAIN_MEDICAL,
+    DOMAIN_HAIR_TRANSPLANT,
     DOMAIN_CAREER,
     DOMAIN_TECH
 )
@@ -203,6 +204,18 @@ class ExperientialVerifier:
             ]
             anecdote = "해외 현지 ATM 출금 시 'DCC(원화 결제)' 옵션을 잘못 눌러 이중 수수료가 나갈 뻔했습니다."
             subtle_tip = "현지 결제 시 반드시 '현지 통화(USD/EUR/JPY 등)'로 결제해야 수수료 이중 부과를 방지합니다."
+        elif domain == DOMAIN_HAIR_TRANSPLANT:
+            pros = [
+                "비절개 슬릿(Slit) 방식 적용 시 모낭 밀도가 촘촘하고 붉은 기가 3~4일 내에 가라앉음",
+                "후두부 안전 영역(Safe Donor Zone) 모낭만 정밀 채취하여 반영구적 지속성 확보",
+                "수술 2주 후 생착 골든타임 통과 시 모낭 탈락 위험 급감 및 일반 샴푸 가능"
+            ]
+            cons = [
+                "수술 후 1~3개월 사이 이식모의 70~80%가 일시 탈락하는 동반탈락(암흑기) 심리적 부담",
+                "수술비 외에 1~3년 탈모약(피나스테리드/두타스테리드) 복용 유지비가 연 20~40만 원 지속 발생"
+            ]
+            anecdote = "첫 상담 때 모수(모발 개수)와 모낭수(Graft) 단가 차이를 확인 안 해서 3,000모 견적 결제 시 150만원을 더 지불할 뻔했던 경험이 있습니다."
+            subtle_tip = "병원 상담 시 반드시 '1모낭당 단가'로 산정된 견적서인지, 수술 당일 대표원장이 전 과정을 직접 집도(슬릿 및 식립)하는지 서면 보증을 받아야 안전합니다."
         elif domain == DOMAIN_MEDICAL:
             pros = [
                 "건강보험심사평가원 비급여 진료비 진료항목 사전 조회로 병원 간 견적 차이 확인",

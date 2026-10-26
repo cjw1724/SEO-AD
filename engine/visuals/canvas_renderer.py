@@ -27,6 +27,9 @@ from engine.matcher.domain_router import (
     DOMAIN_CAREER,
     DOMAIN_TECH
 )
+from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
+
+UI_DESIGNER_PROMPT = get_staff_prompt("04_UIDesigner")
 
 if hasattr(sys.stdout, 'reconfigure'):
     try:

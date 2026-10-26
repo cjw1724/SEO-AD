@@ -46,6 +46,7 @@ from engine.company_runtime import CompanyLogger
 from engine.radar.community_sentiment_scout import CommunitySentimentScout
 from engine.matcher.experiential_verifier import ExperientialVerifier
 from engine.agents.human_voice_engine import HumanVoiceEngine
+from engine.matcher.topic_cluster_engine import TopicClusterEngine
 
 
 # ==============================================================================
@@ -202,6 +203,7 @@ class SequentialMediaPipeline:
         self.hook_maker = ViralHookMaker()
         self.distributor = MultiChannelDistributor()
         self.refresher = ContentRefresher()
+        self.cluster_engine = TopicClusterEngine()
         self.logger = logger or CompanyLogger()
 
     # --------------------------------------------------------------------------
@@ -209,14 +211,22 @@ class SequentialMediaPipeline:
     # --------------------------------------------------------------------------
     def execute_phase1_discovery(self, keyword_override: Optional[str] = None) -> Phase1_DiscoveryResult:
         if keyword_override:
-            trends = [{"keyword": keyword_override, "traffic_volume": 50000, "source": "keyword_override"}]
-            expanded_subs = self.scout.expand_autocomplete(keyword_override, limit=6)
+            target_kw = keyword_override
+            trends = [{"keyword": target_kw, "traffic_volume": 50000, "source": "keyword_override"}]
+            expanded_subs = self.scout.expand_autocomplete(target_kw, limit=6)
+            matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
         else:
-            trends = self.scout.fetch_live_trends(limit=10)
-            top_kw = trends[0]["keyword"] if trends else "2026 청년도약계좌"
-            expanded_subs = self.scout.expand_autocomplete(top_kw, limit=6)
+            # 30-Day Topic Cluster Sequential Progression (철칙 1)
+            cluster_node = self.cluster_engine.get_next_cluster_topic()
+            target_kw = cluster_node["keyword"]
+            trends = [{"keyword": target_kw, "traffic_volume": 50000, "source": "topic_cluster_30day"}]
+            expanded_subs = self.scout.expand_autocomplete(target_kw, limit=6)
+            matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
+            matched_topic["category"] = cluster_node.get("category", matched_topic.get("category", "HAIR"))
+            matched_topic["niche_name"] = cluster_node.get("cluster_name", "모발이식 & 탈모 팩트체크")
+            if "title" in cluster_node:
+                matched_topic["title"] = cluster_node["title"]
 
-        matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
         title = matched_topic.get("title", f"{matched_topic['keyword']} 실측 분석 및 모의 계산 가이드")
 
         # Humanization Phase 1: Community Sentiment & Experiential Factset
@@ -380,6 +390,12 @@ class SequentialMediaPipeline:
 
         # Instant Indexing Protocol (Pillar 1: Google Indexing API + IndexNow + Sitemap Ping)
         indexing_res = self.indexer.submit_all(post_url, dry_run=dry_run)
+
+        # Record publication to advance 30-Day Topic Cluster state
+        try:
+            self.cluster_engine.record_publication(phase1.keyword, post_id, post_url)
+        except Exception as e:
+            self.logger.warning(f"토픽 클러스터 이력 저장 오류: {e}")
 
         return Phase5_PublishResult(
             success=pub_success,

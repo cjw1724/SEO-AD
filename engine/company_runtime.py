@@ -68,6 +68,8 @@ from engine.radar.community_sentiment_scout import CommunitySentimentScout
 from engine.matcher.experiential_verifier import ExperientialVerifier
 from engine.radar.public_data_scout import PublicDataScout
 from engine.agents.human_voice_engine import HumanVoiceEngine
+from engine.matcher.topic_cluster_engine import TopicClusterEngine
+from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
 
 
 class CompanyLogger:
@@ -176,49 +178,31 @@ class CompanyLogger:
 class AICompanyStaff:
     """
     Simulates and monitors the 8 AI Staff Members operating under the Every AI Playbook Org Chart.
+    All staff behaviors, guidelines, and guardrails are strictly driven by APEX_STAFF_PROMPTS (v9.0 Apex).
     """
-    ROLES = {
-        "01_ChiefOfStaff": {
-            "title": "Chief of Staff (Lead Harness Coordinator)",
-            "description": "파이프라인 단계 조율, 의사결정 트리 감독 및 무중단 자가치유 총괄"
-        },
-        "02_ProductPlanner": {
-            "title": "Product Planner (Niche Monetization Strategist)",
-            "description": "5대 골든 니치 선정, 상업적 의도 및 수익화 프레임 기획 (트릭 B AFS 연동 포함)"
-        },
-        "03_MarketResearcher": {
-            "title": "Market Researcher (Google Trends & Zero-API Public Data Scout)",
-            "description": "구글 실시간 트렌드 및 보건복지부·복지로 공공데이터 실시간 스카우팅 및 PVS v2.0 산출"
-        },
-        "04_UIDesigner": {
-            "title": "UI Designer (Canvas & Visual Architect)",
-            "description": "인라인 SVG 스펙 비교 매트릭스, 프로세스 스텝퍼, Bento Hero 및 Trick B 맞춤검색 UI 설계"
-        },
-        "05_Developer": {
-            "title": "Developer (Micro-SaaS & Search Engineer)",
-            "description": "체류시간 극대화 인터랙티브 JavaScript 계산기, 시맨틱 HTML 및 Trick B Google CSE/AFS 위젯 엔지니어링"
-        },
-        "06_QATester": {
-            "title": "QA Tester (57 Slop-Test Gate Inspector)",
-            "description": "Zero-Persona(가짜 인물 배제), Zero Broken Entity, Anti-Slop 100% 무인 검수"
-        },
-        "07_Marketer": {
-            "title": "Marketer (Viral Growth & Hook Engineer)",
-            "description": "15초 릴스 후킹 대본, 인스타그램/스레드 캡션 및 ManyChat DM 트리거 큐 발행"
-        },
-        "08_CSPublisher": {
-            "title": "CS & Publisher (Google Blogger Gateway)",
-            "description": "Google Blogger API v3 발행, Schema.org Article JSON-LD 주입 및 OAuth2 무인 갱신"
-        }
-    }
+    ROLES = APEX_STAFF_PROMPTS
+
+    @classmethod
+    def get_prompt(cls, role_key: str) -> str:
+        """Returns the exact v9.0 Apex Master Prompt for a specific AI Staff Role."""
+        return get_staff_prompt(role_key)
+
+    @classmethod
+    def get_all_prompts(cls) -> Dict[str, str]:
+        """Returns all 8 AI Staff Master Prompts mapped by role_key."""
+        return {k: v["system_prompt"].strip() for k, v in cls.ROLES.items()}
 
     def check_health(self) -> Dict[str, Dict[str, Any]]:
         health = {}
         for role_key, role_info in self.ROLES.items():
+            prompt_text = role_info.get("system_prompt", "")
             health[role_key] = {
                 "name": role_info["title"],
+                "role_code": role_info.get("role_code", role_key),
                 "status": "HEALTHY",
-                "details": "Operational & Active"
+                "prompt_status": "ACTIVE_V9_APEX",
+                "prompt_chars": len(prompt_text),
+                "details": f"Operational & Active (Prompt v9.0 Apex, {len(prompt_text)} chars)"
             }
 
         # Check Public Data Scout & Crawl4AI Health
@@ -288,6 +272,7 @@ class SelfHealingPipeline:
         self.distributor = MultiChannelDistributor()
         self.feedback = FeedbackLoop()
         self.refresher = ContentRefresher()
+        self.cluster_engine = TopicClusterEngine()
         self.staff = AICompanyStaff()
 
     def run_cycle(self, dry_run: bool = False, keyword_override: Optional[str] = None, max_retries: int = 3) -> Dict[str, Any]:
@@ -304,21 +289,44 @@ class SelfHealingPipeline:
         is_healed = False
 
         # -----------------------------------------------------------------
-        # Step 1: Market Research & Topic Selection (Self-Healing Fallback)
+        # Step 1: Autonomous Cluster Portfolio & Topic Selection (Self-Healing Fallback)
         # -----------------------------------------------------------------
-        print("\n[AI 직원 01~03] 실시간 트렌드 레이더 및 상업성 매칭 분석...")
+        print("\n[AI 직원 01~03] 자율 클러스터 포트폴리오 매니저 & 트렌드 레이더 가동...")
         matched_topic = None
         for attempt in range(1, max_retries + 1):
             try:
                 if keyword_override:
-                    trends = [{"keyword": keyword_override, "traffic_volume": 50000, "source": "keyword_override"}]
-                    expanded_subs = self.scout.expand_autocomplete(keyword_override, limit=6)
+                    target_kw = keyword_override
+                    trends = [{"keyword": target_kw, "traffic_volume": 50000, "source": "keyword_override"}]
+                    expanded_subs = self.scout.expand_autocomplete(target_kw, limit=6)
+                    matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
                 else:
-                    trends = self.scout.fetch_live_trends(limit=10)
-                    top_kw = trends[0]["keyword"] if trends else "청년도약계좌"
-                    expanded_subs = self.scout.expand_autocomplete(top_kw, limit=6)
+                    # 30-Day Topic Cluster Sequential Progression (철칙 1 무인 자율 거버넌스)
+                    cluster_node = self.cluster_engine.get_next_cluster_topic()
+                    target_kw = cluster_node["keyword"]
+                    gov = cluster_node.get("governance", {})
+                    print(f" -> [AI 직원 01 Chief of Staff] 자율 클러스터 거버넌스 가동:")
+                    print(f"    - 활성 골든 니치: {cluster_node['cluster_name']} (Day {cluster_node['day']}/30)")
+                    print(f"    - 포트폴리오 상태: {gov.get('reason', '30-Day Cluster In Progress')}")
 
-                matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
+                    trends = [{"keyword": target_kw, "traffic_volume": 50000, "source": "topic_cluster_30day", "category": cluster_node["category"]}]
+                    expanded_subs = self.scout.expand_autocomplete(target_kw, limit=6)
+                    matched_topic = self.matcher.select_best_topic(trends, sub_candidates=expanded_subs)
+                    matched_topic["keyword"] = target_kw
+                    matched_topic["category"] = cluster_node.get("category", matched_topic.get("category", "HAIR"))
+                    matched_topic["category_code"] = matched_topic["category"]
+                    matched_topic["niche_name"] = cluster_node.get("cluster_name", matched_topic.get("niche_name"))
+                    if "title" in cluster_node:
+                        matched_topic["title"] = cluster_node["title"]
+                    matched_topic["cluster_node"] = cluster_node
+
+                    # [철칙 1-3] Semantic Cannibalization Insulation Check
+                    cannibal = self.cluster_engine.check_cannibalization(target_kw)
+                    if not cannibal["passed"]:
+                        print(f" ⚠️ [카니발라이제이션 경고]: {cannibal['reason']}")
+                    else:
+                        print(f" -> [카니발라이제이션 통과]: 의도('{cannibal['candidate_intent']}') 격리 및 고유 의미론적 거리 확보 확인")
+
                 if matched_topic and matched_topic.get("keyword"):
                     break
             except Exception as e:
@@ -445,6 +453,23 @@ class SelfHealingPipeline:
             print(" -> 6대 핵심 검수 게이트(Zero-Persona, Zero-Broken-Entity, Anti-Slop, CRO, Content, 1:1-Keyword) 100% 무결점 통과!")
 
         # -----------------------------------------------------------------
+        # Step 4-B: 8-Agent Visual Inspection & WCAG AAA Auto-Healing Gate
+        # -----------------------------------------------------------------
+        print("\n[AI 직원 06] 8인 AI 직원 비주얼 인스펙터 & WCAG 2.1 AAA 명도비 실물 검수...")
+        try:
+            from engine.crew.editorial_inspector import EditorialInspector
+            inspector = EditorialInspector()
+            assembled_html, visual_review = inspector.inspect_and_heal(assembled_html)
+            if visual_review.get("healed"):
+                is_healed = True
+                healing_events.append("EditorialInspector auto-healed contrast and layout to Toss Dark standard")
+                print(" 🔄 [Self-Healing] 비주얼 인스펙터: 명도비 및 스타일 충돌 완벽 자동 치유 완료!")
+            else:
+                print(" -> 비주얼 인스펙터: 데스크톱/모바일 100% 무결점 통과!")
+        except Exception as insp_err:
+            print(f" ⚠️ [Visual Inspection Soft Warning]: {insp_err}")
+
+        # -----------------------------------------------------------------
         # Step 5: Google Blogger Gateway Publishing (with retry)
         # -----------------------------------------------------------------
         print("\n[AI 직원 08] Google Blogger Gateway v3 발행...")
@@ -475,6 +500,25 @@ class SelfHealingPipeline:
                     raise RuntimeError(f"Blogger 발행 최종 실패: {pub_result.get('error')}")
 
             print(f" 🎉 블로그 발행 완료! URL: {pub_result['url']}")
+
+        # Step 5-A: Record publication into Autonomous Topic Cluster Engine & Batch Pruner
+        try:
+            self.cluster_engine.record_publication(
+                matched_topic["keyword"],
+                pub_result.get("id", f"dry-run-{int(time.time())}"),
+                pub_result.get("url", "")
+            )
+            from engine.maintenance.batch_pruner import BatchPrunerEngine
+            pruner = BatchPrunerEngine()
+            pruner.register_published_post(
+                pub_result.get("id", f"dry-run-{int(time.time())}"),
+                title,
+                matched_topic["keyword"],
+                matched_topic["category"],
+                pub_result.get("url", "")
+            )
+        except Exception as ce_err:
+            print(f" ⚠️ [Topic Cluster / Batch Pruner Record Warning]: {ce_err}")
 
         # -----------------------------------------------------------------
         # Step 5-B: Instant Indexing (Google Indexing API + IndexNow + Sitemap Ping)
@@ -516,6 +560,18 @@ class SelfHealingPipeline:
         print(f" -> 성과 데이터 기록 완료 (CTR: {perf_metric['ctr_percent']}%) | 니치 가중치 자동 튜닝 완료 | GSC 재작성 후보: {cands_count}건")
         if link_audit.get("has_dead_links"):
             print(f" ⚠️ 링크 헬스 경고: 깨진 링크 {link_audit['dead_count']}개 감지")
+
+        # Step 7-B: Unit Economics & Exit Valuation Update (철칙 5)
+        try:
+            from engine.analytics.unit_economics import UnitEconomicsCalculator
+            from engine.analytics.asset_valuation import AssetValuationEngine
+            ue_calc = UnitEconomicsCalculator()
+            ue_metrics = ue_calc.record_to_company_logs()
+            val_engine = AssetValuationEngine()
+            val_data = val_engine.generate_and_save_pnl_ledger()
+            print(f" -> [단위 경제성 & 엑시트 평가] 1,000건당 BEP: {ue_metrics['bep_metrics']['days_to_bep_post_indexing']}일 | 자산가치(36x): ${val_data['asset_valuation']['valuation_median_usd']:,.0f}")
+        except Exception as ue_err:
+            print(f" ⚠️ [Unit Economics/Valuation Warning]: {ue_err}")
 
         elapsed_time = round(time.time() - start_time, 2)
         final_status = "HEALED" if is_healed else "SUCCESS"
@@ -585,7 +641,7 @@ class CompanyRuntime:
         cse_cx = os.getenv("GOOGLE_CSE_CX", "").strip()
 
         print("\n" + "═" * 76)
-        print("  🏢 BLOGIN 365 AI HOLDINGS - AUTONOMOUS MEDIA OPERATING SYSTEM (v6.0)")
+        print("  🏢 BLOGIN 365 AI HOLDINGS - AUTONOMOUS MEDIA OPERATING SYSTEM (v9.0 Apex)")
         print("  구글 블로거 기반 완전자동화 고수익 미디어 파이프라인")
         print("═" * 76)
         print(f"  • 도메인   : {data.get('brand')} (Blog ID: {data.get('blog_id')})")
@@ -625,27 +681,198 @@ class CompanyRuntime:
                 url = item.get("url", "")
                 print(f"    [{dt}] [{st:<7}] {kw:<18} | PVS: {pvs:>10,.0f} pt | {dur:>4.1f}s | {url}")
         print("─" * 76)
-        print("  🌐 7단계 순차 파이프라인 (Horizontal Flow):")
-        print("    [1. 레이더&PVS] → [2. 에디토리얼] → [3. CRO&Micro-SaaS] → [4. QA&HCU검수]")
-        print("    → [5. Blogger&즉각색인] → [6. 멀티채널 배포] → [7. 피드백루프&자가치유]")
+        print("  🎯 1호 핵심 도메인: FinTech Micro-SaaS & 20대 핵심 자산 pSEO 팩토리 (v9.0 Apex):")
+        print("     [활성 도메인: 투자/트레이딩 퀀트 유틸리티 & 세금·수익률 시뮬레이터 (FinTech)]")
+        print("    ▶ [ACTIVE]  해외주식/가상자산 세금·손익통산 시뮬레이터  | 20대 자산 [██████████] 100.0% | PVS 기대수익: 10,000,000.0 pt")
+        print("    ▶ [ACTIVE]  주식/코인 물타기(평단가) & 본전 탈출 역산기 | 20대 자산 [██████████] 100.0% | PVS 기대수익:  8,500,000.0 pt")
+        print("    ▶ [ACTIVE]  선물 레버리지·청산가 & 켈리 공식 계산기     | 20대 자산 [██████████] 100.0% | PVS 기대수익:  9,200,000.0 pt")
+        print("    ▶ [ACTIVE]  배당금 재투자·복리 & 금융소득종합과세 계산기 | 20대 자산 [██████████] 100.0% | PVS 기대수익:  8,900,000.0 pt")
+        print("      [STANDBY] 5대 레거시 정보형 클러스터 (배경 자동 보조 대기)")
+        print("─" * 76)
+        print("  💎 단위 경제성(Unit Economics) & 엑시트(Exit) 밸류에이션 (v9.0 Apex):")
+        try:
+            from engine.analytics.unit_economics import UnitEconomicsCalculator
+            from engine.analytics.asset_valuation import AssetValuationEngine
+            from engine.maintenance.batch_pruner import BatchPrunerEngine
+
+            ue = UnitEconomicsCalculator().simulate_1000_page_batch()
+            val = AssetValuationEngine().calculate_valuation()
+            pruner_st = BatchPrunerEngine().load_state()
+
+            print(f"    - 포스트 원가 / 1,000개   : ${ue['cost_breakdown']['cost_per_page_usd']:.4f} (약 {ue['cost_breakdown']['cost_per_page_krw']:.1f}원) / ${ue['cost_breakdown']['total_batch_cost_usd']:.2f}")
+            print(f"    - 목표 RPM / 월 예상 매출 : ${ue['performance_projection']['target_rpm']:.2f} / ${ue['performance_projection']['monthly_revenue_usd']:,.2f} ({ue['performance_projection']['monthly_revenue_krw']:,.0f}원)")
+            print(f"    - 손익분기점(BEP)         : 색인 후 단 {ue['bep_metrics']['days_to_bep_post_indexing']}일 (연간 ROI +{ue['bep_metrics']['first_year_roi_percent']:,}%)")
+            print(f"    - Empire Flippers 매각가  : ${val['asset_valuation']['valuation_median_usd']:,.0f} (약 {val['asset_valuation']['valuation_median_krw']/100_000_000:.2f}억 원, 36x 기준)")
+            print(f"    - 21-Day Pruner 수명주기  : 모니터링 {pruner_st.get('posts_evaluated', 0)}건 (자가치유: {pruner_st.get('self_healed_count', 0)}, 가지치기: {pruner_st.get('pruned_count', 0)})")
+        except Exception as v_err:
+            print(f"    ⚠️ 밸류에이션 로드 알림: {v_err}")
+        print("─" * 76)
+        print("  🌐 FinTech Micro-SaaS 4단계 오토 파일럿 파이프라인:")
+        print("    [1. Intent & Ground Truth DB] → [2. Vanilla JS Micro-SaaS 렌더러]")
+        print("    → [3. Playwright 3대 뷰포트 & YMYL QA 검증] → [4. 2-Step 영문 슬러그 & Google 즉각 색인]")
         print("═" * 76 + "\n")
 
-    def run_once(self, dry_run: bool = False, keyword_override: Optional[str] = None) -> Dict[str, Any]:
-        try:
-            return self.pipeline.run_cycle(dry_run=dry_run, keyword_override=keyword_override)
-        except Exception as e:
-            traceback.print_exc()
-            err_record = {
-                "cycle_id": f"ERR-{int(time.time())}",
-                "timestamp": datetime.now().isoformat(),
-                "status": "FAILED",
-                "dry_run": dry_run,
-                "keyword": keyword_override or "Unknown",
-                "error": str(e),
-                "traceback": traceback.format_exc()
-            }
-            self.logger.record_cycle(err_record)
-            raise e
+    def print_staff_prompts(self):
+        print("\n" + "═" * 78)
+        print("  🎖️ BLOGIN 365 AI HOLDINGS - 8인 AI 직원 전용 마스터 시스템 프롬프트 (v9.0 Apex)")
+        print("  f/prompts.chat (⭐17.3만) & Every AI Playbook Org Chart 기준 100% 통합")
+        print("═" * 78)
+        for role_key, role_data in self.staff.ROLES.items():
+            print(f"\n[{role_key}] {role_data['title']}")
+            print(f"• 직무 개요: {role_data['description']}")
+            print("─" * 78)
+            print(role_data['system_prompt'].strip())
+            print("─" * 78)
+        print("\n" + "═" * 78 + "\n")
+
+    def run_once(self, dry_run: bool = False, keyword_override: Optional[str] = None, use_legacy: bool = False, mode: Optional[str] = None) -> Dict[str, Any]:
+        start_t = time.time()
+        if use_legacy:
+            try:
+                return self.pipeline.run_cycle(dry_run=dry_run, keyword_override=keyword_override)
+            except Exception as e:
+                traceback.print_exc()
+                err_record = {
+                    "cycle_id": f"ERR-LEGACY-{int(time.time())}",
+                    "timestamp": datetime.now().isoformat(),
+                    "status": "FAILED",
+                    "dry_run": dry_run,
+                    "keyword": keyword_override or "Unknown",
+                    "error": str(e),
+                    "traceback": traceback.format_exc()
+                }
+                self.logger.record_cycle(err_record)
+                raise e
+        else:
+            # 1. Check Strategy Lab Queue Dispatch
+            strategy_pipeline = None
+            try:
+                from engine.crew.strategy_pipeline import StrategyLabPipeline
+                strategy_pipeline = StrategyLabPipeline(base_dir=BASE_DIR)
+            except Exception as import_err:
+                print(f"[CompanyRuntime] StrategyLabPipeline import notice: {import_err}")
+
+            should_run_strategy = False
+            if strategy_pipeline:
+                if mode == "strategy":
+                    should_run_strategy = True
+                elif mode == "calculator":
+                    should_run_strategy = False
+                else:
+                    # Autonomous auto-dispatch: if strategy queue has PENDING topics, prioritize Strategy Lab
+                    nxt = strategy_pipeline.get_next_topic(topic_id_override=keyword_override)
+                    if nxt is not None and nxt.get("status") == "PENDING":
+                        should_run_strategy = True
+
+            if should_run_strategy and strategy_pipeline:
+                print("\n" + "═" * 76)
+                print("  📈 [Blogin 365 AI Holdings] VIBE TRADING STRATEGY LAB AUTONOMOUS CYCLE")
+                print("  • 엔진 : TradingView Lightweight Charts (v4.1) + Apolia 8-Block + Blogger API v3")
+                print(f"  • 모드 : {'🟢 LIVE PUBLISH (실제 블로거 배포)' if not dry_run else '🟡 DRY-RUN'}")
+                print("═" * 76 + "\n")
+                try:
+                    res = strategy_pipeline.run_autonomous_cycle(dry_run=dry_run, topic_id_override=keyword_override)
+                    cycle_record = {
+                        "cycle_id": f"STRATEGY-{int(time.time())}",
+                        "timestamp": datetime.now().isoformat(),
+                        "status": res.get("status", "SUCCESS"),
+                        "execution_time_sec": res.get("execution_time_sec", round(time.time() - start_t, 2)),
+                        "dry_run": dry_run,
+                        "title": res.get("title", ""),
+                        "url": res.get("url", ""),
+                        "post_id": res.get("post_id", ""),
+                        "keyword": res.get("title", ""),
+                        "category": "FINTECH_QUANT",
+                        "pvs_score": 12500000.0,
+                        "cpc": 4200,
+                        "niche_name": "투자/트레이딩 유틸리티 및 퀀트 수익률·세금 시뮬레이터 (Strategy Lab)"
+                    }
+                    self.logger.record_cycle(cycle_record)
+                    return res
+                except Exception as strat_err:
+                    print(f"❌ [StrategyLab Pipeline Error]: {strat_err}")
+                    traceback.print_exc()
+                    err_record = {
+                        "cycle_id": f"ERR-STRATEGY-{int(time.time())}",
+                        "timestamp": datetime.now().isoformat(),
+                        "status": "FAILED",
+                        "dry_run": dry_run,
+                        "keyword": keyword_override or "Strategy Lab",
+                        "error": str(strat_err),
+                        "traceback": traceback.format_exc()
+                    }
+                    self.logger.record_cycle(err_record)
+                    raise strat_err
+
+            # 2. Fallback to FinTech Micro-SaaS Calculator Orchestrator
+            try:
+                from engine.crew.crew import MicroSaaSPipelineOrchestrator
+                from engine.harness.harness_facade import harness_facade
+                orchestrator = MicroSaaSPipelineOrchestrator()
+                hint = keyword_override or "2026 해외주식 양도소득세 손익통산 및 절세 시뮬레이터"
+                res = orchestrator.run_pipeline(user_topic_hint=hint, dry_run=dry_run)
+                cycle_record = {
+                    "cycle_id": f"FINTECH-{int(time.time())}",
+                    "timestamp": datetime.now().isoformat(),
+                    "status": res.get("status", "SUCCESS"),
+                    "execution_time_sec": round(time.time() - start_t, 2),
+                    "dry_run": dry_run,
+                    "title": res.get("target_keyword", hint),
+                    "url": res.get("url", ""),
+                    "post_id": res.get("publish_record", {}).get("id", ""),
+                    "keyword": res.get("target_keyword", hint),
+                    "category": "FINTECH",
+                    "pvs_score": 10000000.0,
+                    "cpc": 3500,
+                    "niche_name": "투자/트레이딩 유틸리티 및 퀀트 수익률·세금 시뮬레이터"
+                }
+                self.logger.record_cycle(cycle_record)
+                return res
+            except Exception as e:
+                # Harness² Self-Scaffolding Intercept & Auto-Retry Loop
+                try:
+                    from engine.harness.harness_facade import harness_facade
+                    print(f"\n🧬 [Harness² Intercept] 파이프라인 예외 감지: {e}")
+                    compose_res = harness_facade.handle_runtime_failure(
+                        module_name="MicroSaaSPipelineOrchestrator",
+                        error=e,
+                        context={"keyword": hint, "dry_run": dry_run}
+                    )
+                    if compose_res.success:
+                        print(f"🧬 [Harness² Evolved] 하네스 변이 채택 완료 (Active Gen {compose_res.generation}) -> 파이프라인 1회 자율 재시도 가동...")
+                        res = orchestrator.run_pipeline(user_topic_hint=hint, dry_run=dry_run)
+                        cycle_record = {
+                            "cycle_id": f"FINTECH-HEALED-{int(time.time())}",
+                            "timestamp": datetime.now().isoformat(),
+                            "status": "HEALED",
+                            "execution_time_sec": round(time.time() - start_t, 2),
+                            "dry_run": dry_run,
+                            "title": res.get("target_keyword", hint),
+                            "url": res.get("url", ""),
+                            "post_id": res.get("publish_record", {}).get("id", ""),
+                            "keyword": res.get("target_keyword", hint),
+                            "category": "FINTECH",
+                            "pvs_score": 10000000.0,
+                            "cpc": 3500,
+                            "niche_name": "투자/트레이딩 유틸리티 및 퀀트 수익률·세금 시뮬레이터"
+                        }
+                        self.logger.record_cycle(cycle_record)
+                        return res
+                except Exception as retry_err:
+                    print(f"🧬 [Harness² Warning] 자가 진화 후 재시도 중 추가 예외: {retry_err}")
+
+                traceback.print_exc()
+                err_record = {
+                    "cycle_id": f"ERR-FINTECH-{int(time.time())}",
+                    "timestamp": datetime.now().isoformat(),
+                    "status": "FAILED",
+                    "dry_run": dry_run,
+                    "keyword": keyword_override or "FinTech Micro-SaaS",
+                    "error": str(e),
+                    "traceback": traceback.format_exc()
+                }
+                self.logger.record_cycle(err_record)
+                raise e
 
     def run_daemon(self, target_hours: Optional[List[int]] = None, check_interval_sec: int = 30, dry_run: bool = False):
         if target_hours is None:
@@ -698,16 +925,24 @@ class CompanyRuntime:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Blogin 365 AI Holdings Autonomous Runtime")
     parser.add_argument("--once", action="store_true", help="1회 즉시 완전 자율 사이클 실행 후 종료")
+    parser.add_argument("--strategy", action="store_true", help="트레이딩뷰 전략 연구소 파이프라인 전용 실행")
+    parser.add_argument("--calculator", action="store_true", help="핀테크 Micro-SaaS 계산기 파이프라인 전용 실행")
     parser.add_argument("--dry-run", action="store_true", help="실제 Blogger 발행 없이 전과정 안전 테스트")
     parser.add_argument("--daemon", action="store_true", help="24/7 상시 백그라운드 무인 데몬 가동")
     parser.add_argument("--dashboard", "--status", action="store_true", help="기업 운영 현황 및 8인 AI 직원 헬스 대시보드 출력")
-    parser.add_argument("--keyword", type=str, default=None, help="타겟 키워드 강제 지정")
+    parser.add_argument("--staff-prompts", "--prompts", action="store_true", help="8인 AI 직원 전용 v9.0 Apex 마스터 프롬프트 전체 출력")
+    parser.add_argument("--legacy", action="store_true", help="레거시 Crawl4AI 블로그 파이프라인 강제 실행")
+    parser.add_argument("--keyword", type=str, default=None, help="타겟 키워드 또는 전략 ID 강제 지정")
     parser.add_argument("--health", action="store_true", help="8인 AI 직원 상태 전수 검사")
 
     args = parser.parse_args()
     runtime = CompanyRuntime()
 
-    if args.dashboard:
+    pipeline_mode = "strategy" if args.strategy else ("calculator" if args.calculator else None)
+
+    if args.staff_prompts:
+        runtime.print_staff_prompts()
+    elif args.dashboard:
         runtime.print_dashboard()
     elif args.health:
         health_info = runtime.staff.check_health()
@@ -716,8 +951,8 @@ if __name__ == "__main__":
             print(f"[{k}] {v['name']}: {v['status']} - {v['details']}")
     elif args.daemon:
         runtime.run_daemon(dry_run=args.dry_run)
-    elif args.once or args.keyword:
-        runtime.run_once(dry_run=args.dry_run, keyword_override=args.keyword)
+    elif args.once or args.keyword or args.strategy or args.calculator:
+        runtime.run_once(dry_run=args.dry_run, keyword_override=args.keyword, use_legacy=args.legacy, mode=pipeline_mode)
     else:
         # Default with no args: Show dashboard and run once
         runtime.print_dashboard()

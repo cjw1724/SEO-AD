@@ -34,6 +34,9 @@ from engine.matcher.domain_router import (
 
 
 from engine.growth.money_printer_bridge import MoneyPrinterBridge
+from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
+
+MARKETER_PROMPT = get_staff_prompt("07_Marketer")
 
 
 class ViralHookMaker:
@@ -45,6 +48,8 @@ class ViralHookMaker:
         os.makedirs(self.output_dir, exist_ok=True)
         self.queue_file = os.path.join(self.output_dir, "viral_growth_queue.json")
         self.money_printer = MoneyPrinterBridge()
+        self.staff_prompt = MARKETER_PROMPT
+        self.role_info = APEX_STAFF_PROMPTS.get("07_Marketer", {})
 
     def generate_hooks(self, topic: dict, post_url: str = "", render_video: bool = True) -> dict:
         """

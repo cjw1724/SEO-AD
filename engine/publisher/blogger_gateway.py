@@ -17,8 +17,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
 
 SCOPES = ['https://www.googleapis.com/auth/blogger']
+CS_PUBLISHER_PROMPT = get_staff_prompt("08_CSPublisher")
 
 
 class BloggerGateway:
@@ -32,6 +34,8 @@ class BloggerGateway:
         self.blog_id = os.getenv("BLOGGER_BLOG_ID", "2002031376804677477")
         self.token_path = os.path.join(self.base_dir, "token.json")
         self.creds_path = os.path.join(self.base_dir, "credentials.json")
+        self.staff_prompt = CS_PUBLISHER_PROMPT
+        self.role_info = APEX_STAFF_PROMPTS.get("08_CSPublisher", {})
 
     def _get_authenticated_credentials(self, force_refresh: bool = False):
         creds = None
@@ -108,11 +112,22 @@ class BloggerGateway:
                 schema_tag = self.build_schema_markup(title, title, category)
                 final_content = f"{schema_tag}\n\n{html_content}"
 
+                # Sanitize labels: Blogger API rejects commas, newlines, and labels exceeding 40 chars
+                clean_labels = []
+                for lbl in (labels or ["정보", "실측분석", "Blogin365AI"]):
+                    if isinstance(lbl, str):
+                        s = lbl.replace(",", " ").replace("\n", " ").strip()
+                        if s and len(s) <= 40 and s not in clean_labels:
+                            clean_labels.append(s)
+                if not clean_labels:
+                    clean_labels = ["정보", "실측분석", "Blogin365AI"]
+
                 body = {
                     "kind": "blogger#post",
-                    "title": title,
+                    "blog": {"id": self.blog_id},
+                    "title": title.strip(),
                     "content": final_content,
-                    "labels": labels or ["정보", "실측분석", "Blogin365AI"]
+                    "labels": clean_labels[:10]
                 }
 
                 posts_resource = service.posts()

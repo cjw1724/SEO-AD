@@ -30,9 +30,13 @@ from engine.matcher.domain_router import (
     DOMAIN_CARDS_TRAVEL,
     DOMAIN_SAVINGS,
     DOMAIN_MEDICAL,
+    DOMAIN_HAIR_TRANSPLANT,
     DOMAIN_CAREER,
     DOMAIN_TECH
 )
+from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
+
+DEVELOPER_PROMPT = get_staff_prompt("05_Developer")
 
 if hasattr(sys.stdout, 'reconfigure'):
     try:
@@ -50,7 +54,7 @@ def _clean_keyword(keyword: str) -> str:
 def _render_savings_calc(clean_kw: str) -> str:
     """통신비 및 고정비 절감 시뮬레이터 (Omni Calculator Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -71,8 +75,8 @@ def _render_savings_calc(clean_kw: str) -> str:
         <button type="button" onclick="setSavingsPreset(110000, 33000)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">VIP 요금제 (11만 → 3.3만)</button>
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Current Bill -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -192,7 +196,7 @@ def _render_savings_calc(clean_kw: str) -> str:
 def _render_subsidy_calc(clean_kw: str) -> str:
     """정부 지원금 및 청년도약계좌/근로장려금 실수령액 모의계산기 (Omni Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -213,8 +217,8 @@ def _render_subsidy_calc(clean_kw: str) -> str:
         <button type="button" onclick="setSubsidyPreset(4800, 70)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">연 4,800만 이하 (기여금 3.7%)</button>
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Annual Income -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -340,7 +344,7 @@ def _render_subsidy_calc(clean_kw: str) -> str:
 def _render_tech_calc(clean_kw: str) -> str:
     """스마트 테크 및 가전 가성비 / 할부 체감비용 계산기 (Omni Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -361,8 +365,8 @@ def _render_tech_calc(clean_kw: str) -> str:
         <button type="button" onclick="setGadgetPreset(1200000, 36)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">올인원 로봇청소기 / 120만</button>
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Price -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -470,7 +474,7 @@ def _render_tech_calc(clean_kw: str) -> str:
 def _render_medical_calc(clean_kw: str) -> str:
     """비급여 의료비 및 실손보험 본인부담금 계산기 (Omni Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -494,8 +498,8 @@ def _render_medical_calc(clean_kw: str) -> str:
         ⚠️ <strong>면책 유의사항:</strong> 치과 비급여(임플란트·보철), 시력교정술(라식·라섹), 단순 미용 치료는 실손보험 표준약관상 보상 제외(면책) 항목입니다.
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Medical Expense -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -592,10 +596,203 @@ def _render_medical_calc(clean_kw: str) -> str:
     """
 
 
+def _render_hair_transplant_calc(clean_kw: str) -> str:
+    """
+    모발이식 실측 견적 & 1~3년 숨은 비용 시뮬레이터 (v8.0 Apex).
+    [철칙 3-6] 견적서에 없는 숨은 비용(수술비, 1~3년 약값, 교통비, 세액공제 한도액) 1원 단위 시뮬레이션.
+    """
+    return f"""
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:9999px; font-weight:800; letter-spacing:0.02em;">OMNI SIMULATOR</span>
+            <span style="font-size:0.75rem; background:#ecfdf5; color:#10b981; padding:3px 10px; border-radius:9999px; font-weight:800;">심평원 비급여 공시 & 법령 기준</span>
+          </div>
+          <h3 style="margin:0 0 6px 0; font-size:1.25rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">💇 {clean_kw} 견적서에 없는 1~3년 숨은 총비용 시뮬레이터</h3>
+          <p style="margin:0; font-size:0.88rem; color:#64748b; line-height:1.5;">수술 기법별 기본 수술비 외에 1~3년 약값, 마취비, 교통비 및 세액공제(소득세법 제59조의4) 유무를 1원 단위까지 정밀 산출합니다.</p>
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div style="margin-bottom:20px; padding:12px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
+        <span style="font-size:0.78rem; font-weight:700; color:#475569; margin-right:8px;">빠른 견적 프리셋:</span>
+        <button type="button" onclick="setHairPreset(3000, 'fue', 2, 'cosmetic')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">3,000모 비절개 FUE (2년 약값)</button>
+        <button type="button" onclick="setHairPreset(2000, 'fue', 1, 'cosmetic')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">2,000모 M자 초기 (1년 약값)</button>
+        <button type="button" onclick="setHairPreset(3000, 'fut', 2, 'cosmetic')" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">3,000모 절개 FUT (가성비)</button>
+      </div>
+
+      <div style="font-size:0.78rem; color:#1e3a8a; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; margin-bottom:16px;">
+        📌 <strong>모수 vs 모낭수 공식 기준:</strong> 한국인 평균 1모낭당 약 2.14개의 모발이 자랍니다. (예: 3,000모 이식 = 약 1,400모낭 환산)
+      </div>
+
+      <!-- Input Controls Grid: 2x2 완벽 대칭 균형 그리드 (빈 공간 0% 완전 제거) -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-bottom:20px;">
+        <!-- Control 1: Total Hairs -->
+        <div data-calc-card="true" style="background:#f8fafc; padding:18px 20px; border-radius:14px; border:1px solid #e2e8f0; display:flex; flex-direction:column; justify-content:space-between; min-height:124px; box-sizing:border-box;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label for="slider-hair-count" style="font-size:0.85rem; font-weight:700; color:#475569;">이식 모수 (Hair Count)</label>
+            <span style="font-size:1rem; font-weight:800; color:#0f172a;" id="disp-hair-count">3,000모 (약 1,400모낭)</span>
+          </div>
+          <input type="range" id="slider-hair-count" min="1000" max="5000" step="100" value="3000" style="width:100%; accent-color:#2563eb; cursor:pointer;" oninput="calcHairTransplant()" />
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#94a3b8; margin-top:4px;">
+            <span>1,000모 (밀도보강)</span>
+            <span>5,000모 (대량이식)</span>
+          </div>
+        </div>
+
+        <!-- Control 2: Technique -->
+        <div data-calc-card="true" style="background:#f8fafc; padding:18px 20px; border-radius:14px; border:1px solid #e2e8f0; display:flex; flex-direction:column; justify-content:space-between; min-height:124px; box-sizing:border-box;">
+          <label style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:8px;">수술 기법 (심평원 공시 기준)</label>
+          <select id="select-hair-method" onchange="calcHairTransplant()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:0.88rem; font-weight:700; color:#0f172a; background:#ffffff;">
+            <option value="fue" selected>비절개 (FUE) - 1모낭당 4,500원 (흉터 최소)</option>
+            <option value="fut">절개 (FUT) - 1모낭당 3,200원 (가성비 최우선)</option>
+            <option value="non_shaven">무삭발 비절개 - 1모낭당 7,200원 (티 안 남)</option>
+          </select>
+          <div style="font-size:0.72rem; color:#64748b; margin-top:4px;">대표원장 직접 집도 및 슬릿(Slit) 방식 기준 공시가</div>
+        </div>
+
+        <!-- Control 3: Medication Years -->
+        <div data-calc-card="true" style="background:#f8fafc; padding:18px 20px; border-radius:14px; border:1px solid #e2e8f0; display:flex; flex-direction:column; justify-content:space-between; min-height:124px; box-sizing:border-box;">
+          <label style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:8px;">탈모약 복용 유지 기간</label>
+          <select id="select-hair-years" onchange="calcHairTransplant()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:0.88rem; font-weight:700; color:#0f172a; background:#ffffff;">
+            <option value="1">1년 복용 (약값 연 28만원)</option>
+            <option value="2" selected>2년 복용 (약값 누적 56만원)</option>
+            <option value="3">3년 복용 (약값 누적 84만원)</option>
+          </select>
+          <div style="font-size:0.72rem; color:#64748b; margin-top:4px;">피나스테리드/두타스테리드 정품 처방 기준</div>
+        </div>
+
+        <!-- Control 4: Tax Deductible Status -->
+        <div data-calc-card="true" style="background:#f8fafc; padding:18px 20px; border-radius:14px; border:1px solid #e2e8f0; display:flex; flex-direction:column; justify-content:space-between; min-height:124px; box-sizing:border-box;">
+          <label style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:8px;">소득세법 제59조의4 세액공제</label>
+          <select id="select-hair-tax" onchange="calcHairTransplant()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:0.88rem; font-weight:700; color:#0f172a; background:#ffffff;">
+            <option value="cosmetic" selected>미용 목적 (세액공제 0원 제외 팩트)</option>
+            <option value="medical">외상·화상 재건 치료 (15% 세액공제 대상)</option>
+          </select>
+          <div style="font-size:0.72rem; color:#dc2626; margin-top:4px; font-weight:600;">국세청 홈택스 공식 유권해석 기준 적용</div>
+        </div>
+      </div>
+
+      <!-- Result Hero Card -->
+      <div style="background:#0f172a; padding:22px; border-radius:14px; color:#ffffff; margin-bottom:20px; box-shadow:0 8px 24px -4px rgba(15,23,42,0.25);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; flex-wrap:wrap; gap:6px;">
+          <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">견적서 밖 숨은 비용 포함 3개년 실부담 총액</span>
+          <span style="font-size:0.75rem; background:#1e293b; color:#38bdf8; padding:3px 8px; border-radius:6px; font-weight:700;" id="badge-hair-breakdown">수술비 + 2년 유지비 합산</span>
+        </div>
+        <div style="font-size:2rem; font-weight:800; color:#38bdf8; letter-spacing:-0.02em; margin:6px 0;" id="result-hair-total">7,060,000원 (1원 단위)</div>
+
+        <!-- Omni Visual Breakdown Bar -->
+        <div style="margin:16px 0 10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">
+            <span style="color:#60a5fa; font-weight:700;">기본 수술비 (<span id="txt-hair-surgery">6,300,000원</span>)</span>
+            <span style="color:#f59e0b; font-weight:700;">숨은 유지비·약값 (<span id="txt-hair-hidden">760,000원</span>)</span>
+          </div>
+          <div style="background:#334155; height:12px; border-radius:6px; overflow:hidden; display:flex; width:100%;">
+            <div id="bar-hair-surgery" style="background:#3b82f6; width:89%; height:100%; transition:width 0.2s ease;"></div>
+            <div id="bar-hair-hidden" style="background:#f59e0b; width:11%; height:100%; transition:width 0.2s ease;"></div>
+          </div>
+        </div>
+
+        <div style="font-size:0.82rem; color:#cbd5e1; margin-top:8px; line-height:1.5;" id="desc-hair-detail">
+          기본 수술비 6,300,000원 + 2년 약값 560,000원 + 마취·교통·관리비 200,000원 (미용 목적으로 세액공제 0원)
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:10px;">
+        <button type="button" id="btn-copy-hair" onclick="copyToolVal('result-hair-total', this)" style="flex:1; padding:13px 20px; background:#2563eb; color:#ffffff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:background 0.15s ease;">결과 복사하기</button>
+        <button type="button" onclick="resetHairTransplant()" style="padding:13px 22px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer;">공식 기준 초기화</button>
+      </div>
+
+      <!-- Real-Time CTA / CSE Dynamic Button -->
+      <a href="#article-search-nav" id="btn-calc-cta-hair" class="calc-dynamic-cta-btn" style="display:block; width:100%; margin-top:14px; padding:15px 20px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:1rem; text-align:center; text-decoration:none; border-radius:12px; box-shadow:0 4px 14px rgba(37,99,235,0.25); box-sizing:border-box; transition:transform 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">👉 계산된 3개년 총비용 상세 견적서 비교하기</a>
+    </div>
+
+    <script>
+    function calcHairTransplant() {{
+      const hairs = parseInt(document.getElementById('slider-hair-count').value);
+      const method = document.getElementById('select-hair-method').value;
+      const years = parseInt(document.getElementById('select-hair-years').value);
+      const taxType = document.getElementById('select-hair-tax').value;
+
+      const grafts = Math.round(hairs / 2.14);
+      document.getElementById('disp-hair-count').innerText = hairs.toLocaleString() + '모 (약 ' + grafts.toLocaleString() + '모낭)';
+
+      let unitPrice = 4500;
+      if (method === 'fut') unitPrice = 3200;
+      if (method === 'non_shaven') unitPrice = 7200;
+
+      const surgeryCost = grafts * unitPrice;
+      const medCost = years * 280000;
+      const hiddenMiscCost = 200000;
+
+      let taxDeduction = 0;
+      if (taxType === 'medical') {{
+        taxDeduction = Math.round((surgeryCost + medCost) * 0.15);
+      }}
+
+      const totalOutpocket = Math.max(0, surgeryCost + medCost + hiddenMiscCost - taxDeduction);
+
+      document.getElementById('result-hair-total').innerText = totalOutpocket.toLocaleString() + '원 (1원 단위)';
+      document.getElementById('txt-hair-surgery').innerText = surgeryCost.toLocaleString() + '원';
+      document.getElementById('txt-hair-hidden').innerText = (medCost + hiddenMiscCost - taxDeduction).toLocaleString() + '원';
+
+      const surgeryPct = Math.round((surgeryCost / Math.max(1, surgeryCost + medCost + hiddenMiscCost)) * 100);
+      const hiddenPct = 100 - surgeryPct;
+      document.getElementById('bar-hair-surgery').style.width = surgeryPct + '%';
+      document.getElementById('bar-hair-hidden').style.width = hiddenPct + '%';
+
+      let taxNote = taxType === 'medical' ? ' (외상 재건 15% 세액공제 -' + taxDeduction.toLocaleString() + '원 반영)' : ' (소득세법 제59조의4 미용 목적으로 세액공제 0원)';
+      document.getElementById('desc-hair-detail').innerText = '기본 수술비 ' + surgeryCost.toLocaleString() + '원 + ' + years + '년 약값 ' + medCost.toLocaleString() + '원 + 부대비용 ' + hiddenMiscCost.toLocaleString() + '원' + taxNote;
+
+      const ctaBtn = document.getElementById('btn-calc-cta-hair');
+      if (ctaBtn) {{
+        ctaBtn.innerText = '👉 계산된 ' + totalOutpocket.toLocaleString() + '원 총비용 견적서 비교하기';
+      }}
+    }}
+
+    function setHairPreset(hairs, method, years, taxType) {{
+      document.getElementById('slider-hair-count').value = hairs;
+      document.getElementById('select-hair-method').value = method;
+      document.getElementById('select-hair-years').value = years;
+      document.getElementById('select-hair-tax').value = taxType;
+      calcHairTransplant();
+    }}
+
+    function resetHairTransplant() {{
+      setHairPreset(3000, 'fue', 2, 'cosmetic');
+    }}
+
+    // Auto-eject any alien ad elements injected by theme scripts
+    function ejectCalcAliens() {{
+      var grid = document.querySelector('.b365-calc-input-grid');
+      if (grid) {{
+        Array.from(grid.children).forEach(function(c) {{
+          if ((c.id && c.id.indexOf('HTML') === 0) || c.classList.contains('widget') || (c.classList.contains('mb-4') && !c.hasAttribute('data-calc-card'))) {{
+            c.remove();
+          }}
+        }});
+      }}
+    }}
+    ejectCalcAliens();
+    var gridEl = document.querySelector('.b365-calc-input-grid');
+    if (gridEl) {{
+      var obs = new MutationObserver(function() {{ ejectCalcAliens(); }});
+      obs.observe(gridEl, {{ childList: true, subtree: false }});
+    }}
+    window.addEventListener('load', ejectCalcAliens);
+    setTimeout(ejectCalcAliens, 400);
+    setTimeout(ejectCalcAliens, 1200);
+    </script>
+    """
+
+
 def _render_career_calc(clean_kw: str) -> str:
     """직장인 국비지원(내일배움카드) 실부담금 & 연봉 ROI 계산기 (Omni Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -616,8 +813,8 @@ def _render_career_calc(clean_kw: str) -> str:
         <button type="button" onclick="setCareerPreset(850000, 70, 20)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">전기/산업안전기사 (70% 지원)</button>
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Course Tuition -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -874,7 +1071,7 @@ def render_cost_spec_comparison_table(clean_kw: str, category_code: str = "MEDIC
 def _render_auto_insurance_calc(clean_kw: str) -> str:
     """자동차보험 및 다이렉트 보험료 절감 & 특약 할인 시뮬레이터 (Omni Benchmark)"""
     return f"""
-    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:36px auto; max-width:760px; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
+    <div class="saas-calculator editorial-calculator-card" id="custom-saas-tool" style="margin:32px 0; width:100%; max-width:100%; padding:28px; background:#ffffff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 24px -4px rgba(15,23,42,0.06); box-sizing:border-box;">
       <!-- Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div>
@@ -895,8 +1092,8 @@ def _render_auto_insurance_calc(clean_kw: str) -> str:
         <button type="button" onclick="setAutoInsurancePreset(1350000, 35)" style="padding:4px 10px; font-size:0.75rem; font-weight:700; background:#ffffff; color:#334155; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; margin:2px;">대형 / SUV (연 135만 기준)</button>
       </div>
 
-      <!-- Input Controls Grid -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:22px;">
+      <!-- Input Controls Grid: 2-Column Balanced Grid -->
+      <div class="b365-calc-input-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:22px;">
         <!-- Control 1: Current Premium -->
         <div style="background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1125,7 +1322,11 @@ def get_calculator_by_category(category_code: str, keyword: str = "") -> str:
     if domain == DOMAIN_AUTO_INSURANCE:
         return _render_auto_insurance_calc(clean_kw)
 
-    # 2. MEDICAL / PROCEDURES / DENTAL
+    # 2. HAIR TRANSPLANT & HAIR RESTORATION (Dedicated Micro-SaaS)
+    if domain == DOMAIN_HAIR_TRANSPLANT or cat in ["HAIR", "HAIR_TRANSPLANT"]:
+        return _render_hair_transplant_calc(clean_kw)
+
+    # 3. MEDICAL / PROCEDURES / DENTAL
     if domain == DOMAIN_MEDICAL:
         procedure_keywords = ["임플란트", "라식", "라섹", "스마일라식", "치과", "치아", "보철", "성형", "백내장", "견적"]
         if any(k in clean_kw.lower() for k in procedure_keywords):

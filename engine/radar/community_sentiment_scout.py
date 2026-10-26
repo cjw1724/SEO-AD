@@ -27,6 +27,7 @@ from engine.matcher.domain_router import (
     DOMAIN_CARDS_TRAVEL,
     DOMAIN_SAVINGS,
     DOMAIN_MEDICAL,
+    DOMAIN_HAIR_TRANSPLANT,
     DOMAIN_CAREER,
     DOMAIN_TECH
 )
@@ -211,6 +212,24 @@ class CommunitySentimentScout:
                 ],
                 "colloquial_slang": ["환전 수수료 0원", "트래블카드", "DCC 차단", "현지 인출", "환테크"],
                 "debate_summary": "해외 여행 및 결제 시 전용 트래블 카드를 통한 수수료 100% 면제 활용이 필수라는 여론"
+            }
+        elif domain == DOMAIN_HAIR_TRANSPLANT:
+            vault = {
+                "sources": ["대다모 (국내 1위 탈모/모발이식 커뮤니티)", "디시인사이드 탈모 갤러리", "뽐뿌 뷰티/건강포럼", "유튜브 모발이식 집도의 채널 댓글"],
+                "raw_opinions": [
+                    "수술 2주차인데 스쿼트 쳐도 되나요? 혈압 올라서 생착 중인 모낭 튀어나올까 봐 운동 중독인데 안절부절못함",
+                    "터키 모발이식 갔다가 테크니션한테 당했습니다. 의사는 5분 보고 나가고 간호조무사들이 10시간 심어서 밀도 흉측하게 됨",
+                    "견적서에 3,000모라고 적혀있어서 3,000모낭인 줄 알았는데 알고 보니 1,400모낭이었음. 모수 vs 모낭수 뻥튀기 감별 필수임",
+                    "수술비 700에 끝나는 줄 알았는데 1년 동안 프로페시아 약값에 두피 스케일링까지 숨은 비용 150만원 더 들어감"
+                ],
+                "pain_points": [
+                    "수술 후 14일 생착 골든타임 중 고강도 운동(스쿼트, 헬스) 및 혈압 상승으로 인한 모낭 탈락 위험",
+                    "모수(Hair)와 모낭수(Graft) 단가 장난질 및 병원별 견적 편차",
+                    "수술 후 1~3개월 동반탈락(암흑기, Shock Loss) 공포와 ISHRS 가이드라인 대처법",
+                    "소득세법 제59조의4에 따른 의료비 세액공제 불인정(미용 목적) 및 실비보험 미적용 기준"
+                ],
+                "colloquial_slang": ["모낭 튀어나옴 방지", "모수 vs 모낭수", "2주 생착 골든타임", "동반탈락 암흑기", "터키 테크니션 주의", "프로페시아 유지비"],
+                "debate_summary": "가격만 보고 공장형이나 불법 테크니션 시술에 현혹되지 말고, 의사 직접 집도 여부와 2주 생착 관리, 1~3년 약값 숨은 비용까지 감안해야 한다는 여론 지배적"
             }
         elif domain == DOMAIN_MEDICAL:
             vault = self.COMMUNITY_SENTIMENT_VAULT["MEDICAL"]

@@ -16,8 +16,31 @@ DOMAIN_TELECOM = "TELECOM"
 DOMAIN_CARDS_TRAVEL = "CARDS_TRAVEL"
 DOMAIN_SAVINGS = "SAVINGS"
 DOMAIN_MEDICAL = "MEDICAL"
+DOMAIN_HAIR_TRANSPLANT = "HAIR_TRANSPLANT"
 DOMAIN_CAREER = "CAREER"
 DOMAIN_TECH = "TECH"
+
+
+# Domain strict negative anti-contamination dictionaries (철칙 2: 템플릿 오염 0건 강제)
+DOMAIN_FORBIDDEN_CONTAMINATION = {
+    DOMAIN_HAIR_TRANSPLANT: [
+        "임플란트", "치과", "도수치료", "골유착", "치조골 뼈이식", "상악동거상술",
+        "지르코니아", "라식", "라섹", "스마일라식", "치아", "보철", "골이식",
+        "틀니", "상악동", "치조골", "체외충격파", "도수 치료", "알뜰폰", "유심",
+        "esim", "통신비", "자동차보험", "운전자보험"
+    ],
+    DOMAIN_AUTO_INSURANCE: [
+        "알뜰폰", "유심", "esim", "통신비", "임플란트", "치과", "도수치료", "모발이식"
+    ],
+    DOMAIN_TELECOM: [
+        "자동차보험", "운전자보험", "임플란트", "치과", "도수치료", "모발이식"
+    ]
+}
+
+
+def get_domain_forbidden_words(domain: str) -> List[str]:
+    """Returns strictly prohibited cross-domain words for the given domain."""
+    return DOMAIN_FORBIDDEN_CONTAMINATION.get(domain, [])
 
 
 def classify_domain(keyword: str, category: str = "") -> str:
@@ -93,7 +116,18 @@ def classify_domain(keyword: str, category: str = "") -> str:
     if any(k in kw_lower for k in card_indicators):
         return DOMAIN_CARDS_TRAVEL
 
-    # 6. MEDICAL / DENTAL / PROCEDURES
+    # 6. HAIR TRANSPLANT & HAIR RESTORATION (Dedicated domain isolation - 철칙 2 엄수)
+    hair_indicators = [
+        "모발이식", "모발 이식", "모낭", "모수", "헤어라인", "헤어라인 교정",
+        "m자 탈모", "엠자 탈모", "정수리 탈모", "탈모약", "프로페시아", "아보다트",
+        "피나스테리드", "두타스테리드", "미녹시딜", "동반탈락", "암흑기", "대다모",
+        "비절개 모발이식", "절개 모발이식", "3000모", "2000모", "4000모", "모낭수",
+        "무삭발", "ishrs", "국제모발이식"
+    ]
+    if any(k in kw_lower for k in hair_indicators):
+        return DOMAIN_HAIR_TRANSPLANT
+
+    # 7. GENERAL MEDICAL / DENTAL / PROCEDURES
     procedure_indicators = [
         "임플란트", "라식", "라섹", "스마일라식", "치과", "치아",
         "보철", "비급여", "도수치료", "백내장", "피부과", "성형"
@@ -101,7 +135,7 @@ def classify_domain(keyword: str, category: str = "") -> str:
     if any(k in kw_lower for k in procedure_indicators) or cat_upper in ["MEDICAL", "CLINIC"]:
         return DOMAIN_MEDICAL
 
-    # 7. CAREER / EDUCATION
+    # 8. CAREER / EDUCATION
     career_indicators = [
         "내일배움카드", "국비지원", "직업훈련", "자격증", "손해평가사",
         "공인중개사", "전기기사", "데이터분석"
@@ -109,9 +143,9 @@ def classify_domain(keyword: str, category: str = "") -> str:
     if any(k in kw_lower for k in career_indicators) or cat_upper in ["CAREER", "EDUCATION", "CERT"]:
         return DOMAIN_CAREER
 
-    # 8. GENERAL SAVINGS / CASHFLOW (Fixed costs, non-telecom)
+    # 9. GENERAL SAVINGS / CASHFLOW (Fixed costs, non-telecom)
     if cat_upper in ["SAVINGS", "CASHFLOW"] or any(k in kw_lower for k in ["고정비", "생활비", "전기요금", "난방비", "도시가스", "통장 쪼개기", "가계부", "적금"]):
         return DOMAIN_SAVINGS
 
-    # 9. DEFAULT TO TECH
+    # 10. DEFAULT TO TECH
     return DOMAIN_TECH

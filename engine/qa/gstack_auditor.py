@@ -20,7 +20,11 @@ base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-from engine.agents.prompts_chat_pack import FORBIDDEN_SLOP_PHRASES
+from engine.agents.prompts_chat_pack import FORBIDDEN_SLOP_PHRASES, APEX_STAFF_PROMPTS, get_staff_prompt
+from engine.matcher.domain_router import classify_domain, get_domain_forbidden_words
+from engine.contracts.ground_truth_contract import ALLOWED_GENERIC_HOSPITALS
+
+QA_TESTER_PROMPT = get_staff_prompt("06_QATester")
 
 
 # Strict Persona Blacklist (To prevent legal risks and persona fabrication)
@@ -37,7 +41,8 @@ FORBIDDEN_ENTITIES = [
 
 class GStackAuditor:
     def __init__(self):
-        pass
+        self.staff_prompt = QA_TESTER_PROMPT
+        self.role_info = APEX_STAFF_PROMPTS.get("06_QATester", {})
 
     def audit_post(self, title: str, html_content: str, keyword_package: dict = None) -> dict:
         """
@@ -91,7 +96,7 @@ class GStackAuditor:
 
         # Gate 4: Essential UX/CRO Component Integrity
         missing_components = []
-        if "bento-hero" not in html_content:
+        if not any(k in html_content for k in ["bento-hero", "b365-key-takeaways-3line", "b365-hero-header"]):
             missing_components.append("Bento Hero Takeaway Card")
         calc_identifiers = ["saas-calculator", "calc-container", "editorial-calculator-card", "custom-saas-tool", "calc"]
         if not any(cid in html_content for cid in calc_identifiers):
@@ -247,6 +252,62 @@ class GStackAuditor:
                 "metrics": nat_eval["metrics"]
             })
 
+        # Gate 9: Strict Domain Isolation & Cross-Domain Anti-Contamination (철칙 2)
+        kw_for_domain = (keyword_package.get("main") if keyword_package else "") or title
+        domain = classify_domain(kw_for_domain)
+        domain_forbidden = get_domain_forbidden_words(domain)
+        contamination_found = [term for term in domain_forbidden if term in html_content]
+
+        if contamination_found:
+            errors.append(f"[GATE 9 FAIL] 타 도메인 템플릿 오염 감지 (도메인: {domain}): {contamination_found}")
+            gate_results.append({
+                "gate": "Gate 9 (Domain Isolation)",
+                "status": "FAIL",
+                "detail": f"Cross-domain contamination detected: {contamination_found}"
+            })
+        else:
+            gate_results.append({
+                "gate": "Gate 9 (Domain Isolation)",
+                "status": "PASS",
+                "detail": f"Domain '{domain}' 100% strictly isolated (0 contamination terms)"
+            })
+
+        # Gate 10: Information Gain & Ground Truth Metric Check (철칙 2, 4)
+        info_gain_eval = self.evaluate_information_gain(title, html_content, domain)
+        if not info_gain_eval["passed"]:
+            for err in info_gain_eval["errors"]:
+                errors.append(f"[GATE 10 FAIL] {err}")
+            gate_results.append({
+                "gate": "Gate 10 (Information Gain & Ground Truth)",
+                "status": "FAIL",
+                "detail": "; ".join(info_gain_eval["errors"]),
+                "metrics": info_gain_eval["metrics"]
+            })
+        else:
+            gate_results.append({
+                "gate": "Gate 10 (Information Gain & Ground Truth)",
+                "status": "PASS",
+                "detail": f"Information Gain: {info_gain_eval['score']}/100, Numerical/Stat density: {info_gain_eval['metrics']['numerical_density']:.1f}%, Ground Truth: {len(info_gain_eval['metrics']['ground_truth_found'])} sources",
+                "metrics": info_gain_eval["metrics"]
+            })
+
+        # Gate 10-B: Legal Compliance & De-identification (Patch 1: 화이트리스트 기반 오탐 방어)
+        legal_eval = self.evaluate_legal_deidentification(html_content)
+        if not legal_eval["passed"]:
+            for err in legal_eval["errors"]:
+                errors.append(f"[GATE 10-B FAIL] {err}")
+            gate_results.append({
+                "gate": "Gate 10-B (Legal De-identification)",
+                "status": "FAIL",
+                "detail": "; ".join(legal_eval["errors"])
+            })
+        else:
+            gate_results.append({
+                "gate": "Gate 10-B (Legal De-identification)",
+                "status": "PASS",
+                "detail": "의료법 제56조 준수 (실명 병원 0건, 화이트리스트 일반명사 정상 허용)"
+            })
+
         passed = len(errors) == 0
         return {
             "passed": passed,
@@ -255,7 +316,75 @@ class GStackAuditor:
             "hcu_score": hcu_eval.get("score", 85),
             "hcu_metrics": hcu_eval.get("metrics", {}),
             "naturalness_score": nat_eval.get("score", 85),
-            "naturalness_metrics": nat_eval.get("metrics", {})
+            "naturalness_metrics": nat_eval.get("metrics", {}),
+            "info_gain_score": info_gain_eval.get("score", 85),
+            "info_gain_metrics": info_gain_eval.get("metrics", {}),
+            "legal_deid_passed": legal_eval["passed"]
+        }
+
+    def evaluate_legal_deidentification(self, html_content: str) -> dict:
+        """
+        [Patch 1 적용] 의료법 제56조 준수 및 비식별화 검증:
+        - 특정 병원명 실명 미마스킹 노출 검사
+        - ALLOWED_GENERIC_HOSPITALS('대학병원', '동네의원', '해당병원' 등)는 화이트리스트로 통과
+        """
+        clean_text = re.sub(r'<[^>]+>', ' ', html_content)
+        unmasked = re.findall(r'([가-힣]{2,4}(?:성형외과|피부과|의원|병원))', clean_text)
+        violations = []
+        for c in unmasked:
+            if c in ALLOWED_GENERIC_HOSPITALS:
+                continue
+            if c.startswith("OO") or c.startswith("XX"):
+                continue
+            violations.append(c)
+
+        errors = []
+        if violations:
+            errors.append(f"의료법 위반 소지 병원명 미마스킹 발견: {violations}")
+
+        return {
+            "passed": len(errors) == 0,
+            "errors": errors,
+            "violations": violations
+        }
+
+    def evaluate_information_gain(self, title: str, html_content: str, domain: str = "") -> dict:
+        """
+        Evaluates Information Gain & Ground Truth Metric (Gate 10 - 철칙 2 & 철칙 4):
+        1. Numerical & factual unit density (KRW, %, years, months, units)
+        2. Authoritative statutes or standards citations (e.g. 심평원, 소득세법, ISHRS, 조세특례 등)
+        3. Exclusive data threshold >= 30%
+        """
+        clean_text = re.sub(r'<[^>]+>', ' ', html_content)
+        facts = re.findall(r'(\d+[\d,\.]*\s*(?:만원|원|%|일|개월|시간|점|배|세|건|명|위|모|모낭))', clean_text)
+        words = clean_text.split()
+        total_words = max(len(words), 1)
+        numerical_density = round((len(facts) / total_words) * 100, 2)
+
+        official_citations = [
+            "심평원", "건강보험심사평가원", "소득세법", "소득세법 제59조의4", "ISHRS", "국제모발이식학회",
+            "국세청", "홈택스", "조세특례제한법", "보건복지부", "금융위원회", "손해보험협회", "생명보험협회",
+            "고용노동부", "HRD-Net", "고용24", "서민금융진흥원", "정부24", "복지로"
+        ]
+        found_citations = [c for c in official_citations if c in html_content]
+
+        errors = []
+        if len(facts) < 4:
+            errors.append(f"독점 수치 데이터(Information Gain) 부족 ({len(facts)}개 < 4개)")
+
+        score = min(50, len(facts) * 3) + min(50, len(found_citations) * 15)
+        score = max(50, min(100, score))
+
+        passed = len(errors) == 0
+        return {
+            "passed": passed,
+            "score": score,
+            "errors": errors,
+            "metrics": {
+                "facts_count": len(facts),
+                "numerical_density": numerical_density,
+                "ground_truth_found": found_citations
+            }
         }
 
     def evaluate_human_naturalness(self, title: str, html_content: str) -> dict:
@@ -451,13 +580,19 @@ class GStackAuditor:
             kw = main_keyword.strip()
             occurrences = list(re.finditer(re.escape(kw), html_content))
             if len(occurrences) > 12:
+                # Find all heading spans to protect headings from being altered
+                heading_spans = [m.span() for m in re.finditer(r'<(?:h[1-6]|title|button|a)[^>]*>.*?</(?:h[1-6]|title|button|a)>', html_content, re.IGNORECASE | re.DOTALL)]
+
+                def is_protected(start, end):
+                    return any(hs <= start and end <= he for hs, he in heading_spans)
+
                 # Keep first 8 occurrences intact (Title, Lead, First sections, Calc)
-                # Replace every 2nd later occurrence with natural demonstratives
+                # Replace later occurrences in normal paragraph text only
                 parts = []
                 last_idx = 0
                 for idx, match in enumerate(occurrences):
                     parts.append(html_content[last_idx:match.start()])
-                    if idx >= 8 and (idx % 2 == 1):
+                    if idx >= 8 and (idx % 2 == 1) and not is_protected(match.start(), match.end()):
                         parts.append("해당 내용")
                     else:
                         parts.append(match.group(0))
