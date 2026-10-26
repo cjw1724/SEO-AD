@@ -220,6 +220,7 @@ class StrategyLabRenderer:
       <span id="chart-legend-price" style="color: #10b981; font-weight: 800;">Loading...</span>
       <span style="color: #94a3b8;">BB(20,2): <span id="chart-legend-bb" style="color: #38bdf8;">--</span></span>
       <span style="color: #94a3b8;">RSI: <span id="chart-legend-rsi" style="color: #c084fc;">--</span></span>
+      <span style="color: #94a3b8;">거래량: <span id="chart-legend-vol" style="color: #f8fafc; font-weight: 700;">--</span></span>
       <span style="color: #94a3b8;">시그널: <span id="chart-legend-signals" style="color: #10b981; font-weight: 700;">▲ 0 / ▼ 0</span></span>
     </div>
 
@@ -406,6 +407,7 @@ class StrategyLabRenderer:
   const legendBb = document.getElementById('chart-legend-bb');
   const legendRsi = document.getElementById('chart-legend-rsi');
   const legendSignals = document.getElementById('chart-legend-signals');
+  const legendVol = document.getElementById('chart-legend-vol');
 
   // Follow Toggle
   const toggleFollow = document.getElementById('toggle-follow-strategy');
@@ -447,11 +449,27 @@ class StrategyLabRenderer:
       }}
     }});
 
-    // Volume series (bottom pane)
+    // Volume series (bottom pane with isolated scale)
     volumeSeries = chart.addHistogramSeries({{
       priceFormat: {{ type: 'volume' }},
-      priceScaleId: '',
-      scaleMargins: {{ top: 0.8, bottom: 0 }}
+      priceScaleId: 'volume_overlay',
+    }});
+    chart.priceScale('volume_overlay').applyOptions({{
+      scaleMargins: {{ top: 0.82, bottom: 0 }},
+      visible: false
+    }});
+
+    // Crosshair move listener for live HUD inspection
+    chart.subscribeCrosshairMove(param => {{
+      if (!param || !param.time) return;
+      const c = param.seriesData.get(candleSeries);
+      const v = param.seriesData.get(volumeSeries);
+      if (c && c.close && legendPrice) {{
+        legendPrice.textContent = `$${{c.close.toLocaleString()}}`;
+      }}
+      if (v && v.value !== undefined && legendVol) {{
+        legendVol.textContent = v.value >= 1000 ? (v.value / 1000).toFixed(1) + 'k' : v.value.toFixed(1);
+      }}
     }});
 
     // Bollinger Band Lines
@@ -487,7 +505,7 @@ class StrategyLabRenderer:
       const data = await resp.json();
 
       rawCandles = data.map(item => ({{
-        time: Math.floor(item[0] / 1000),
+        time: Math.floor(item[0] / 1000) + (9 * 3600), // KST UTC+9 offset
         open: parseFloat(item[1]),
         high: parseFloat(item[2]),
         low: parseFloat(item[3]),
@@ -513,7 +531,7 @@ class StrategyLabRenderer:
   function generateFallbackCandles() {{
     rawCandles = [];
     let price = 67500.0;
-    const now = Math.floor(Date.now() / 1000) - 500 * 900;
+    const now = Math.floor(Date.now() / 1000) - 500 * 900 + (9 * 3600);
     for (let i = 0; i < 500; i++) {{
       const change = (Math.random() - 0.495) * 220;
       const open = price;
@@ -787,6 +805,10 @@ class StrategyLabRenderer:
       const lastRsi = ind.rsi[ind.rsi.length - 1] || 50;
       legendRsi.textContent = lastRsi.toFixed(1);
       legendBb.textContent = `$${{(ind.lower[ind.lower.length - 1] || 0).toFixed(0)}} ~ $${{(ind.upper[ind.upper.length - 1] || 0).toFixed(0)}}`;
+      if (legendVol) {{
+        const lastVol = last.volume || 0;
+        legendVol.textContent = lastVol >= 1000 ? (lastVol / 1000).toFixed(1) + 'k' : lastVol.toFixed(1);
+      }}
       legendSignals.innerHTML = `▲ 롱 ${{longWins}}/${{longTrades.length}} · ▼ 숏 ${{shortWins}}/${{shortTrades.length}} (총 ${{totalTrades}})`;
     }}
   }}
@@ -813,7 +835,7 @@ class StrategyLabRenderer:
       if (msg.e === 'kline') {{
         const k = msg.k;
         const candle = {{
-          time: Math.floor(k.t / 1000),
+          time: Math.floor(k.t / 1000) + (9 * 3600), // KST UTC+9 offset
           open: parseFloat(k.o),
           high: parseFloat(k.h),
           low: parseFloat(k.l),
@@ -831,7 +853,15 @@ class StrategyLabRenderer:
         }}
 
         candleSeries.update(candle);
+        volumeSeries.update({{
+          time: candle.time,
+          value: candle.volume,
+          color: candle.close >= candle.open ? 'rgba(16, 185, 129, 0.45)' : 'rgba(239, 68, 68, 0.45)'
+        }});
         legendPrice.textContent = `$${{candle.close.toLocaleString()}}`;
+        if (legendVol) {{
+          legendVol.textContent = candle.volume >= 1000 ? (candle.volume / 1000).toFixed(1) + 'k' : candle.volume.toFixed(1);
+        }}
 
         // Live Paper Trade evaluation on candle close
         if (isFollowing && k.x) {{

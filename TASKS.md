@@ -70,3 +70,12 @@
 - [x] **Task 8.3**: 단위 테스트 `tests/test_strategy_lab_renderer.py` 양방향 로직 검증 및 통과 (Exit Code 0)
 - [x] **Task 8.4**: 라이브 발행된 포스트 2건(워뇨띠 1호, 슈퍼트렌드 2호)에 새 양방향 롱/숏 엔진 즉시 Blogger API 라이브 패치 배포
 - [x] **Task 8.5**: Playwright E2E 시각 검증 실행하여 `SELL (숏)` 마커 및 양방향 시그널 렌더링 스크린샷 캡처 및 최종 완료 보고
+
+---
+
+### [Phase 9] 한국 표준시(KST) 100% 동기화 및 실시간 거래량(Volume) 펄스 엔진 장착
+- [x] **Task 9.1**: 바이낸스 글로벌 UTC 타임스탬프를 한국 표준시(KST UTC+9)로 변환하는 오프셋(`+ 9 * 3600`) 일괄 적용 (과거 500캔들 + 웹소켓 실시간 캔들)
+- [x] **Task 9.2**: `activeWs.onmessage`에 `volumeSeries.update(...)` 장착하여 실시간 틱마다 거래량 막대 동적 반응 구현 및 우측 Y축 가격 겹침 클린업
+- [x] **Task 9.3**: 차트 상단 HUD에 `거래량: <span id="chart-legend-vol">` 실시간 수치 표시 및 마우스 호버(Crosshair Move) 반응형 연동
+- [x] **Task 9.4**: 단위 테스트 및 라이브 포스트 2건에 즉시 Blogger API 라이브 패치 배포
+- [x] **Task 9.5**: Playwright E2E 검증 실행 (한국 시간 18:xx 표시 및 거래량 HUD 수치 확인) 및 실물 캡처 보고
