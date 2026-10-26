@@ -98,3 +98,11 @@
 - [x] **Task 12.3**: 단위 테스트 실행 및 통과 (Exit Code 0)
 - [x] **Task 12.4**: 라이브 블로그 포스트 2건에 Blogger API 라이브 패치 배포
 - [x] **Task 12.5**: Playwright E2E 검증 (`TP 0.0%` 부재 확인, 깔끔한 마커 렌더링, 트레이딩뷰 공식 위젯 전환 확인) 및 최종 보고
+
+---
+
+### [Phase 13] 타임프레임(1분봉/15분봉) 일관성 100% 동기화 & 하드코딩 슬롭 영구 박멸
+- [x] **Task 13.1**: `StrategyLabRenderer.render()`에서 4대 타임프레임 버튼 스타일(`btn_1m`, `btn_5m`, `btn_15m`, `btn_1h`)을 전략의 `interval`에 따라 동적 주입 및 설명문 텍스트(`{interval_kor}`) 동적 치환
+- [x] **Task 13.2**: TradingView 공식 프로 위젯 `interval` 매개변수를 전략 기준 타임프레임(`tvInterval`)으로 1:1 동기화
+- [x] **Task 13.3**: 단위 테스트 실행 및 라이브 블로그 포스트 2건 Blogger API 라이브 재배포
+- [x] **Task 13.4**: Playwright E2E 검증 (슈퍼트렌드 포스트에서 `1분봉` 버튼 활성화 및 설명문 100% 일치 실측 캡처) 및 사용자 보고

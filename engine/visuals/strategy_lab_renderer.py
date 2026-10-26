@@ -107,6 +107,16 @@ class StrategyLabRenderer:
         subtitle = cfg.get("subtitle", cls.DEFAULT_WONYOTTI_CONFIG["subtitle"])
         description = cfg.get("strategy_description", cls.DEFAULT_WONYOTTI_CONFIG["strategy_description"])
 
+        active_btn = "background: #2563eb; border: 1px solid #3b82f6; color: #ffffff;"
+        inactive_btn = "background: #1e293b; border: 1px solid #334155; color: #94a3b8;"
+
+        btn_1m_style = active_btn if interval == "1m" else inactive_btn
+        btn_5m_style = active_btn if interval == "5m" else inactive_btn
+        btn_15m_style = active_btn if interval == "15m" else inactive_btn
+        btn_1h_style = active_btn if interval == "1h" else inactive_btn
+
+        interval_kor = "1분봉" if interval == "1m" else ("5분봉" if interval == "5m" else ("15분봉" if interval == "15m" else "1시간봉"))
+
         html = f"""
 <!-- ============================================================================== -->
 <!-- 🏛️ Blogin 365 AI Holdings - Vibe Strategy Lab (TradingView Lightweight Engine) -->
@@ -128,12 +138,12 @@ class StrategyLabRenderer:
           바이낸스 실시간 시세 연동
         </span>
       </div>
-      <!-- Timeframe Switcher Tabs -->
+      <!-- Timeframe Switcher Tabs (Dynamically Styled by Strategy Interval) -->
       <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-        <button type="button" class="btn-tf" data-tf="1m" style="background: #1e293b; border: 1px solid #334155; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">1분봉</button>
-        <button type="button" class="btn-tf" data-tf="5m" style="background: #1e293b; border: 1px solid #334155; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">5분봉</button>
-        <button type="button" class="btn-tf" data-tf="15m" style="background: #2563eb; border: 1px solid #3b82f6; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">15분봉</button>
-        <button type="button" class="btn-tf" data-tf="1h" style="background: #1e293b; border: 1px solid #334155; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">1시간봉</button>
+        <button type="button" class="btn-tf" data-tf="1m" style="{btn_1m_style} font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">1분봉</button>
+        <button type="button" class="btn-tf" data-tf="5m" style="{btn_5m_style} font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">5분봉</button>
+        <button type="button" class="btn-tf" data-tf="15m" style="{btn_15m_style} font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">15분봉</button>
+        <button type="button" class="btn-tf" data-tf="1h" style="{btn_1h_style} font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; cursor: pointer;">1시간봉</button>
       </div>
       <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: #f8fafc; letter-spacing: -0.3px;">
         {title}
@@ -338,7 +348,7 @@ class StrategyLabRenderer:
         <strong style="color: #f8fafc; font-size: 14px;">이 전략으로 실시간 모의투자 추종 (Auto-Paper Trade)</strong>
       </div>
       <p style="margin: 0; font-size: 12px; color: #94a3b8;">
-        스위치를 켜면 바이낸스 실시간 웹소켓 15분봉이 마감될 때마다 해당 조건에서 자동으로 가상 포지션을 진입합니다.
+        스위치를 켜면 바이낸스 실시간 웹소켓 {interval_kor}이 마감될 때마다 해당 조건에서 자동으로 가상 포지션을 진입합니다.
       </p>
     </div>
 
@@ -1203,7 +1213,7 @@ class StrategyLabRenderer:
         tvOfficialWidget = new TradingView.widget({{
           autosize: true,
           symbol: 'BINANCE:' + SYMBOL,
-          interval: '1',
+          interval: (INTERVAL === '1m' ? '1' : (INTERVAL === '5m' ? '5' : (INTERVAL === '15m' ? '15' : (INTERVAL === '1h' ? '60' : '15')))),
           timezone: 'Asia/Seoul',
           theme: 'dark',
           style: '1',
