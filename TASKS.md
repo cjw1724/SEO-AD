@@ -54,10 +54,10 @@
 ---
 
 ### [Phase 7] GitHub Actions 100% 무료 클라우드 무인 자동화 구축 (PC 영구 종료 가능)
-- [ ] **Task 7.1**: `.gitignore` 업데이트 (`!data/strategy_topics_queue.json`, `!data/company_logs.json` 허용하여 상태 영구 지속성 확보)
-- [ ] **Task 7.2**: `requirements.txt` 최적화 정리 (Playwright, Google Auth, requests, pydantic 등 CI 런타임 패키지 명시)
-- [ ] **Task 7.3**: `scripts/bootstrap_ci_secrets.py` 구축 (CI 환경에서 GitHub Secrets로부터 `credentials.json`, `token.json`, `SEO.env` 무결점 복원)
-- [ ] **Task 7.4**: `.github/workflows/autonomous_publisher.yml` 워크플로우 제작 (Cron 09:00/15:00/21:00 KST + workflow_dispatch + Auto Commit/Push state)
-- [ ] **Task 7.5**: `scripts/export_github_secrets.py` 제작 (GitHub 저장소 `Settings -> Secrets`에 등록할 5대 비밀키 원클릭 출력 도구)
-- [ ] **Task 7.6**: CI 부트스트랩 및 로컬 시뮬레이션 무결점 검증 (Exit Code 0)
-- [ ] **Task 7.7**: Git 커밋 & 원격 저장소(`origin main`) 푸시 및 사용자 등록 가이드 제공
+- [x] **Task 7.1**: `.gitignore` 업데이트 (`!data/strategy_topics_queue.json`, `!data/company_logs.json` 허용하여 상태 영구 지속성 확보)
+- [x] **Task 7.2**: `requirements.txt` 최적화 정리 (Playwright, Google Auth, requests, pydantic 등 CI 런타임 패키지 명시)
+- [x] **Task 7.3**: `scripts/bootstrap_ci_secrets.py` 구축 (CI 환경에서 GitHub Secrets로부터 `credentials.json`, `token.json`, `SEO.env` 무결점 복원)
+- [x] **Task 7.4**: `.github/workflows/autonomous_publisher.yml` 워크플로우 제작 (Cron 09:00/15:00/21:00 KST + workflow_dispatch + Auto Commit/Push state)
+- [x] **Task 7.5**: `scripts/export_github_secrets.py` 제작 (GitHub 저장소 `Settings -> Secrets`에 등록할 5대 비밀키 원클릭 출력 도구)
+- [x] **Task 7.6**: CI 부트스트랩 및 로컬 시뮬레이션 무결점 검증 (Exit Code 0)
+- [x] **Task 7.7**: Git 커밋 & 원격 저장소(`origin main`) 푸시 및 사용자 등록 가이드 제공
