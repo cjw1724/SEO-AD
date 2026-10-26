@@ -61,3 +61,12 @@
 - [x] **Task 7.5**: `scripts/export_github_secrets.py` 제작 (GitHub 저장소 `Settings -> Secrets`에 등록할 5대 비밀키 원클릭 출력 도구)
 - [x] **Task 7.6**: CI 부트스트랩 및 로컬 시뮬레이션 무결점 검증 (Exit Code 0)
 - [x] **Task 7.7**: Git 커밋 & 원격 저장소(`origin main`) 푸시 및 사용자 등록 가이드 제공
+
+---
+
+### [Phase 8] 트레이딩뷰 롱/숏(Long & Short) 양방향 퀀트 엔진 전면 업그레이드 및 실시간 배포
+- [x] **Task 8.1**: `engine/visuals/strategy_lab_renderer.py`에 롱(BUY) 및 숏(SELL) 양방향 타점 탐지/청산 알고리즘 및 마커(`BUY (롱) @ $xxx`, `SELL (숏) @ $xxx`, `TP (롱)`, `TP (숏)`, `SL`) 완전 구현
+- [x] **Task 8.2**: 상단 HUD 범례(`▲ 롱 / ▼ 숏`) 및 4대 Bento KPI(롱/숏 통합 승률, 손익비, MDD) 동기화
+- [x] **Task 8.3**: 단위 테스트 `tests/test_strategy_lab_renderer.py` 양방향 로직 검증 및 통과 (Exit Code 0)
+- [x] **Task 8.4**: 라이브 발행된 포스트 2건(워뇨띠 1호, 슈퍼트렌드 2호)에 새 양방향 롱/숏 엔진 즉시 Blogger API 라이브 패치 배포
+- [x] **Task 8.5**: Playwright E2E 시각 검증 실행하여 `SELL (숏)` 마커 및 양방향 시그널 렌더링 스크린샷 캡처 및 최종 완료 보고

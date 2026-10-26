@@ -71,6 +71,11 @@ class TestStrategyLabRenderer(unittest.TestCase):
         self.assertIn('#111827', html)
         self.assertIn('#f8fafc', html)
 
+        # 8. Dual-Directional Long/Short Quantitative Engine
+        self.assertIn('BUY (롱)', html)
+        self.assertIn('SELL (숏)', html)
+        self.assertIn('TP (숏)', html)
+
     def test_custom_config_override(self):
         custom_cfg = {
             "strategy_id": "custom_eth_scalp",

@@ -629,9 +629,9 @@ class StrategyLabRenderer:
     middleBandSeries.setData(middleData);
     lowerBandSeries.setData(lowerData);
 
-    // Simulate Trades
+    // Simulate Trades (Dual-Directional: Long & Short)
     const markers = [];
-    let inTrade = false;
+    let position = null; // null | 'LONG' | 'SHORT'
     let entryPrice = 0;
     let entryTime = 0;
     let trades = [];
@@ -642,19 +642,23 @@ class StrategyLabRenderer:
     for (let i = bbPeriod; i < rawCandles.length; i++) {{
       const c = rawCandles[i];
       const prevC = rawCandles[i - 1];
+      const lowerVal = ind.lower[i];
+      const upperVal = ind.upper[i];
+      const avgVol = ind.volSma[i];
+      const rsiVal = ind.rsi[i] || 50;
+      const isVolSurge = avgVol ? (c.volume >= avgVol * volMult) : true;
 
-      if (!inTrade) {{
-        // Condition: Touch or drop below lower band + Volume surge + RSI oversold
-        const lowerVal = ind.lower[i];
-        const avgVol = ind.volSma[i];
-        const rsiVal = ind.rsi[i] || 50;
-
+      if (!position) {{
+        // LONG Condition: Lower band touch + Volume surge + RSI oversold
         const isLowerTouch = c.low <= lowerVal || prevC.low <= ind.lower[i - 1];
-        const isVolSurge = avgVol ? (c.volume >= avgVol * volMult) : true;
         const isRsiOversold = rsiVal <= rsiTh;
 
+        // SHORT Condition: Upper band touch + Volume surge + RSI overbought (100 - rsiTh)
+        const isUpperTouch = c.high >= upperVal || prevC.high >= ind.upper[i - 1];
+        const isRsiOverbought = rsiVal >= (100 - rsiTh);
+
         if (isLowerTouch && isVolSurge && isRsiOversold) {{
-          inTrade = true;
+          position = 'LONG';
           entryPrice = c.close;
           entryTime = c.time;
           markers.push({{
@@ -662,25 +666,36 @@ class StrategyLabRenderer:
             position: 'belowBar',
             color: '#10b981',
             shape: 'arrowUp',
-            text: `BUY @ $${{entryPrice.toFixed(0)}}`
+            text: `BUY (롱) @ $${{entryPrice.toFixed(0)}}`
+          }});
+        }} else if (isUpperTouch && isVolSurge && isRsiOverbought) {{
+          position = 'SHORT';
+          entryPrice = c.close;
+          entryTime = c.time;
+          markers.push({{
+            time: c.time,
+            position: 'aboveBar',
+            color: '#f43f5e',
+            shape: 'arrowDown',
+            text: `SELL (숏) @ $${{entryPrice.toFixed(0)}}`
           }});
         }}
-      }} else {{
-        // Exit check: Take Profit or Stop Loss
+      }} else if (position === 'LONG') {{
+        // Exit check for LONG: Price rises by tpPct (Win) or falls by slPct (Loss)
         const change = (c.close - entryPrice) / entryPrice;
         const hitTp = change >= tpPct || c.high >= (ind.upper[i] || 999999);
         const hitSl = change <= -slPct;
 
         if (hitTp || hitSl) {{
-          inTrade = false;
           const pnlPct = (hitTp ? tpPct : -slPct) * lev;
-          const tradePnl = (balance * 0.3) * pnlPct; // Risk 30% capital per trade
+          const tradePnl = (balance * 0.3) * pnlPct;
           balance += tradePnl;
           if (balance > peakBalance) peakBalance = balance;
           const dd = ((peakBalance - balance) / peakBalance) * 100;
           if (dd > maxDrawdown) maxDrawdown = dd;
 
           trades.push({{
+            side: 'LONG',
             entryPrice,
             exitPrice: c.close,
             pnlPct,
@@ -692,8 +707,40 @@ class StrategyLabRenderer:
             position: 'aboveBar',
             color: hitTp ? '#38bdf8' : '#ef4444',
             shape: 'arrowDown',
-            text: hitTp ? `TP +${{(tpPct * 100 * lev).toFixed(1)}}%` : `SL -${{(slPct * 100 * lev).toFixed(1)}}%`
+            text: hitTp ? `TP (롱) +${{(tpPct * 100 * lev).toFixed(1)}}%` : `SL (롱) -${{(slPct * 100 * lev).toFixed(1)}}%`
           }});
+          position = null;
+        }}
+      }} else if (position === 'SHORT') {{
+        // Exit check for SHORT: Price falls by tpPct (Win) or rises by slPct (Loss)
+        const change = (entryPrice - c.close) / entryPrice;
+        const hitTp = change >= tpPct || c.low <= (ind.lower[i] || 0);
+        const hitSl = change <= -slPct;
+
+        if (hitTp || hitSl) {{
+          const pnlPct = (hitTp ? tpPct : -slPct) * lev;
+          const tradePnl = (balance * 0.3) * pnlPct;
+          balance += tradePnl;
+          if (balance > peakBalance) peakBalance = balance;
+          const dd = ((peakBalance - balance) / peakBalance) * 100;
+          if (dd > maxDrawdown) maxDrawdown = dd;
+
+          trades.push({{
+            side: 'SHORT',
+            entryPrice,
+            exitPrice: c.close,
+            pnlPct,
+            isWin: hitTp
+          }});
+
+          markers.push({{
+            time: c.time,
+            position: 'belowBar',
+            color: hitTp ? '#38bdf8' : '#ef4444',
+            shape: 'arrowUp',
+            text: hitTp ? `TP (숏) +${{(tpPct * 100 * lev).toFixed(1)}}%` : `SL (숏) -${{(slPct * 100 * lev).toFixed(1)}}%`
+          }});
+          position = null;
         }}
       }}
     }}
@@ -705,6 +752,11 @@ class StrategyLabRenderer:
     const wins = trades.filter(t => t.isWin).length;
     const losses = totalTrades - wins;
     const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : '0.0';
+
+    const longTrades = trades.filter(t => t.side === 'LONG');
+    const shortTrades = trades.filter(t => t.side === 'SHORT');
+    const longWins = longTrades.filter(t => t.isWin).length;
+    const shortWins = shortTrades.filter(t => t.isWin).length;
 
     let totalGains = 0;
     let totalLosses = 0;
@@ -719,7 +771,7 @@ class StrategyLabRenderer:
     // Update DOM KPIs
     kpiWinrate.textContent = `${{winRate}}%`;
     kpiWinrate.style.color = parseFloat(winRate) >= 50 ? '#10b981' : '#f59e0b';
-    kpiTrades.textContent = `총 ${{totalTrades}}회 거래 (${{wins}}승 ${{losses}}패)`;
+    kpiTrades.innerHTML = `▲ 롱 ${{longWins}}/${{longTrades.length}} · ▼ 숏 ${{shortWins}}/${{shortTrades.length}} (총 ${{totalTrades}}회)`;
 
     kpiPf.textContent = profitFactor;
     kpiMdd.textContent = `-${{maxDrawdown.toFixed(1)}}%`;
@@ -735,7 +787,7 @@ class StrategyLabRenderer:
       const lastRsi = ind.rsi[ind.rsi.length - 1] || 50;
       legendRsi.textContent = lastRsi.toFixed(1);
       legendBb.textContent = `$${{(ind.lower[ind.lower.length - 1] || 0).toFixed(0)}} ~ $${{(ind.upper[ind.upper.length - 1] || 0).toFixed(0)}}`;
-      legendSignals.innerHTML = `▲ ${{wins}} / ▼ ${{losses}} (총 ${{totalTrades}})`;
+      legendSignals.innerHTML = `▲ 롱 ${{longWins}}/${{longTrades.length}} · ▼ 숏 ${{shortWins}}/${{shortTrades.length}} (총 ${{totalTrades}})`;
     }}
   }}
 
