@@ -29,6 +29,7 @@ from engine.matcher.topic_clusters import (
     MEDICAL_WELLNESS_CLUSTER,
     CAREER_CERT_CLUSTER
 )
+from engine.matcher.universal_topic_engine import UniversalTopicEngine, resolve_canonical_pillar
 from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
 from engine.matcher.semantic_cannibalization_engine import LocalSemanticVectorizer
 
@@ -257,6 +258,7 @@ class TopicClusterEngine:
 
     def __init__(self, state_file: str = STATE_FILE_PATH):
         self.portfolio_mgr = AutonomousClusterPortfolioManager(state_file=state_file)
+        self.universal_engine = UniversalTopicEngine(state_path=state_file)
         self.chief_prompt = CHIEF_OF_STAFF_PROMPT
         self.planner_prompt = PRODUCT_PLANNER_PROMPT
         self.semantic_vectorizer = LocalSemanticVectorizer()
@@ -268,12 +270,19 @@ class TopicClusterEngine:
         self.portfolio_mgr.save_state(state)
 
     def get_cluster(self, cluster_id: str = "hair_transplant") -> Dict[str, Any]:
-        return ALL_CLUSTERS.get(cluster_id, HAIR_TRANSPLANT_CLUSTER)
+        if cluster_id in ALL_CLUSTERS:
+            return ALL_CLUSTERS[cluster_id]
+        if hasattr(self, 'universal_engine'):
+            return self.universal_engine.get_cluster(cluster_id)
+        return HAIR_TRANSPLANT_CLUSTER
 
     def resolve_cluster_id_from_category(self, category: str, keyword: str = "") -> str:
         cat_upper = category.upper() if category else ""
         if cat_upper in CATEGORY_TO_CLUSTER_MAP:
             return CATEGORY_TO_CLUSTER_MAP[cat_upper]
+
+        if hasattr(self, 'universal_engine'):
+            return self.universal_engine.resolve_cluster_id(category, keyword)
 
         kw_clean = keyword.lower()
         if "모발" in kw_clean or "탈모" in kw_clean or "이식" in kw_clean:

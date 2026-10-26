@@ -4,14 +4,14 @@
   "blog_id": "2002031376804677477",
   "system_version": "v6.0-autonomous",
   "created_at": "2026-10-11T15:54:19.277025",
-  "last_heartbeat": "2026-10-26T21:00:29.007382",
+  "last_heartbeat": "2026-10-27T00:48:38.585575",
   "metrics": {
-    "total_cycles_run": 382,
-    "successful_cycles": 357,
-    "failed_cycles": 25,
-    "healed_cycles": 23,
-    "success_rate_percent": 93.5,
-    "cumulative_pvs_score": 9543721058.75,
+    "total_cycles_run": 384,
+    "successful_cycles": 358,
+    "failed_cycles": 26,
+    "healed_cycles": 24,
+    "success_rate_percent": 93.2,
+    "cumulative_pvs_score": 9606720433.75,
     "total_published_posts": 33
   },
   "role_statuses": {
@@ -25,6 +25,400 @@
     "08_CSPublisher": "READY"
   },
   "execution_history": [
+    {
+      "cycle_id": "CYC-1793029688",
+      "timestamp": "2026-10-27T00:48:38.580321",
+      "status": "HEALED",
+      "dry_run": true,
+      "keyword": "임플란트 수면치료 가격",
+      "title": "임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내",
+      "category": "MEDICAL",
+      "tier": "최적",
+      "ratio": 76.923,
+      "subs": [
+        "임플란트 수면치료 비급여 실제 가격 비교",
+        "임플란트 수면치료 실손보험 실비 청구 기준",
+        "임플란트 수면치료 시술 전 필수 주의사항"
+      ],
+      "keyword_package": {
+        "main": "임플란트 수면치료 가격",
+        "subs": [
+          "임플란트 수면치료 비급여 실제 가격 비교",
+          "임플란트 수면치료 실손보험 실비 청구 기준",
+          "임플란트 수면치료 시술 전 필수 주의사항"
+        ],
+        "sub_details": [
+          {
+            "role": "서브 1",
+            "keyword": "임플란트 수면치료 비급여 실제 가격 비교",
+            "monthly_search_vol": 2500,
+            "blog_doc_count": 78,
+            "monthly_published": 12,
+            "ratio": 32.051,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 2",
+            "keyword": "임플란트 수면치료 실손보험 실비 청구 기준",
+            "monthly_search_vol": 1250,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 27.778,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 3",
+            "keyword": "임플란트 수면치료 시술 전 필수 주의사항",
+            "monthly_search_vol": 833,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 18.511,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          }
+        ],
+        "ratio": 76.923,
+        "tier": "최적",
+        "monthly_search_vol": 50000,
+        "blog_doc_count": 650,
+        "monthly_published": 120,
+        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+      },
+      "pvs": 50499375.0,
+      "pvs_score": 50499375.0,
+      "cpc": 5500,
+      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+      "post_id": "dry-run-1793029709",
+      "execution_time_sec": 30.33,
+      "growth_package": {
+        "keyword": "임플란트 수면치료 가격",
+        "category": "MEDICAL",
+        "title": "임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내",
+        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+        "created_at": "2026-10-27T00:48:37.123724",
+        "reel_script": {
+          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"병원 가기 전 임플란트 수면치료 가격 비급여 실제 견적부터 꼭 확인하세요.\"",
+          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 의료기관별 실측 비교표와 지원 기준로 비급여 수가 대조 및 건강보험 지원 기준 결과를 바로 확인할 수 있습니다.\"",
+          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
+        },
+        "sns_caption": "병원 가기 전 임플란트 수면치료 가격 비급여 실제 견적부터 꼭 확인하세요.\n\n매번 찾으려면 번거롭고 어려운 임플란트 수면치료 가격, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 비급여 수가 대조 및 건강보험 지원 기준 실측 비교\n• 의료기관별 실측 비교표와 지원 기준\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #임플란트수면치료가격 #생활꿀팁 #스마트라이프 #절약팁",
+        "dm_copy": "안녕하세요! 요청하신 [임플란트 수면치료 가격] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793029709.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
+        "video_package": {
+          "batch_id": "MPT-1793029709",
+          "keyword": "임플란트 수면치료 가격",
+          "category": "MEDICAL",
+          "title": "임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내",
+          "created_at": "2026-10-27T00:48:37.101442",
+          "status": "COMPLETED",
+          "duration_sec": 24.89,
+          "aspect_ratio": "9:16",
+          "resolution": "1080x1920",
+          "manifest_dir": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709",
+          "subtitles_srt": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\subtitles.srt",
+          "subtitles_json": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\subtitles.json",
+          "audio_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\voiceover.mp3",
+          "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\short_reel.mp4",
+          "assets": [
+            "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\assets\\slide_01_hook.png",
+            "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\assets\\slide_02_core.png",
+            "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\assets\\slide_03_cta.png"
+          ],
+          "tts_meta": {
+            "success": true,
+            "method": "edge-tts",
+            "voice": "ko-KR-SunHiNeural",
+            "output_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\voiceover.mp3",
+            "duration_sec": 24.89,
+            "file_size": 149328
+          },
+          "money_printer_turbo_spec": {
+            "task_id": "MPT-1793029709",
+            "video_subject": "임플란트 수면치료 가격",
+            "video_script": "병원 가기 전 임플란트 수면치료 가격 비급여 실제 견적부터 꼭 확인하세요. 복잡한 약관 뒤질 필요 없이, 의료기관별 실측 비교표와 지원 기준로 비급여 수가 대조 및 건강보험 지원 기준 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
+            "video_terms": [
+              "임플란트 수면치료 가격",
+              "MEDICAL",
+              "2026",
+              "모의계산"
+            ],
+            "video_aspect": "9:16",
+            "video_concat_mode": "sequential",
+            "video_clip_duration": 5,
+            "voice_name": "ko-KR-SunHiNeural",
+            "voice_rate": 1.0,
+            "voice_volume": 1.0,
+            "bgm_type": "random",
+            "bgm_volume": 0.2,
+            "subtitle_enabled": true,
+            "font_name": "malgunbd.ttf",
+            "text_fore_color": "#FFFFFF",
+            "text_background_color": "transparent",
+            "stroke_color": "#000000",
+            "stroke_width": 1.5,
+            "status": "COMPLETED",
+            "rendered_file": "short_reel.mp4",
+            "audio_file": "voiceover.mp3",
+            "subtitles_file": "subtitles.srt"
+          }
+        },
+        "video_batch_id": "MPT-1793029709",
+        "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1793029709\\short_reel.mp4"
+      },
+      "indexing": {
+        "timestamp": "2026-10-27T00:48:29.773788",
+        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+        "url_count": 1,
+        "dry_run": true,
+        "results": {
+          "google_indexing": {
+            "engine": "google_indexing_api",
+            "auth_type": "dry_run",
+            "status": "SIMULATED_SUCCESS",
+            "action": "URL_UPDATED",
+            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "status_code": 200,
+            "response": {
+              "urlNotificationMetadata": {
+                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+                "type": "URL_UPDATED",
+                "notifyTime": "2026-10-27T00:48:29.773729"
+              }
+            }
+          },
+          "indexnow": {
+            "engine": "indexnow",
+            "status": "SIMULATED_SUCCESS",
+            "host": "blogin365ai.blogspot.com",
+            "submitted_count": 1,
+            "urls": [
+              "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html"
+            ],
+            "status_code": 200,
+            "payload": {
+              "host": "blogin365ai.blogspot.com",
+              "key": "blogin365ai_indexer_key",
+              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
+              "urlList": [
+                "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html"
+              ]
+            }
+          },
+          "sitemap_ping": {
+            "engine": "sitemap_ping",
+            "status": "SIMULATED_SUCCESS",
+            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
+            "pings": {
+              "google": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              },
+              "bing": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              }
+            }
+          }
+        }
+      },
+      "distribution": {
+        "status": "SIMULATED_SUCCESS",
+        "batch_id": "DIST-1793029717",
+        "timestamp": "2026-10-27T00:48:37.133169",
+        "dry_run": true,
+        "keyword": "임플란트 수면치료 가격",
+        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+        "channels": {
+          "threads": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "threads",
+            "platform": "threads",
+            "batch_id": "DIST-1793029717",
+            "payload_size": 2030,
+            "timestamp": "2026-10-27T00:48:37.133145"
+          },
+          "twitter_x": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "twitter_x",
+            "platform": "twitter_x",
+            "batch_id": "DIST-1793029717",
+            "payload_size": 652,
+            "timestamp": "2026-10-27T00:48:37.133155"
+          },
+          "manychat_webhook": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "manychat_webhook",
+            "platform": "manychat_webhook",
+            "batch_id": "DIST-1793029717",
+            "payload_size": 1036,
+            "timestamp": "2026-10-27T00:48:37.133163"
+          },
+          "kakao_view": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "kakao_view",
+            "platform": "kakao_view",
+            "batch_id": "DIST-1793029717",
+            "payload_size": 512,
+            "timestamp": "2026-10-27T00:48:37.133168"
+          }
+        },
+        "payloads": {
+          "threads": {
+            "channel": "threads",
+            "text": "🔥 임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내\n\n병원 가기 전 임플란트 수면치료 가격 비급여 실제 견적부터 꼭 확인하세요.\n\n매번 찾으려면 번거롭고 어려운 임플란트 수면치료 가격, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 비급여 수가 대조 및 건강보험 지원 기준 실측 비교\n• 의료기관별 실측 비교표와 지원 기준\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #임플란트수면치료가격 #생활꿀팁 #스마트라이프 #절약팁\n\n👉 전체 계산기 및 가이드: https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "link_attachment_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "topic_tags": [
+              "임플란트수면치료가격",
+              "정보공유",
+              "스마트라이프"
+            ]
+          },
+          "twitter_x": {
+            "channel": "twitter_x",
+            "text": "💡 임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내\n\n병원 가기 전 임플란트 수면치료 가격 비급여 실제 견적부터 꼭 확인하세요.\n\n📊 모의계산기 & 상세표 즉시 확인:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html"
+          },
+          "manychat_webhook": {
+            "channel": "manychat_webhook",
+            "event": "new_editorial_post",
+            "trigger_keyword": "10",
+            "title": "임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내",
+            "keyword": "임플란트 수면치료 가격",
+            "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "dm_response_copy": "안녕하세요! 요청하신 [임플란트 수면치료 가격] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793029709.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
+            "timestamp": "2026-10-27T00:48:37.133110"
+          },
+          "kakao_view": {
+            "channel": "kakao_view",
+            "board_title": "[실측분석] 임플란트 수면치료 가격 실제 가격 견적 및 건강보험 지원 기준 안내",
+            "summary": "임플란트 수면치료 가격 핵심 기준과 실수령액 계산기 요약",
+            "link_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793029709.html",
+            "category": "MEDICAL"
+          }
+        }
+      },
+      "feedback": {
+        "performance": {
+          "post_id": "dry-run-1793029709",
+          "keyword": "임플란트 수면치료 가격",
+          "category": "MEDICAL",
+          "updated_at": "2026-10-27T00:48:37.159950",
+          "impressions": 3200,
+          "clicks": 153,
+          "ctr_percent": 4.78,
+          "conversions": 3,
+          "cvr_percent": 1.96,
+          "affiliate_revenue": 90000,
+          "adsense_revenue": 58224.0,
+          "actual_revenue": 148224.0,
+          "estimated_pvs": 50499375.0,
+          "pvs_accuracy_ratio": 0.003,
+          "dwell_time_sec": 135.0
+        },
+        "weights": {
+          "tuned_weights": {
+            "TECH": 1.15,
+            "SUBSIDY": 1.322,
+            "SAVINGS": 1.265,
+            "CASHFLOW": 1.05,
+            "MEDICAL": 1.15,
+            "CAREER": 1.15,
+            "LIFESTYLE": 1.0,
+            "HAIR": 1.15
+          },
+          "adjustments": {
+            "SUBSIDY": {
+              "baseline_weight": 1.15,
+              "tuned_weight": 1.322,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 134597.99
+            },
+            "TECH": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.58,
+              "avg_revenue": 129043.9
+            },
+            "MEDICAL": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.97,
+              "avg_revenue": 154290.82
+            },
+            "CAREER": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.54,
+              "avg_revenue": 74520.65
+            },
+            "SAVINGS": {
+              "baseline_weight": 1.1,
+              "tuned_weight": 1.265,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 157781.81
+            },
+            "HAIR": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.78,
+              "avg_revenue": 111338.12
+            }
+          },
+          "total_analyzed_posts": 284
+        },
+        "gsc_candidates": {
+          "last_synced": "2026-10-27T00:48:38.528081",
+          "status": "SUCCESS",
+          "total_candidates": 0,
+          "date_range": {
+            "startDate": "2026-10-11",
+            "endDate": "2026-10-25"
+          },
+          "candidates": []
+        }
+      },
+      "link_audit": {
+        "total_links": 14,
+        "alive_count": 14,
+        "dead_count": 0,
+        "dead_links": [],
+        "has_dead_links": false,
+        "timestamp": "2026-10-27T00:48:38.529199"
+      },
+      "refresh_candidates": [],
+      "trick_b": {
+        "mode": "GOOGLE_CSE",
+        "has_search_widget": true,
+        "has_pills": true,
+        "cse_cx_present": true
+      },
+      "healing_events": [
+        "Auditor auto-sanitization executed and verified",
+        "EditorialInspector auto-healed contrast and layout to Toss Dark standard"
+      ]
+    },
+    {
+      "cycle_id": "STRATEGY-1793029465",
+      "timestamp": "2026-10-27T00:44:25.087965",
+      "status": "COMPLETED",
+      "execution_time_sec": 3.94,
+      "dry_run": true,
+      "title": "2026 전설의 터틀 트레이딩 20일 돈키언 채널 돌파 기법: 실시간 바이낸스 백테스팅 팩트체크",
+      "url": "https://blogin365ai.blogspot.com/dry-run-turtle_donchian_breakout.html",
+      "post_id": "dry-1793029465",
+      "keyword": "2026 전설의 터틀 트레이딩 20일 돈키언 채널 돌파 기법: 실시간 바이낸스 백테스팅 팩트체크",
+      "category": "FINTECH_QUANT",
+      "pvs_score": 12500000.0,
+      "cpc": 4200,
+      "niche_name": "투자/트레이딩 유틸리티 및 퀀트 수익률·세금 시뮬레이터 (Strategy Lab)"
+    },
     {
       "cycle_id": "STRATEGY-1793016029",
       "timestamp": "2026-10-26T21:00:29.000978",
@@ -11587,774 +11981,10 @@
       "healing_events": [
         "Soft QA warnings acknowledged and bypassed: [\"[GATE 6 FAIL] 서브 키워드 '0원 요금제 디시'가 소제목(H2)에 1:1로 매핑되지 않음 (발견된 H2: ['1. 0원요금제 핵심 분석', '2. 알뜰폰 0원 요금제 조건 및 필수 점검사항', '3. 해당 내용 디시 실전 전략 및 유의점'])\"]"
       ]
-    },
-    {
-      "cycle_id": "CYC-1792561479",
-      "timestamp": "2026-10-21T14:44:39.615699",
-      "status": "SUCCESS",
-      "dry_run": true,
-      "keyword": "2026 청년도약계좌",
-      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-      "category": "SUBSIDY",
-      "tier": "최적",
-      "ratio": 76.923,
-      "subs": [
-        "2026 청년도약계좌 정부기여금",
-        "2026 청년도약계좌 신청기간",
-        "2026 청년도약계좌 조건"
-      ],
-      "keyword_package": {
-        "main": "2026 청년도약계좌",
-        "subs": [
-          "2026 청년도약계좌 정부기여금",
-          "2026 청년도약계좌 신청기간",
-          "2026 청년도약계좌 조건"
-        ],
-        "sub_details": [
-          {
-            "role": "서브 1",
-            "keyword": "2026 청년도약계좌 정부기여금",
-            "monthly_search_vol": 2500,
-            "blog_doc_count": 78,
-            "monthly_published": 12,
-            "ratio": 32.051,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 2",
-            "keyword": "2026 청년도약계좌 신청기간",
-            "monthly_search_vol": 1250,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 27.778,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 3",
-            "keyword": "2026 청년도약계좌 조건",
-            "monthly_search_vol": 833,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 18.511,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          }
-        ],
-        "ratio": 76.923,
-        "tier": "최적",
-        "monthly_search_vol": 50000,
-        "blog_doc_count": 650,
-        "monthly_published": 120,
-        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-      },
-      "pvs": 29031120.0,
-      "pvs_score": 29031120.0,
-      "cpc": 3200,
-      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-      "post_id": "dry-run-1792561476",
-      "growth_package": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-        "created_at": "2026-10-21T14:44:39.571157",
-        "reel_script": {
-          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
-          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
-          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
-        },
-        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
-        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792561476.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-        "video_package": {
-          "batch_id": "MPT-1792561476",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-          "created_at": "2026-10-21T14:44:39.569408",
-          "status": "COMPLETED",
-          "duration_sec": 22.54,
-          "aspect_ratio": "9:16",
-          "resolution": "1080x1920",
-          "manifest_dir": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476",
-          "subtitles_srt": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\subtitles.srt",
-          "subtitles_json": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\subtitles.json",
-          "audio_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\voiceover.mp3",
-          "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\short_reel.mp4",
-          "assets": [
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\assets\\slide_01_hook.png",
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\assets\\slide_02_core.png",
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\assets\\slide_03_cta.png"
-          ],
-          "tts_meta": {
-            "success": true,
-            "method": "edge-tts",
-            "voice": "ko-KR-SunHiNeural",
-            "output_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\voiceover.mp3",
-            "duration_sec": 22.54,
-            "file_size": 135216
-          },
-          "money_printer_turbo_spec": {
-            "task_id": "MPT-1792561476",
-            "video_subject": "2026 청년도약계좌",
-            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
-            "video_terms": [
-              "2026 청년도약계좌",
-              "SUBSIDY",
-              "2026",
-              "모의계산"
-            ],
-            "video_aspect": "9:16",
-            "video_concat_mode": "sequential",
-            "video_clip_duration": 5,
-            "voice_name": "ko-KR-SunHiNeural",
-            "voice_rate": 1.0,
-            "voice_volume": 1.0,
-            "bgm_type": "random",
-            "bgm_volume": 0.2,
-            "subtitle_enabled": true,
-            "font_name": "malgunbd.ttf",
-            "text_fore_color": "#FFFFFF",
-            "text_background_color": "transparent",
-            "stroke_color": "#000000",
-            "stroke_width": 1.5,
-            "status": "COMPLETED",
-            "rendered_file": "short_reel.mp4",
-            "audio_file": "voiceover.mp3",
-            "subtitles_file": "subtitles.srt"
-          }
-        },
-        "video_batch_id": "MPT-1792561476",
-        "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561476\\short_reel.mp4"
-      },
-      "indexing": {
-        "timestamp": "2026-10-21T14:44:36.892636",
-        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-        "url_count": 1,
-        "dry_run": true,
-        "results": {
-          "google_indexing": {
-            "engine": "google_indexing_api",
-            "auth_type": "dry_run",
-            "status": "SIMULATED_SUCCESS",
-            "action": "URL_UPDATED",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "status_code": 200,
-            "response": {
-              "urlNotificationMetadata": {
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-                "type": "URL_UPDATED",
-                "notifyTime": "2026-10-21T14:44:36.892588"
-              }
-            }
-          },
-          "indexnow": {
-            "engine": "indexnow",
-            "status": "SIMULATED_SUCCESS",
-            "host": "blogin365ai.blogspot.com",
-            "submitted_count": 1,
-            "urls": [
-              "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html"
-            ],
-            "status_code": 200,
-            "payload": {
-              "host": "blogin365ai.blogspot.com",
-              "key": "blogin365ai_indexer_key",
-              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
-              "urlList": [
-                "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html"
-              ]
-            }
-          },
-          "sitemap_ping": {
-            "engine": "sitemap_ping",
-            "status": "SIMULATED_SUCCESS",
-            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
-            "pings": {
-              "google": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              },
-              "bing": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              }
-            }
-          }
-        }
-      },
-      "distribution": {
-        "status": "SIMULATED_SUCCESS",
-        "batch_id": "DIST-1792561479",
-        "timestamp": "2026-10-21T14:44:39.577820",
-        "dry_run": true,
-        "keyword": "2026 청년도약계좌",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-        "channels": {
-          "threads": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "threads",
-            "platform": "threads",
-            "batch_id": "DIST-1792561479",
-            "payload_size": 1806,
-            "timestamp": "2026-10-21T14:44:39.577792"
-          },
-          "twitter_x": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "twitter_x",
-            "platform": "twitter_x",
-            "batch_id": "DIST-1792561479",
-            "payload_size": 565,
-            "timestamp": "2026-10-21T14:44:39.577802"
-          },
-          "manychat_webhook": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "manychat_webhook",
-            "platform": "manychat_webhook",
-            "batch_id": "DIST-1792561479",
-            "payload_size": 978,
-            "timestamp": "2026-10-21T14:44:39.577813"
-          },
-          "kakao_view": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "kakao_view",
-            "platform": "kakao_view",
-            "batch_id": "DIST-1792561479",
-            "payload_size": 475,
-            "timestamp": "2026-10-21T14:44:39.577819"
-          }
-        },
-        "payloads": {
-          "threads": {
-            "channel": "threads",
-            "text": "🔥 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁\n\n👉 전체 계산기 및 가이드: https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "link_attachment_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "topic_tags": [
-              "2026청년도약계좌",
-              "정보공유",
-              "스마트라이프"
-            ]
-          },
-          "twitter_x": {
-            "channel": "twitter_x",
-            "text": "💡 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n📊 모의계산기 & 상세표 즉시 확인:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html"
-          },
-          "manychat_webhook": {
-            "channel": "manychat_webhook",
-            "event": "new_editorial_post",
-            "trigger_keyword": "10",
-            "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "keyword": "2026 청년도약계좌",
-            "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "dm_response_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792561476.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-            "timestamp": "2026-10-21T14:44:39.577757"
-          },
-          "kakao_view": {
-            "channel": "kakao_view",
-            "board_title": "[실측분석] 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "summary": "2026 청년도약계좌 핵심 기준과 실수령액 계산기 요약",
-            "link_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561476.html",
-            "category": "SUBSIDY"
-          }
-        }
-      },
-      "feedback": {
-        "performance": {
-          "post_id": "dry-run-1792561476",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "updated_at": "2026-10-21T14:44:39.600674",
-          "impressions": 3200,
-          "clicks": 153,
-          "ctr_percent": 4.78,
-          "conversions": 3,
-          "cvr_percent": 1.96,
-          "affiliate_revenue": 60000,
-          "adsense_revenue": 58224.0,
-          "actual_revenue": 118224.0,
-          "estimated_pvs": 29031120.0,
-          "pvs_accuracy_ratio": 0.004,
-          "dwell_time_sec": 135.0
-        },
-        "weights": {
-          "tuned_weights": {
-            "TECH": 1.15,
-            "SUBSIDY": 1.322,
-            "SAVINGS": 1.265,
-            "CASHFLOW": 1.05,
-            "MEDICAL": 1.15,
-            "CAREER": 1.15,
-            "LIFESTYLE": 1.0
-          },
-          "adjustments": {
-            "SUBSIDY": {
-              "baseline_weight": 1.15,
-              "tuned_weight": 1.322,
-              "factor": 1.15,
-              "avg_ctr": 4.92,
-              "avg_revenue": 135902.12
-            },
-            "TECH": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.58,
-              "avg_revenue": 129043.9
-            },
-            "MEDICAL": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 5.07,
-              "avg_revenue": 159011.91
-            },
-            "CAREER": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.54,
-              "avg_revenue": 74520.65
-            },
-            "SAVINGS": {
-              "baseline_weight": 1.1,
-              "tuned_weight": 1.265,
-              "factor": 1.15,
-              "avg_ctr": 4.94,
-              "avg_revenue": 159191.93
-            }
-          },
-          "total_analyzed_posts": 253
-        }
-      },
-      "link_audit": {
-        "total_links": 9,
-        "alive_count": 9,
-        "dead_count": 0,
-        "dead_links": [],
-        "has_dead_links": false,
-        "timestamp": "2026-10-21T14:44:39.606521"
-      },
-      "refresh_candidates": [],
-      "hcu_score": 97
-    },
-    {
-      "cycle_id": "CYC-1792561439",
-      "status": "SUCCESS",
-      "timestamp": "2026-10-21T14:44:17.405212",
-      "execution_time_sec": 17.41,
-      "dry_run": true,
-      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html",
-      "post_id": "dry-run-1792561452",
-      "keyword": "2026 청년도약계좌",
-      "category": "SUBSIDY",
-      "tier": "최적",
-      "ratio": 76.923,
-      "subs": [
-        "2026 청년도약계좌 정부기여금",
-        "2026 청년도약계좌 신청기간",
-        "2026 청년도약계좌 조건"
-      ],
-      "sub_details": [
-        {
-          "role": "서브 1",
-          "keyword": "2026 청년도약계좌 정부기여금",
-          "monthly_search_vol": 2500,
-          "blog_doc_count": 78,
-          "monthly_published": 12,
-          "ratio": 32.051,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        },
-        {
-          "role": "서브 2",
-          "keyword": "2026 청년도약계좌 신청기간",
-          "monthly_search_vol": 1250,
-          "blog_doc_count": 45,
-          "monthly_published": 8,
-          "ratio": 27.778,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        },
-        {
-          "role": "서브 3",
-          "keyword": "2026 청년도약계좌 조건",
-          "monthly_search_vol": 833,
-          "blog_doc_count": 45,
-          "monthly_published": 8,
-          "ratio": 18.511,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        }
-      ],
-      "keyword_package": {
-        "main": "2026 청년도약계좌",
-        "subs": [
-          "2026 청년도약계좌 정부기여금",
-          "2026 청년도약계좌 신청기간",
-          "2026 청년도약계좌 조건"
-        ],
-        "sub_details": [
-          {
-            "role": "서브 1",
-            "keyword": "2026 청년도약계좌 정부기여금",
-            "monthly_search_vol": 2500,
-            "blog_doc_count": 78,
-            "monthly_published": 12,
-            "ratio": 32.051,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 2",
-            "keyword": "2026 청년도약계좌 신청기간",
-            "monthly_search_vol": 1250,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 27.778,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 3",
-            "keyword": "2026 청년도약계좌 조건",
-            "monthly_search_vol": 833,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 18.511,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          }
-        ],
-        "ratio": 76.923,
-        "tier": "최적",
-        "monthly_search_vol": 50000,
-        "blog_doc_count": 650,
-        "monthly_published": 120,
-        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-      },
-      "pvs": 29031120.0,
-      "pvs_score": 29031120.0,
-      "cpc": 3200,
-      "growth_package": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html",
-        "created_at": "2026-10-21T14:44:15.494682",
-        "reel_script": {
-          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
-          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
-          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
-        },
-        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
-        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792561452.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-        "video_package": {
-          "batch_id": "MPT-1792561452",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-          "created_at": "2026-10-21T14:44:15.493461",
-          "status": "COMPLETED",
-          "duration_sec": 22.54,
-          "aspect_ratio": "9:16",
-          "resolution": "1080x1920",
-          "manifest_dir": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452",
-          "subtitles_srt": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\subtitles.srt",
-          "subtitles_json": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\subtitles.json",
-          "audio_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\voiceover.mp3",
-          "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\short_reel.mp4",
-          "assets": [
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\assets\\slide_01_hook.png",
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\assets\\slide_02_core.png",
-            "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\assets\\slide_03_cta.png"
-          ],
-          "tts_meta": {
-            "success": true,
-            "method": "edge-tts",
-            "voice": "ko-KR-SunHiNeural",
-            "output_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\voiceover.mp3",
-            "duration_sec": 22.54,
-            "file_size": 135216
-          },
-          "money_printer_turbo_spec": {
-            "task_id": "MPT-1792561452",
-            "video_subject": "2026 청년도약계좌",
-            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
-            "video_terms": [
-              "2026 청년도약계좌",
-              "SUBSIDY",
-              "2026",
-              "모의계산"
-            ],
-            "video_aspect": "9:16",
-            "video_concat_mode": "sequential",
-            "video_clip_duration": 5,
-            "voice_name": "ko-KR-SunHiNeural",
-            "voice_rate": 1.0,
-            "voice_volume": 1.0,
-            "bgm_type": "random",
-            "bgm_volume": 0.2,
-            "subtitle_enabled": true,
-            "font_name": "malgunbd.ttf",
-            "text_fore_color": "#FFFFFF",
-            "text_background_color": "transparent",
-            "stroke_color": "#000000",
-            "stroke_width": 1.5,
-            "status": "COMPLETED",
-            "rendered_file": "short_reel.mp4",
-            "audio_file": "voiceover.mp3",
-            "subtitles_file": "subtitles.srt"
-          }
-        },
-        "video_batch_id": "MPT-1792561452",
-        "video_path": "d:\\SEO AD\\data\\video_render_queue\\MPT-1792561452\\short_reel.mp4"
-      },
-      "indexing": {
-        "timestamp": "2026-10-21T14:44:12.318745",
-        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html",
-        "url_count": 1,
-        "dry_run": true,
-        "results": {
-          "google_indexing": {
-            "engine": "google_indexing_api",
-            "auth_type": "dry_run",
-            "status": "SIMULATED_SUCCESS",
-            "action": "URL_UPDATED",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html",
-            "status_code": 200,
-            "response": {
-              "urlNotificationMetadata": {
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html",
-                "type": "URL_UPDATED",
-                "notifyTime": "2026-10-21T14:44:12.318709"
-              }
-            }
-          },
-          "indexnow": {
-            "engine": "indexnow",
-            "status": "SIMULATED_SUCCESS",
-            "host": "blogin365ai.blogspot.com",
-            "submitted_count": 1,
-            "urls": [
-              "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html"
-            ],
-            "status_code": 200,
-            "payload": {
-              "host": "blogin365ai.blogspot.com",
-              "key": "blogin365ai_indexer_key",
-              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
-              "urlList": [
-                "https://blogin365ai.blogspot.com/preview-dry-run-1792561452.html"
-              ]
-            }
-          },
-          "sitemap_ping": {
-            "engine": "sitemap_ping",
-            "status": "SIMULATED_SUCCESS",
-            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
-            "pings": {
-              "google": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              },
-              "bing": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              }
-            }
-          }
-        }
-      },
-      "distribution": {
-        "threads": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "threads",
-          "platform": "threads",
-          "batch_id": "DIST-1792561455",
-          "payload_size": 1806,
-          "timestamp": "2026-10-21T14:44:15.500183"
-        },
-        "twitter_x": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "twitter_x",
-          "platform": "twitter_x",
-          "batch_id": "DIST-1792561455",
-          "payload_size": 565,
-          "timestamp": "2026-10-21T14:44:15.500192"
-        },
-        "manychat_webhook": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "manychat_webhook",
-          "platform": "manychat_webhook",
-          "batch_id": "DIST-1792561455",
-          "payload_size": 978,
-          "timestamp": "2026-10-21T14:44:15.500205"
-        },
-        "kakao_view": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "kakao_view",
-          "platform": "kakao_view",
-          "batch_id": "DIST-1792561455",
-          "payload_size": 475,
-          "timestamp": "2026-10-21T14:44:15.500211"
-        }
-      },
-      "feedback": {
-        "performance": {
-          "post_id": "dry-run-1792561452",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "updated_at": "2026-10-21T14:44:15.541970",
-          "impressions": 3200,
-          "clicks": 153,
-          "ctr_percent": 4.78,
-          "conversions": 3,
-          "cvr_percent": 1.96,
-          "affiliate_revenue": 60000,
-          "adsense_revenue": 58224.0,
-          "actual_revenue": 118224.0,
-          "estimated_pvs": 29031120.0,
-          "pvs_accuracy_ratio": 0.004,
-          "dwell_time_sec": 135.0
-        },
-        "weights": {
-          "tuned_weights": {
-            "TECH": 1.15,
-            "SUBSIDY": 1.322,
-            "SAVINGS": 1.265,
-            "CASHFLOW": 1.05,
-            "MEDICAL": 1.15,
-            "CAREER": 1.15,
-            "LIFESTYLE": 1.0
-          },
-          "adjustments": {
-            "SUBSIDY": {
-              "baseline_weight": 1.15,
-              "tuned_weight": 1.322,
-              "factor": 1.15,
-              "avg_ctr": 4.92,
-              "avg_revenue": 135980.69
-            },
-            "TECH": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.58,
-              "avg_revenue": 129043.9
-            },
-            "MEDICAL": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 5.07,
-              "avg_revenue": 159011.91
-            },
-            "CAREER": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.54,
-              "avg_revenue": 74520.65
-            },
-            "SAVINGS": {
-              "baseline_weight": 1.1,
-              "tuned_weight": 1.265,
-              "factor": 1.15,
-              "avg_ctr": 4.94,
-              "avg_revenue": 159191.93
-            }
-          },
-          "total_analyzed_posts": 252
-        }
-      },
-      "hcu_score": 97,
-      "hcu_metrics": {
-        "ttr": 0.609,
-        "total_words": 898,
-        "unique_words": 547,
-        "facts_count": 51,
-        "sentence_count": 141,
-        "avg_words_per_sentence": 6.4,
-        "reading_ease_score": 85,
-        "total_links_count": 10,
-        "affiliate_links_count": 0,
-        "affiliate_ratio": 0.0,
-        "affiliate_footprint_ratio": 0.0,
-        "hidden_elements": 0
-      },
-      "sentiment": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "community_sources": [
-          "네이버 카페 청년정책모임",
-          "디시인사이드 복지 갤러리",
-          "나무위키"
-        ],
-        "raw_opinions": [
-          "은행별 우대금리 조건 맞추려면 카드 실적 월 10만원씩 채워야 해서 꼼꼼히 봐야 함",
-          "이거 중간에 해지하면 정부 기여금 전액 토해내야 하니까 무조건 만기 채워야 함",
-          "부모님 주민등록상 같이 있어도 세대 분리 기준 충족하면 단독 가구 인정받음"
-        ],
-        "core_pain_points": [
-          "신청 후 심사 진행 중 '보완 요구' 떴을 때 즉각 대처법",
-          "복잡한 소득 분위 계산 및 건강보험료 합산 기준"
-        ],
-        "colloquial_slang": [
-          "국세청 홈택스 꿀팁",
-          "실수령액",
-          "환급 꿀팁",
-          "기여금 챙기기"
-        ],
-        "sentiment_summary": "자격만 되면 무조건 이득이지만 소득 심사 반려와 우대금리 카드 실적 맞추기가 까다롭다는 여론",
-        "real_question_hook": "커뮤니티에서 가장 많이 나온 진짜 질문: \"신청 후 심사 진행 중 '보완 요구' 떴을 때 즉각 대처법\""
-      },
-      "factset": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "tester_attribution": "스마트 라이프 에디토리얼 팀 실측 검증",
-        "testing_duration": "공식 공시 기준 및 시장 실측 데이터 대조",
-        "rating_score": 4.8,
-        "pros_real": [
-          "홈택스 모바일 손택스로 조회하면 PC 공인인증서 없이 간편인증 10초 만에 가조회 완료",
-          "국가 기여금 매칭 비율이 일반 적금 이자율의 3배 이상이라 실질 수익률이 압도적임",
-          "만기 시 비과세 혜택이 적용되어 이자소득세 15.4% 전액 면제 효과 체감"
-        ],
-        "cons_unfiltered": [
-          "직전년도 종합소득세 신고 확정 전(5~6월)에는 가구 소득 조회 시 오류 코드가 뜰 수 있음",
-          "매월 납입 인정일이 은행 영업일 기준이라 말일 입금 시 다음 달로 밀릴 위험 존재"
-        ],
-        "failure_anecdote": "팀 내에서 테스트할 때 자동이체 계좌에 잔고 1만원 부족해서 첫 달 기여금 매칭이 누락될 뻔한 아찔한 순간이 있었습니다.",
-        "subtle_pro_tip": "매월 1일로 자동이체를 설정해두면 누락 위험 없이 안정적으로 매칭 기여금이 적립됩니다.",
-        "official_facts": {
-          "is_verified": true,
-          "department": "금융위원회 / 서민금융진흥원",
-          "portal_name": "서민금융진흥원 종합포털",
-          "portal_url": "https://www.kinfa.or.kr/",
-          "direct_path": "취급 11개 시중은행 모바일 뱅킹 앱 > 청년도약계좌 가입 신청",
-          "official_law": "조세특례제한법 제91조의22 (청년도약계좌에 대한 과세특례)",
-          "verification_note": "만 19~34세 청년 대상, 정부 기여금 매월 최대 6% 매칭 및 이자소득세 비과세 혜택",
-          "disclaimer": "본 정보는 정부 부처 최신 공식 발표 및 누리집 공고 지침을 엄격히 준수하여 집필되었습니다.",
-          "live_tables": [
-            "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |"
-          ],
-          "primary_table": "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
-          "live_markdown": "### 2026 청년도약계좌 공식 기준 요약\n\n| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
-          "crawl_method": "soup_fallback_with_vault"
-        },
-        "credibility_badge": "공식 데이터 대조 100% 팩트체크 완료"
-      },
-      "trick_b": {
-        "present": true,
-        "has_pills": true,
-        "mode": "GOOGLE_CSE"
-      }
     }
   ],
-  "last_run_timestamp": "2026-10-26T21:00:29.000978",
-  "last_status": "COMPLETED",
+  "last_run_timestamp": "2026-10-27T00:48:38.580321",
+  "last_status": "HEALED",
   "unit_economics_history": [
     {
       "timestamp": "2026-10-24T03:24:58.123458",
@@ -12511,10 +12141,36 @@
         "first_year_roi_percent": 59991.0,
         "unit_economic_health": "ULTRA_HIGH_MARGIN"
       }
+    },
+    {
+      "timestamp": "2026-10-27T00:48:38.560131",
+      "batch_size": 1000,
+      "cost_breakdown": {
+        "cost_per_page_usd": 0.00596,
+        "cost_per_page_krw": 8.22,
+        "total_batch_cost_usd": 5.96,
+        "total_batch_cost_krw": 8225.0
+      },
+      "performance_projection": {
+        "target_rpm": 38.5,
+        "index_rate_percent": 85.0,
+        "indexed_pages": 850,
+        "monthly_impressions": 323000,
+        "monthly_clicks": 7752,
+        "monthly_revenue_usd": 298.45,
+        "monthly_revenue_krw": 411864.0,
+        "daily_revenue_usd": 9.95,
+        "daily_revenue_krw": 13729.0
+      },
+      "bep_metrics": {
+        "days_to_bep_post_indexing": 0.6,
+        "first_year_roi_percent": 59991.0,
+        "unit_economic_health": "ULTRA_HIGH_MARGIN"
+      }
     }
   ],
   "latest_unit_economics": {
-    "timestamp": "2026-10-25T20:26:33.596032",
+    "timestamp": "2026-10-27T00:48:38.560131",
     "batch_size": 1000,
     "cost_breakdown": {
       "cost_per_page_usd": 0.00596,

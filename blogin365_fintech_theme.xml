@@ -148,6 +148,57 @@
       transform: translateY(-1px);
     }
 
+    /* Authority Category Bar (4대 표준 필라) */
+    .b365-category-bar-wrapper {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 65px;
+      z-index: 99;
+    }
+    .b365-category-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .b365-category-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .b365-cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .b365-cat-pill:hover, .b365-cat-pill.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+    .b365-cat-pill.vibe-pill {
+      background: #0f172a;
+      color: #38bdf8;
+      border-color: #1e293b;
+    }
+    .b365-cat-pill.vibe-pill:hover {
+      background: #1e293b;
+      color: #7dd3fc;
+    }
+
     /* Main Grid */
     .b365-main-layout {
       display: grid;
@@ -518,15 +569,28 @@
       </b:section>
 
       <nav class='b365-nav-links'>
-        <a expr:href='data:blog.homepageUrl'>홈</a>
-        <a href='#custom-saas-tool'>실시간 계산기</a>
-        <a href='#popular'>인기 금융 가이드</a>
-        <a href='#policy'>2026 정부 정책</a>
+        <a expr:href='data:blog.homepageUrl'>전체 홈</a>
+        <a expr:href='data:blog.homepageUrl + &quot;search/label/경제·금융&quot;'>경제·금융</a>
+        <a expr:href='data:blog.homepageUrl + &quot;search/label/생활·건강&quot;'>생활·건강</a>
+        <a expr:href='data:blog.homepageUrl + &quot;search/label/정책·복지&quot;'>정책·복지</a>
+        <a expr:href='data:blog.homepageUrl + &quot;search/label/생활·소비&quot;'>생활·소비</a>
       </nav>
 
-      <a class='b365-header-cta' href='#custom-saas-tool'>실시간 모의계산</a>
+      <a class='b365-header-cta' expr:href='data:blog.homepageUrl + &quot;p/vibe-trading.html&quot;'>🔥 VIBE TRADING</a>
     </div>
   </header>
+
+  <!-- Authority Category Pill Bar (전 기기 상시 노출) -->
+  <div class='b365-category-bar-wrapper'>
+    <div class='b365-site-wrapper b365-category-bar'>
+      <a class='b365-cat-pill' expr:href='data:blog.homepageUrl'>🏠 전체</a>
+      <a class='b365-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/경제·금융&quot;'>💰 경제·금융</a>
+      <a class='b365-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/생활·건강&quot;'>🏥 생활·건강</a>
+      <a class='b365-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/정책·복지&quot;'>🏛️ 정책·복지</a>
+      <a class='b365-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/생활·소비&quot;'>💡 생활·소비</a>
+      <a class='b365-cat-pill vibe-pill' expr:href='data:blog.homepageUrl + &quot;p/vibe-trading.html&quot;'>⚡ VIBE TRADING</a>
+    </div>
+  </div>
 
   <!-- Main Content Layout -->
   <div class='b365-site-wrapper b365-main-layout'>

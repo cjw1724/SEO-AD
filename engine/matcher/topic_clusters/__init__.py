@@ -2,24 +2,29 @@
 """
 engine/matcher/topic_clusters/__init__.py
 -----------------------------------------
-Blogin 365 AI Holdings 5대 골든 니치 30-Day 토픽 클러스터 레지스트리 (v8.0 Apex).
+Blogin 365 AI Holdings - Universal Topic Clusters Registry (v9.0 Apex)
+
+특정 키워드 하드코딩 파이썬 파일(hair.py, medical.py 등)을 폐기하고,
+data/universal_clusters.json 및 UniversalTopicEngine 기반으로 동적 로드.
 """
 
+import os
+import json
 from typing import Dict, Any
 
-from .hair import HAIR_TRANSPLANT_CLUSTER
-from .subsidy import GOVERNMENT_SUBSIDY_CLUSTER
-from .savings import CASHFLOW_HACKS_CLUSTER
-from .medical import MEDICAL_WELLNESS_CLUSTER
-from .career import CAREER_CERT_CLUSTER
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+JSON_PATH = os.path.join(BASE_DIR, "data", "universal_clusters.json")
 
-ALL_CLUSTERS: Dict[str, Dict[str, Any]] = {
-    "hair_transplant": HAIR_TRANSPLANT_CLUSTER,
-    "government_subsidy": GOVERNMENT_SUBSIDY_CLUSTER,
-    "cashflow_hacks": CASHFLOW_HACKS_CLUSTER,
-    "medical_wellness": MEDICAL_WELLNESS_CLUSTER,
-    "career_cert": CAREER_CERT_CLUSTER
-}
+def _load_all_clusters() -> Dict[str, Dict[str, Any]]:
+    if os.path.exists(JSON_PATH):
+        try:
+            with open(JSON_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ [topic_clusters] universal_clusters.json 로드 경고: {e}")
+    return {}
+
+ALL_CLUSTERS: Dict[str, Dict[str, Any]] = _load_all_clusters()
 
 CATEGORY_TO_CLUSTER_MAP: Dict[str, str] = {
     "HAIR": "hair_transplant",
@@ -28,6 +33,12 @@ CATEGORY_TO_CLUSTER_MAP: Dict[str, str] = {
     "MEDICAL": "medical_wellness",
     "CAREER": "career_cert"
 }
+
+HAIR_TRANSPLANT_CLUSTER = ALL_CLUSTERS.get("hair_transplant", {})
+GOVERNMENT_SUBSIDY_CLUSTER = ALL_CLUSTERS.get("government_subsidy", {})
+CASHFLOW_HACKS_CLUSTER = ALL_CLUSTERS.get("cashflow_hacks", {})
+MEDICAL_WELLNESS_CLUSTER = ALL_CLUSTERS.get("medical_wellness", {})
+CAREER_CERT_CLUSTER = ALL_CLUSTERS.get("career_cert", {})
 
 __all__ = [
     "ALL_CLUSTERS",

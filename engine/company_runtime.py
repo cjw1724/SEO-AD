@@ -69,6 +69,7 @@ from engine.matcher.experiential_verifier import ExperientialVerifier
 from engine.radar.public_data_scout import PublicDataScout
 from engine.agents.human_voice_engine import HumanVoiceEngine
 from engine.matcher.topic_cluster_engine import TopicClusterEngine
+from engine.matcher.universal_topic_engine import UniversalTopicEngine, resolve_canonical_pillar
 from engine.agents.prompts_chat_pack import APEX_STAFF_PROMPTS, get_staff_prompt
 
 
@@ -475,7 +476,8 @@ class SelfHealingPipeline:
         print("\n[AI 직원 08] Google Blogger Gateway v3 발행...")
         pub_result = None
         # 태그(Labels): 메인 키워드 포함 + 서브 키워드 전부 포함 (바이브 메이커 공식)
-        raw_labels = [matched_topic["keyword"]] + matched_topic.get("subs", []) + ["정보", matched_topic["category"], "모의계산", "Blogin365AI"]
+        pillar_cat = resolve_canonical_pillar(matched_topic.get("category", ""), matched_topic.get("keyword", ""))
+        raw_labels = [pillar_cat, matched_topic["keyword"]] + matched_topic.get("subs", []) + ["모의계산", "Blogin365AI"]
         seen_labels = set()
         labels = [l for l in raw_labels if l and not (l in seen_labels or seen_labels.add(l))]
 
@@ -760,7 +762,8 @@ class CompanyRuntime:
                     should_run_strategy = False
                 else:
                     # Autonomous auto-dispatch: if strategy queue has PENDING topics, prioritize Strategy Lab
-                    nxt = strategy_pipeline.get_next_topic(topic_id_override=keyword_override)
+                    is_strat_kw = any(s.get("strategy_id") == keyword_override for s in getattr(strategy_pipeline, 'queue', [])) if keyword_override else False
+                    nxt = strategy_pipeline.get_next_topic(topic_id_override=keyword_override) if is_strat_kw else None
                     if nxt is not None and nxt.get("status") == "PENDING":
                         should_run_strategy = True
 
@@ -804,7 +807,25 @@ class CompanyRuntime:
                     self.logger.record_cycle(err_record)
                     raise strat_err
 
-            # 2. Fallback to FinTech Micro-SaaS Calculator Orchestrator
+            # 2. Universal 8-Agent Editorial Pipeline (Primary Media Engine)
+            if mode != "calculator":
+                try:
+                    return self.pipeline.run_cycle(dry_run=dry_run, keyword_override=keyword_override)
+                except Exception as ed_err:
+                    traceback.print_exc()
+                    err_record = {
+                        "cycle_id": f"ERR-EDITORIAL-{int(time.time())}",
+                        "timestamp": datetime.now().isoformat(),
+                        "status": "FAILED",
+                        "dry_run": dry_run,
+                        "keyword": keyword_override or "Universal Topic",
+                        "error": str(ed_err),
+                        "traceback": traceback.format_exc()
+                    }
+                    self.logger.record_cycle(err_record)
+                    raise ed_err
+
+            # 3. Fallback to FinTech Micro-SaaS Calculator Orchestrator
             try:
                 from engine.crew.crew import MicroSaaSPipelineOrchestrator
                 from engine.harness.harness_facade import harness_facade

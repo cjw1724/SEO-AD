@@ -126,5 +126,133 @@
     "status": "PENDING",
     "published_url": null,
     "published_at": null
+  },
+  {
+    "strategy_id": "macd_divergence_scalping",
+    "title": "2026 해외 100만 트레이더들의 MACD 다이버전스 반전 매매법: 실시간 바이낸스 캔들 백테스팅 팩트체크",
+    "subtitle": "가격과 보조지표의 괴리를 이용한 추세 반전 매매법의 실제 승률과 손익비를 바이낸스 캔들 위에서 0.01초 만에 검증합니다.",
+    "target_keyword": "MACD 다이버전스 매매법 백테스팅",
+    "symbol": "BTCUSDT",
+    "interval": "15m",
+    "category": "FINTECH_QUANT",
+    "labels": [
+      "FINTECH",
+      "QUANT",
+      "MACD",
+      "DIVERGENCE",
+      "TRADINGVIEW",
+      "VIBE_TRADING"
+    ],
+    "trader_name": "전설의 월가 차티스트",
+    "default_params": {
+      "bb_period": 20,
+      "bb_std": 2.0,
+      "vol_mult": 1.4,
+      "rsi_threshold": 38,
+      "tp_percent": 2.2,
+      "sl_percent": 1.1,
+      "leverage": 3
+    },
+    "strategy_description": "주가는 신저점을 경신하나 MACD 히스토그램은 저점을 높이는 상승 다이버전스 출현 시, 거래량이 실린 반등 캔들에서 롱 진입. 2.2% 익절 및 1.1% 칼손절.",
+    "callout_text": "다이버전스 매매의 가장 큰 함정은 '과매도 국면에서의 섣부른 조기 진입'입니다. 반드시 거래량이 동반되며 직전 캔들의 저가를 방어하는 양봉 확인 캔들이 종가 마감된 이후에만 진입해야 휩소(Whipsaw)를 피할 수 있습니다.",
+    "status": "PENDING",
+    "published_url": null,
+    "published_at": null
+  },
+  {
+    "strategy_id": "ema_golden_cross_trend",
+    "title": "2026 지수이동평균(EMA) 20/50/200 정배열 골든크로스 추세추종: 실시간 비트코인 캔들 백테스팅",
+    "subtitle": "추세추종의 정석 EMA 정배열과 눌림목 지지선 반등 타점의 실시간 승률 및 최대 손실폭(MDD)을 투명하게 팩트체크합니다.",
+    "target_keyword": "EMA 골든크로스 추세추종 매매법 백테스팅",
+    "symbol": "BTCUSDT",
+    "interval": "1h",
+    "category": "FINTECH_QUANT",
+    "labels": [
+      "FINTECH",
+      "QUANT",
+      "EMA",
+      "TREND_FOLLOWING",
+      "TRADINGVIEW",
+      "VIBE_TRADING"
+    ],
+    "trader_name": "정통 테크니컬 애널리스트",
+    "default_params": {
+      "bb_period": 20,
+      "bb_std": 2.0,
+      "vol_mult": 1.5,
+      "rsi_threshold": 45,
+      "tp_percent": 3.5,
+      "sl_percent": 1.8,
+      "leverage": 2
+    },
+    "strategy_description": "20 EMA가 50 EMA를 상향 돌파하고 200 EMA 위에서 대세 상승 추세가 확정될 때, 20 EMA 지지 테스트에서 매수 진입. 3.5% 목표가 분할 익절, 1.8% 이탈 시 칼손절.",
+    "callout_text": "대세 상승장에서는 잦은 손절보다 '추세를 길게 발라먹는 손익비(Risk-Reward)'가 전체 수익률을 좌우합니다. 200 EMA 지지선이 깨지지 않는 한 흔들기에 털리지 않고 버티는 것이 퀀트 추세추종의 핵심입니다.",
+    "status": "PENDING",
+    "published_url": null,
+    "published_at": null
+  },
+  {
+    "strategy_id": "keltner_ttm_squeeze",
+    "title": "2026 존 카터의 TTM 스퀴즈(Squeeze) & 켈트너 채널 폭발 매매법: 실시간 바이낸스 백테스팅",
+    "subtitle": "에너지를 응축한 볼린저 밴드가 켈트너 채널을 뚫고 폭발하는 모멘텀 타점을 실시간 차트 위에서 시뮬레이션합니다.",
+    "target_keyword": "TTM 스퀴즈 켈트너 채널 매매법 백테스팅",
+    "symbol": "BTCUSDT",
+    "interval": "15m",
+    "category": "FINTECH_QUANT",
+    "labels": [
+      "FINTECH",
+      "QUANT",
+      "TTM_SQUEEZE",
+      "KELTNER",
+      "TRADINGVIEW",
+      "VIBE_TRADING"
+    ],
+    "trader_name": "존 카터 (John Carter)",
+    "default_params": {
+      "bb_period": 20,
+      "bb_std": 2.0,
+      "vol_mult": 1.6,
+      "rsi_threshold": 42,
+      "tp_percent": 2.5,
+      "sl_percent": 1.2,
+      "leverage": 3
+    },
+    "strategy_description": "볼린저 밴드가 켈트너 채널 내부로 수축(Squeeze)된 후 밴드 밖으로 벗어나며 거래량이 폭증할 때 첫 번째 돌파 캔들에서 모멘텀 롱 진입.",
+    "callout_text": "변동성이 극도로 축소되는 스퀴즈 구간은 마치 용수철을 꽉 누른 상태와 같습니다. 방향성이 터지기 직전 미리 예측하기보다, 밴드 밖으로 거래량이 실리는 첫 번째 캔들에 즉각 탑승하는 것이 정석입니다.",
+    "status": "PENDING",
+    "published_url": null,
+    "published_at": null
+  },
+  {
+    "strategy_id": "rsi_connors_mean_reversion",
+    "title": "2026 전설의 래리 코너스(Larry Connors) RSI 극단 과매도 V자 반등 전략: 실시간 바이낸스 백테스팅",
+    "subtitle": "200일선 위 대세 상승장에서 일시적 패닉셀로 폭락한 과매도 공포 구간을 수학적으로 공략하는 고승률 평균회귀 기법.",
+    "target_keyword": "코너스 RSI 과매도 반등 매매법 백테스팅",
+    "symbol": "BTCUSDT",
+    "interval": "5m",
+    "category": "FINTECH_QUANT",
+    "labels": [
+      "FINTECH",
+      "QUANT",
+      "CONNORS_RSI",
+      "MEAN_REVERSION",
+      "TRADINGVIEW",
+      "VIBE_TRADING"
+    ],
+    "trader_name": "래리 코너스 (Larry Connors)",
+    "default_params": {
+      "bb_period": 20,
+      "bb_std": 2.0,
+      "vol_mult": 1.3,
+      "rsi_threshold": 25,
+      "tp_percent": 1.5,
+      "sl_percent": 0.9,
+      "leverage": 4
+    },
+    "strategy_description": "200 이평선 위의 대세 상승 기조 속에서, 일시적인 패닉셀로 인해 RSI가 25 이하로 극단적으로 폭락했을 때 공포를 역이용하여 단기 V자 반등을 취하는 평균회귀 전략.",
+    "callout_text": "모두가 공포에 질려 던질 때 수학적 기대값은 극대화됩니다. 단, 200 이평선 아래의 역배열 하락장에서는 바닥 밑에 지하실이 있으므로 철저하게 상위 이평선 지지 조건이 충족될 때만 가동해야 합니다.",
+    "status": "PENDING",
+    "published_url": null,
+    "published_at": null
   }
 ]

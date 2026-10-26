@@ -210,6 +210,50 @@ class BloggerGateway:
             "attempts": max_retries
         }
 
+    def patch_labels(self, post_id: str, labels: list, max_retries: int = 3) -> dict:
+        """
+        Patches only the labels of an existing Blogger post without modifying title or content.
+        """
+        if not self.blog_id:
+            return {"success": False, "error": "BLOGGER_BLOG_ID is missing"}
+
+        last_error = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                force_refresh = (attempt > 1)
+                creds = self._get_authenticated_credentials(force_refresh=force_refresh)
+                service = build('blogger', 'v3', credentials=creds)
+
+                body = {
+                    "labels": labels
+                }
+
+                posts_resource = service.posts()
+                result = posts_resource.patch(
+                    blogId=self.blog_id,
+                    postId=post_id,
+                    body=body
+                ).execute()
+
+                return {
+                    "success": True,
+                    "url": result.get("url", ""),
+                    "id": post_id,
+                    "labels": result.get("labels", []),
+                    "attempts": attempt
+                }
+            except Exception as e:
+                last_error = e
+                print(f"[BloggerGateway] patch_labels attempt {attempt}/{max_retries} failed: {e}")
+                if attempt < max_retries:
+                    time.sleep(2 * attempt)
+
+        return {
+            "success": False,
+            "error": str(last_error),
+            "attempts": max_retries
+        }
+
     def list_pages(self, max_retries: int = 3) -> list:
         """
         Lists all static pages of the Blogger blog.

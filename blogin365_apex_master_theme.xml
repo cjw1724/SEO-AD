@@ -198,6 +198,81 @@
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
+    /* 4대 권위 필라 GNB 네비게이션 & 카테고리 알약 바 */
+    .apex-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .apex-nav-links a {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--apex-text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .apex-nav-links a:hover {
+      color: var(--apex-accent-blue);
+    }
+    @media (max-width: 960px) {
+      .apex-nav-links {
+        display: none;
+      }
+    }
+
+    .apex-category-bar-wrap {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--apex-border-header);
+      position: sticky;
+      top: 65px;
+      z-index: 99;
+    }
+    .apex-category-bar-inner {
+      max-width: var(--apex-content-width);
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .apex-category-bar-inner::-webkit-scrollbar {
+      display: none;
+    }
+    .apex-cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--apex-text-secondary);
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--apex-border-card);
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .apex-cat-pill:hover {
+      background: var(--apex-accent-blue);
+      color: #ffffff;
+      border-color: var(--apex-accent-blue);
+    }
+    .apex-cat-pill.vibe-special {
+      background: linear-gradient(135deg, rgba(37,99,235,0.3), rgba(59,130,246,0.15));
+      border-color: rgba(59,130,246,0.4);
+      color: #60a5fa;
+    }
+    .apex-cat-pill.vibe-special:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
     /* -------------------------------------------------------------------------
        Main 880px Canvas Wrapper
        ------------------------------------------------------------------------- */
@@ -517,10 +592,13 @@
           <span class='apex-brand-badge'>FINTECH RESEARCH</span>
         </div>
 
-        <div class='apex-fx-ticker' id='apexLiveFxTicker'>
-          <span class='pulse-dot'/>
-          <span>USD/KRW 1,380.0원 (실시간 오라클)</span>
-        </div>
+        <nav class='apex-nav-links'>
+          <a expr:href='data:blog.homepageUrl'>전체 홈</a>
+          <a expr:href='data:blog.homepageUrl + &quot;search/label/경제·금융&quot;'>경제·금융</a>
+          <a expr:href='data:blog.homepageUrl + &quot;search/label/생활·건강&quot;'>생활·건강</a>
+          <a expr:href='data:blog.homepageUrl + &quot;search/label/정책·복지&quot;'>정책·복지</a>
+          <a expr:href='data:blog.homepageUrl + &quot;search/label/생활·소비&quot;'>생활·소비</a>
+        </nav>
 
         <div class='apex-nav-actions' style='display:flex; align-items:center; gap:10px;'>
           <a class='apex-vibe-nav-btn' href='/p/vibe-trading.html' style='display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, #1d4ed8, #2563eb); color:#ffffff !important; font-weight:800; font-size:13px; padding:7px 14px; border-radius:20px; text-decoration:none; box-shadow:0 2px 10px rgba(37,99,235,0.4);'>
@@ -529,6 +607,18 @@
         </div>
       </div>
     </header>
+
+    <!-- Authority Category Pill Bar (전 기기 상시 스크롤 노출) -->
+    <div class='apex-category-bar-wrap'>
+      <div class='apex-category-bar-inner'>
+        <a class='apex-cat-pill' expr:href='data:blog.homepageUrl'>🏠 전체</a>
+        <a class='apex-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/경제·금융&quot;'>💰 경제·금융</a>
+        <a class='apex-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/생활·건강&quot;'>🏥 생활·건강</a>
+        <a class='apex-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/정책·복지&quot;'>🏛️ 정책·복지</a>
+        <a class='apex-cat-pill' expr:href='data:blog.homepageUrl + &quot;search/label/생활·소비&quot;'>💡 생활·소비</a>
+        <a class='apex-cat-pill vibe-special' expr:href='data:blog.homepageUrl + &quot;p/vibe-trading.html&quot;'>⚡ VIBE TRADING</a>
+      </div>
+    </div>
 
     <!-- Main Content Layout (Strict 880px Single-Column Canvas) -->
     <div class='apex-main-wrapper'>

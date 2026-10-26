@@ -611,7 +611,7 @@ class StrategyLabPipeline:
             pub_res = self.gateway.publish(
                 title=topic.get("title"),
                 html_content=full_html,
-                labels=topic.get("labels", ["FINTECH", "QUANT"]),
+                labels=["경제·금융"] + [l for l in topic.get("labels", ["FINTECH", "QUANT"]) if l != "경제·금융"],
                 is_draft=False,
                 category=topic.get("category", "FINTECH_QUANT")
             )
