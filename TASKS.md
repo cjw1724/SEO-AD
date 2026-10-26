@@ -106,3 +106,12 @@
 - [x] **Task 13.2**: TradingView 공식 프로 위젯 `interval` 매개변수를 전략 기준 타임프레임(`tvInterval`)으로 1:1 동기화
 - [x] **Task 13.3**: 단위 테스트 실행 및 라이브 블로그 포스트 2건 Blogger API 라이브 재배포
 - [x] **Task 13.4**: Playwright E2E 검증 (슈퍼트렌드 포스트에서 `1분봉` 버튼 활성화 및 설명문 100% 일치 실측 캡처) 및 사용자 보고
+
+---
+
+### [Phase 14] 다형성 퀀트 엔진: 슈퍼트렌드(Supertrend) + RSI 1분봉 실체화 & 전략 로직 불일치 영구 종결
+- [x] **Task 14.1**: `data/strategy_topics_queue.json`에서 `supertrend_rsi_scalping` 파라미터를 슈퍼트렌드 규격(`st_period: 10, st_mult: 3.0, rsi_threshold: 40, tp_percent: 0.8, sl_percent: 0.5`)으로 정규화 완료
+- [x] **Task 14.2**: `engine/visuals/strategy_lab_renderer.py`에 `computeSupertrend()` 알고리즘 및 전략별 다형성 지표/차트선/진입시그널/슬라이더 분기 탑재 완료 (본문 설명과 100% 일치: 슈퍼트렌드 강세 전환 + RSI 40 이상 돌파 + 거래량 1.2배 시 BUY 진입, 약세 전환 + RSI 60 이하 돌파 시 SELL 진입)
+- [x] **Task 14.3**: 단위 테스트 `tests/test_strategy_lab_renderer.py`에 슈퍼트렌드 전용 렌더링 검증 추가 및 전수 통과 (Exit Code 0, 4/4 passed)
+- [x] **Task 14.4**: 라이브 블로그 포스트 2건 Blogger API 라이브 재배포 완료
+- [x] **Task 14.5**: Playwright E2E 검증 (슈퍼트렌드 추세선 렌더링, HUD 슈퍼트렌드 지지/저항 표시, 손절선 SL -0.5% / ROE -2.5% 투명화, 본문 설명과 100% 일치하는 타점 마킹 실측) 및 최종 보고 완료

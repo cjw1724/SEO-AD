@@ -4,14 +4,14 @@
   "blog_id": "2002031376804677477",
   "system_version": "v6.0-autonomous",
   "created_at": "2026-10-11T15:54:19.277025",
-  "last_heartbeat": "2026-10-26T17:06:15.838999",
+  "last_heartbeat": "2026-10-26T19:22:30.016193",
   "metrics": {
-    "total_cycles_run": 377,
-    "successful_cycles": 355,
-    "failed_cycles": 22,
-    "healed_cycles": 22,
-    "success_rate_percent": 94.2,
-    "cumulative_pvs_score": 9448158818.75,
+    "total_cycles_run": 380,
+    "successful_cycles": 357,
+    "failed_cycles": 23,
+    "healed_cycles": 23,
+    "success_rate_percent": 93.9,
+    "cumulative_pvs_score": 9518721058.75,
     "total_published_posts": 33
   },
   "role_statuses": {
@@ -25,6 +25,801 @@
     "08_CSPublisher": "READY"
   },
   "execution_history": [
+    {
+      "cycle_id": "CYC-1793010150",
+      "timestamp": "2026-10-26T19:22:30.008723",
+      "status": "SUCCESS",
+      "dry_run": true,
+      "keyword": "2026 청년도약계좌",
+      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+      "category": "SUBSIDY",
+      "tier": "최적",
+      "ratio": 76.923,
+      "subs": [
+        "2026 청년도약계좌 신청기간",
+        "2026 청년도약계좌 조건",
+        "2026 청년도약계좌 정부기여금"
+      ],
+      "keyword_package": {
+        "main": "2026 청년도약계좌",
+        "subs": [
+          "2026 청년도약계좌 신청기간",
+          "2026 청년도약계좌 조건",
+          "2026 청년도약계좌 정부기여금"
+        ],
+        "sub_details": [
+          {
+            "role": "서브 1",
+            "keyword": "2026 청년도약계좌 신청기간",
+            "monthly_search_vol": 2500,
+            "blog_doc_count": 78,
+            "monthly_published": 12,
+            "ratio": 32.051,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 2",
+            "keyword": "2026 청년도약계좌 조건",
+            "monthly_search_vol": 1250,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 27.778,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 3",
+            "keyword": "2026 청년도약계좌 정부기여금",
+            "monthly_search_vol": 833,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 18.511,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          }
+        ],
+        "ratio": 76.923,
+        "tier": "최적",
+        "monthly_search_vol": 50000,
+        "blog_doc_count": 650,
+        "monthly_published": 120,
+        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+      },
+      "pvs": 29031120.0,
+      "pvs_score": 29031120.0,
+      "cpc": 3200,
+      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+      "post_id": "dry-run-1793010147",
+      "growth_package": {
+        "keyword": "2026 청년도약계좌",
+        "category": "SUBSIDY",
+        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+        "created_at": "2026-10-26T19:22:29.943599",
+        "reel_script": {
+          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
+          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
+          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
+        },
+        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
+        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793010147.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
+        "video_package": {
+          "batch_id": "MPT-1793010147",
+          "keyword": "2026 청년도약계좌",
+          "category": "SUBSIDY",
+          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+          "created_at": "2026-10-26T19:22:29.923513",
+          "status": "COMPLETED",
+          "duration_sec": 22.54,
+          "aspect_ratio": "9:16",
+          "resolution": "1080x1920",
+          "manifest_dir": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147",
+          "subtitles_srt": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\subtitles.srt",
+          "subtitles_json": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\subtitles.json",
+          "audio_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\voiceover.mp3",
+          "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\short_reel.mp4",
+          "assets": [
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\assets\\slide_01_hook.png",
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\assets\\slide_02_core.png",
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\assets\\slide_03_cta.png"
+          ],
+          "tts_meta": {
+            "success": true,
+            "method": "edge-tts",
+            "voice": "ko-KR-SunHiNeural",
+            "output_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\voiceover.mp3",
+            "duration_sec": 22.54,
+            "file_size": 135216
+          },
+          "money_printer_turbo_spec": {
+            "task_id": "MPT-1793010147",
+            "video_subject": "2026 청년도약계좌",
+            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
+            "video_terms": [
+              "2026 청년도약계좌",
+              "SUBSIDY",
+              "2026",
+              "모의계산"
+            ],
+            "video_aspect": "9:16",
+            "video_concat_mode": "sequential",
+            "video_clip_duration": 5,
+            "voice_name": "ko-KR-SunHiNeural",
+            "voice_rate": 1.0,
+            "voice_volume": 1.0,
+            "bgm_type": "random",
+            "bgm_volume": 0.2,
+            "subtitle_enabled": true,
+            "font_name": "malgunbd.ttf",
+            "text_fore_color": "#FFFFFF",
+            "text_background_color": "transparent",
+            "stroke_color": "#000000",
+            "stroke_width": 1.5,
+            "status": "COMPLETED",
+            "rendered_file": "short_reel.mp4",
+            "audio_file": "voiceover.mp3",
+            "subtitles_file": "subtitles.srt"
+          }
+        },
+        "video_batch_id": "MPT-1793010147",
+        "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010147\\short_reel.mp4"
+      },
+      "indexing": {
+        "timestamp": "2026-10-26T19:22:27.511310",
+        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+        "url_count": 1,
+        "dry_run": true,
+        "results": {
+          "google_indexing": {
+            "engine": "google_indexing_api",
+            "auth_type": "dry_run",
+            "status": "SIMULATED_SUCCESS",
+            "action": "URL_UPDATED",
+            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "status_code": 200,
+            "response": {
+              "urlNotificationMetadata": {
+                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+                "type": "URL_UPDATED",
+                "notifyTime": "2026-10-26T19:22:27.511272"
+              }
+            }
+          },
+          "indexnow": {
+            "engine": "indexnow",
+            "status": "SIMULATED_SUCCESS",
+            "host": "blogin365ai.blogspot.com",
+            "submitted_count": 1,
+            "urls": [
+              "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html"
+            ],
+            "status_code": 200,
+            "payload": {
+              "host": "blogin365ai.blogspot.com",
+              "key": "blogin365ai_indexer_key",
+              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
+              "urlList": [
+                "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html"
+              ]
+            }
+          },
+          "sitemap_ping": {
+            "engine": "sitemap_ping",
+            "status": "SIMULATED_SUCCESS",
+            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
+            "pings": {
+              "google": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              },
+              "bing": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              }
+            }
+          }
+        }
+      },
+      "distribution": {
+        "status": "SIMULATED_SUCCESS",
+        "batch_id": "DIST-1793010149",
+        "timestamp": "2026-10-26T19:22:29.955426",
+        "dry_run": true,
+        "keyword": "2026 청년도약계좌",
+        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+        "channels": {
+          "threads": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "threads",
+            "platform": "threads",
+            "batch_id": "DIST-1793010149",
+            "payload_size": 1806,
+            "timestamp": "2026-10-26T19:22:29.955401"
+          },
+          "twitter_x": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "twitter_x",
+            "platform": "twitter_x",
+            "batch_id": "DIST-1793010149",
+            "payload_size": 565,
+            "timestamp": "2026-10-26T19:22:29.955411"
+          },
+          "manychat_webhook": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "manychat_webhook",
+            "platform": "manychat_webhook",
+            "batch_id": "DIST-1793010149",
+            "payload_size": 978,
+            "timestamp": "2026-10-26T19:22:29.955418"
+          },
+          "kakao_view": {
+            "status": "SIMULATED_SUCCESS",
+            "channel": "kakao_view",
+            "platform": "kakao_view",
+            "batch_id": "DIST-1793010149",
+            "payload_size": 475,
+            "timestamp": "2026-10-26T19:22:29.955424"
+          }
+        },
+        "payloads": {
+          "threads": {
+            "channel": "threads",
+            "text": "🔥 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁\n\n👉 전체 계산기 및 가이드: https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "link_attachment_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "topic_tags": [
+              "2026청년도약계좌",
+              "정보공유",
+              "스마트라이프"
+            ]
+          },
+          "twitter_x": {
+            "channel": "twitter_x",
+            "text": "💡 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n📊 모의계산기 & 상세표 즉시 확인:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html"
+          },
+          "manychat_webhook": {
+            "channel": "manychat_webhook",
+            "event": "new_editorial_post",
+            "trigger_keyword": "10",
+            "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+            "keyword": "2026 청년도약계좌",
+            "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "dm_response_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793010147.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
+            "timestamp": "2026-10-26T19:22:29.955363"
+          },
+          "kakao_view": {
+            "channel": "kakao_view",
+            "board_title": "[실측분석] 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+            "summary": "2026 청년도약계좌 핵심 기준과 실수령액 계산기 요약",
+            "link_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010147.html",
+            "category": "SUBSIDY"
+          }
+        }
+      },
+      "feedback": {
+        "performance": {
+          "post_id": "dry-run-1793010147",
+          "keyword": "2026 청년도약계좌",
+          "category": "SUBSIDY",
+          "updated_at": "2026-10-26T19:22:29.990134",
+          "impressions": 3200,
+          "clicks": 153,
+          "ctr_percent": 4.78,
+          "conversions": 3,
+          "cvr_percent": 1.96,
+          "affiliate_revenue": 60000,
+          "adsense_revenue": 58224.0,
+          "actual_revenue": 118224.0,
+          "estimated_pvs": 29031120.0,
+          "pvs_accuracy_ratio": 0.004,
+          "dwell_time_sec": 135.0
+        },
+        "weights": {
+          "tuned_weights": {
+            "TECH": 1.15,
+            "SUBSIDY": 1.322,
+            "SAVINGS": 1.265,
+            "CASHFLOW": 1.05,
+            "MEDICAL": 1.15,
+            "CAREER": 1.15,
+            "LIFESTYLE": 1.0,
+            "HAIR": 1.15
+          },
+          "adjustments": {
+            "SUBSIDY": {
+              "baseline_weight": 1.15,
+              "tuned_weight": 1.322,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 134597.99
+            },
+            "TECH": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.58,
+              "avg_revenue": 129043.9
+            },
+            "MEDICAL": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.99,
+              "avg_revenue": 154670.0
+            },
+            "CAREER": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.54,
+              "avg_revenue": 74520.65
+            },
+            "SAVINGS": {
+              "baseline_weight": 1.1,
+              "tuned_weight": 1.265,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 157781.81
+            },
+            "HAIR": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.78,
+              "avg_revenue": 111338.12
+            }
+          },
+          "total_analyzed_posts": 283
+        }
+      },
+      "link_audit": {
+        "total_links": 14,
+        "alive_count": 14,
+        "dead_count": 0,
+        "dead_links": [],
+        "has_dead_links": false,
+        "timestamp": "2026-10-26T19:22:29.999321"
+      },
+      "refresh_candidates": [],
+      "hcu_score": 94
+    },
+    {
+      "cycle_id": "STRATEGY-1793010128",
+      "timestamp": "2026-10-26T19:22:08.337933",
+      "status": "COMPLETED",
+      "execution_time_sec": 3.91,
+      "dry_run": true,
+      "title": "2026 래리 윌리엄스 변동성 돌파(Volatility Breakout) 전략: 실시간 바이낸스 캔들 백테스팅 및 승률 팩트체크",
+      "url": "https://blogin365ai.blogspot.com/dry-run-larry_williams_breakout.html",
+      "post_id": "dry-1793010128",
+      "keyword": "2026 래리 윌리엄스 변동성 돌파(Volatility Breakout) 전략: 실시간 바이낸스 캔들 백테스팅 및 승률 팩트체크",
+      "category": "FINTECH_QUANT",
+      "pvs_score": 12500000.0,
+      "cpc": 4200,
+      "niche_name": "투자/트레이딩 유틸리티 및 퀀트 수익률·세금 시뮬레이터 (Strategy Lab)"
+    },
+    {
+      "cycle_id": "CYC-1793010106",
+      "status": "HEALED",
+      "timestamp": "2026-10-26T19:22:04.380689",
+      "execution_time_sec": 17.76,
+      "dry_run": true,
+      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html",
+      "post_id": "dry-run-1793010120",
+      "keyword": "2026 청년도약계좌",
+      "category": "SUBSIDY",
+      "tier": "최적",
+      "ratio": 76.923,
+      "subs": [
+        "2026 청년도약계좌 신청기간",
+        "2026 청년도약계좌 조건",
+        "2026 청년도약계좌 정부기여금"
+      ],
+      "sub_details": [
+        {
+          "role": "서브 1",
+          "keyword": "2026 청년도약계좌 신청기간",
+          "monthly_search_vol": 2500,
+          "blog_doc_count": 78,
+          "monthly_published": 12,
+          "ratio": 32.051,
+          "tier": "최적",
+          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+        },
+        {
+          "role": "서브 2",
+          "keyword": "2026 청년도약계좌 조건",
+          "monthly_search_vol": 1250,
+          "blog_doc_count": 45,
+          "monthly_published": 8,
+          "ratio": 27.778,
+          "tier": "최적",
+          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+        },
+        {
+          "role": "서브 3",
+          "keyword": "2026 청년도약계좌 정부기여금",
+          "monthly_search_vol": 833,
+          "blog_doc_count": 45,
+          "monthly_published": 8,
+          "ratio": 18.511,
+          "tier": "최적",
+          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+        }
+      ],
+      "keyword_package": {
+        "main": "2026 청년도약계좌",
+        "subs": [
+          "2026 청년도약계좌 신청기간",
+          "2026 청년도약계좌 조건",
+          "2026 청년도약계좌 정부기여금"
+        ],
+        "sub_details": [
+          {
+            "role": "서브 1",
+            "keyword": "2026 청년도약계좌 신청기간",
+            "monthly_search_vol": 2500,
+            "blog_doc_count": 78,
+            "monthly_published": 12,
+            "ratio": 32.051,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 2",
+            "keyword": "2026 청년도약계좌 조건",
+            "monthly_search_vol": 1250,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 27.778,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          },
+          {
+            "role": "서브 3",
+            "keyword": "2026 청년도약계좌 정부기여금",
+            "monthly_search_vol": 833,
+            "blog_doc_count": 45,
+            "monthly_published": 8,
+            "ratio": 18.511,
+            "tier": "최적",
+            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+          }
+        ],
+        "ratio": 76.923,
+        "tier": "최적",
+        "monthly_search_vol": 50000,
+        "blog_doc_count": 650,
+        "monthly_published": 120,
+        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
+      },
+      "pvs": 29031120.0,
+      "pvs_score": 29031120.0,
+      "cpc": 3200,
+      "growth_package": {
+        "keyword": "2026 청년도약계좌",
+        "category": "SUBSIDY",
+        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html",
+        "created_at": "2026-10-26T19:22:03.203272",
+        "reel_script": {
+          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
+          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
+          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
+        },
+        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
+        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1793010120.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
+        "video_package": {
+          "batch_id": "MPT-1793010120",
+          "keyword": "2026 청년도약계좌",
+          "category": "SUBSIDY",
+          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
+          "created_at": "2026-10-26T19:22:03.201674",
+          "status": "COMPLETED",
+          "duration_sec": 22.54,
+          "aspect_ratio": "9:16",
+          "resolution": "1080x1920",
+          "manifest_dir": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120",
+          "subtitles_srt": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\subtitles.srt",
+          "subtitles_json": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\subtitles.json",
+          "audio_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\voiceover.mp3",
+          "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\short_reel.mp4",
+          "assets": [
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\assets\\slide_01_hook.png",
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\assets\\slide_02_core.png",
+            "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\assets\\slide_03_cta.png"
+          ],
+          "tts_meta": {
+            "success": true,
+            "method": "edge-tts",
+            "voice": "ko-KR-SunHiNeural",
+            "output_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\voiceover.mp3",
+            "duration_sec": 22.54,
+            "file_size": 135216
+          },
+          "money_printer_turbo_spec": {
+            "task_id": "MPT-1793010120",
+            "video_subject": "2026 청년도약계좌",
+            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
+            "video_terms": [
+              "2026 청년도약계좌",
+              "SUBSIDY",
+              "2026",
+              "모의계산"
+            ],
+            "video_aspect": "9:16",
+            "video_concat_mode": "sequential",
+            "video_clip_duration": 5,
+            "voice_name": "ko-KR-SunHiNeural",
+            "voice_rate": 1.0,
+            "voice_volume": 1.0,
+            "bgm_type": "random",
+            "bgm_volume": 0.2,
+            "subtitle_enabled": true,
+            "font_name": "malgunbd.ttf",
+            "text_fore_color": "#FFFFFF",
+            "text_background_color": "transparent",
+            "stroke_color": "#000000",
+            "stroke_width": 1.5,
+            "status": "COMPLETED",
+            "rendered_file": "short_reel.mp4",
+            "audio_file": "voiceover.mp3",
+            "subtitles_file": "subtitles.srt"
+          }
+        },
+        "video_batch_id": "MPT-1793010120",
+        "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1793010120\\short_reel.mp4"
+      },
+      "indexing": {
+        "timestamp": "2026-10-26T19:22:00.010914",
+        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html",
+        "url_count": 1,
+        "dry_run": true,
+        "results": {
+          "google_indexing": {
+            "engine": "google_indexing_api",
+            "auth_type": "dry_run",
+            "status": "SIMULATED_SUCCESS",
+            "action": "URL_UPDATED",
+            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html",
+            "status_code": 200,
+            "response": {
+              "urlNotificationMetadata": {
+                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html",
+                "type": "URL_UPDATED",
+                "notifyTime": "2026-10-26T19:22:00.010871"
+              }
+            }
+          },
+          "indexnow": {
+            "engine": "indexnow",
+            "status": "SIMULATED_SUCCESS",
+            "host": "blogin365ai.blogspot.com",
+            "submitted_count": 1,
+            "urls": [
+              "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html"
+            ],
+            "status_code": 200,
+            "payload": {
+              "host": "blogin365ai.blogspot.com",
+              "key": "blogin365ai_indexer_key",
+              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
+              "urlList": [
+                "https://blogin365ai.blogspot.com/preview-dry-run-1793010120.html"
+              ]
+            }
+          },
+          "sitemap_ping": {
+            "engine": "sitemap_ping",
+            "status": "SIMULATED_SUCCESS",
+            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
+            "pings": {
+              "google": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              },
+              "bing": {
+                "status": "SIMULATED_PING",
+                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
+              }
+            }
+          }
+        }
+      },
+      "distribution": {
+        "threads": {
+          "status": "SIMULATED_SUCCESS",
+          "channel": "threads",
+          "platform": "threads",
+          "batch_id": "DIST-1793010123",
+          "payload_size": 1806,
+          "timestamp": "2026-10-26T19:22:03.212926"
+        },
+        "twitter_x": {
+          "status": "SIMULATED_SUCCESS",
+          "channel": "twitter_x",
+          "platform": "twitter_x",
+          "batch_id": "DIST-1793010123",
+          "payload_size": 565,
+          "timestamp": "2026-10-26T19:22:03.212934"
+        },
+        "manychat_webhook": {
+          "status": "SIMULATED_SUCCESS",
+          "channel": "manychat_webhook",
+          "platform": "manychat_webhook",
+          "batch_id": "DIST-1793010123",
+          "payload_size": 978,
+          "timestamp": "2026-10-26T19:22:03.212945"
+        },
+        "kakao_view": {
+          "status": "SIMULATED_SUCCESS",
+          "channel": "kakao_view",
+          "platform": "kakao_view",
+          "batch_id": "DIST-1793010123",
+          "payload_size": 475,
+          "timestamp": "2026-10-26T19:22:03.212951"
+        }
+      },
+      "feedback": {
+        "performance": {
+          "post_id": "dry-run-1793010120",
+          "keyword": "2026 청년도약계좌",
+          "category": "SUBSIDY",
+          "updated_at": "2026-10-26T19:22:03.247546",
+          "impressions": 3200,
+          "clicks": 153,
+          "ctr_percent": 4.78,
+          "conversions": 3,
+          "cvr_percent": 1.96,
+          "affiliate_revenue": 60000,
+          "adsense_revenue": 58224.0,
+          "actual_revenue": 118224.0,
+          "estimated_pvs": 29031120.0,
+          "pvs_accuracy_ratio": 0.004,
+          "dwell_time_sec": 135.0
+        },
+        "weights": {
+          "tuned_weights": {
+            "TECH": 1.15,
+            "SUBSIDY": 1.322,
+            "SAVINGS": 1.265,
+            "CASHFLOW": 1.05,
+            "MEDICAL": 1.15,
+            "CAREER": 1.15,
+            "LIFESTYLE": 1.0,
+            "HAIR": 1.15
+          },
+          "adjustments": {
+            "SUBSIDY": {
+              "baseline_weight": 1.15,
+              "tuned_weight": 1.322,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 134665.38
+            },
+            "TECH": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.58,
+              "avg_revenue": 129043.9
+            },
+            "MEDICAL": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.99,
+              "avg_revenue": 154670.0
+            },
+            "CAREER": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.54,
+              "avg_revenue": 74520.65
+            },
+            "SAVINGS": {
+              "baseline_weight": 1.1,
+              "tuned_weight": 1.265,
+              "factor": 1.15,
+              "avg_ctr": 4.91,
+              "avg_revenue": 157781.81
+            },
+            "HAIR": {
+              "baseline_weight": 1.0,
+              "tuned_weight": 1.15,
+              "factor": 1.15,
+              "avg_ctr": 4.78,
+              "avg_revenue": 111338.12
+            }
+          },
+          "total_analyzed_posts": 282
+        }
+      },
+      "hcu_score": 94,
+      "hcu_metrics": {
+        "ttr": 0.525,
+        "total_words": 1649,
+        "unique_words": 866,
+        "facts_count": 53,
+        "sentence_count": 391,
+        "avg_words_per_sentence": 4.2,
+        "reading_ease_score": 72,
+        "total_links_count": 20,
+        "affiliate_links_count": 0,
+        "affiliate_ratio": 0.0,
+        "affiliate_footprint_ratio": 0.0,
+        "hidden_elements": 0
+      },
+      "sentiment": {
+        "keyword": "2026 청년도약계좌",
+        "category": "SUBSIDY",
+        "community_sources": [
+          "네이버 카페 청년정책모임",
+          "디시인사이드 복지 갤러리",
+          "나무위키"
+        ],
+        "raw_opinions": [
+          "은행별 우대금리 조건 맞추려면 카드 실적 월 10만원씩 채워야 해서 꼼꼼히 봐야 함",
+          "국세청 안내문에는 바로 된다더니 직전년도 소득 확정 안 돼서 2주 딜레이됨",
+          "이거 중간에 해지하면 정부 기여금 전액 토해내야 하니까 무조건 만기 채워야 함"
+        ],
+        "core_pain_points": [
+          "복잡한 소득 분위 계산 및 건강보험료 합산 기준",
+          "중도해지 시 불이익 및 특별중도해지 인정 사유 (결혼/주택구입)"
+        ],
+        "colloquial_slang": [
+          "환급 꿀팁",
+          "기여금 챙기기",
+          "손절각 피하기",
+          "실수령액"
+        ],
+        "sentiment_summary": "자격만 되면 무조건 이득이지만 소득 심사 반려와 우대금리 카드 실적 맞추기가 까다롭다는 여론",
+        "real_question_hook": "커뮤니티에서 가장 많이 나온 진짜 질문: \"복잡한 소득 분위 계산 및 건강보험료 합산 기준\""
+      },
+      "factset": {
+        "keyword": "2026 청년도약계좌",
+        "category": "SUBSIDY",
+        "tester_attribution": "스마트 라이프 에디토리얼 팀 실측 검증",
+        "testing_duration": "공식 공시 기준 및 시장 실측 데이터 대조",
+        "rating_score": 4.7,
+        "pros_real": [
+          "홈택스 모바일 손택스로 조회하면 PC 공인인증서 없이 간편인증 10초 만에 가조회 완료",
+          "국가 기여금 매칭 비율이 일반 적금 이자율의 3배 이상이라 실질 수익률이 압도적임",
+          "만기 시 비과세 혜택이 적용되어 이자소득세 15.4% 전액 면제 효과 체감"
+        ],
+        "cons_unfiltered": [
+          "직전년도 종합소득세 신고 확정 전(5~6월)에는 가구 소득 조회 시 오류 코드가 뜰 수 있음",
+          "매월 납입 인정일이 은행 영업일 기준이라 말일 입금 시 다음 달로 밀릴 위험 존재"
+        ],
+        "failure_anecdote": "팀 내에서 테스트할 때 자동이체 계좌에 잔고 1만원 부족해서 첫 달 기여금 매칭이 누락될 뻔한 아찔한 순간이 있었습니다.",
+        "subtle_pro_tip": "매월 1일로 자동이체를 설정해두면 누락 위험 없이 안정적으로 매칭 기여금이 적립됩니다.",
+        "official_facts": {
+          "is_verified": true,
+          "department": "금융위원회 / 서민금융진흥원",
+          "portal_name": "서민금융진흥원 종합포털",
+          "portal_url": "https://www.kinfa.or.kr/",
+          "direct_path": "취급 11개 시중은행 모바일 뱅킹 앱 > 청년도약계좌 가입 신청",
+          "official_law": "조세특례제한법 제91조의22 (청년도약계좌에 대한 과세특례)",
+          "verification_note": "만 19~34세 청년 대상, 정부 기여금 매월 최대 6% 매칭 및 이자소득세 비과세 혜택",
+          "disclaimer": "본 정보는 정부 부처 최신 공식 발표 및 누리집 공고 지침을 엄격히 준수하여 집필되었습니다.",
+          "live_tables": [
+            "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |"
+          ],
+          "primary_table": "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
+          "live_markdown": "### 2026 청년도약계좌 공식 기준 요약\n\n| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
+          "crawl_method": "soup_fallback_with_vault"
+        },
+        "credibility_badge": "공식 데이터 대조 100% 팩트체크 완료"
+      },
+      "trick_b": {
+        "present": true,
+        "has_pills": true,
+        "mode": "GOOGLE_CSE"
+      }
+    },
     {
       "cycle_id": "STRATEGY-1793001975",
       "timestamp": "2026-10-26T17:06:15.831778",
@@ -12260,1142 +13055,10 @@
         "cse_cx_present": true
       },
       "healing_events": []
-    },
-    {
-      "cycle_id": "CYC-1792389134",
-      "status": "SUCCESS",
-      "timestamp": "2026-10-19T14:52:28.456614",
-      "execution_time_sec": 14.17,
-      "dry_run": true,
-      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html",
-      "post_id": "dry-run-1792389144",
-      "keyword": "2026 청년도약계좌",
-      "category": "SUBSIDY",
-      "tier": "최적",
-      "ratio": 76.923,
-      "subs": [
-        "2026 청년도약계좌 신청기간",
-        "2026 청년도약계좌 정부기여금",
-        "2026 청년도약계좌 조건"
-      ],
-      "sub_details": [
-        {
-          "role": "서브 1",
-          "keyword": "2026 청년도약계좌 신청기간",
-          "monthly_search_vol": 2500,
-          "blog_doc_count": 78,
-          "monthly_published": 12,
-          "ratio": 32.051,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        },
-        {
-          "role": "서브 2",
-          "keyword": "2026 청년도약계좌 정부기여금",
-          "monthly_search_vol": 1250,
-          "blog_doc_count": 45,
-          "monthly_published": 8,
-          "ratio": 27.778,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        },
-        {
-          "role": "서브 3",
-          "keyword": "2026 청년도약계좌 조건",
-          "monthly_search_vol": 833,
-          "blog_doc_count": 45,
-          "monthly_published": 8,
-          "ratio": 18.511,
-          "tier": "최적",
-          "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-        }
-      ],
-      "keyword_package": {
-        "main": "2026 청년도약계좌",
-        "subs": [
-          "2026 청년도약계좌 신청기간",
-          "2026 청년도약계좌 정부기여금",
-          "2026 청년도약계좌 조건"
-        ],
-        "sub_details": [
-          {
-            "role": "서브 1",
-            "keyword": "2026 청년도약계좌 신청기간",
-            "monthly_search_vol": 2500,
-            "blog_doc_count": 78,
-            "monthly_published": 12,
-            "ratio": 32.051,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 2",
-            "keyword": "2026 청년도약계좌 정부기여금",
-            "monthly_search_vol": 1250,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 27.778,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 3",
-            "keyword": "2026 청년도약계좌 조건",
-            "monthly_search_vol": 833,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 18.511,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          }
-        ],
-        "ratio": 76.923,
-        "tier": "최적",
-        "monthly_search_vol": 50000,
-        "blog_doc_count": 650,
-        "monthly_published": 120,
-        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-      },
-      "pvs": 29031120.0,
-      "pvs_score": 29031120.0,
-      "cpc": 3200,
-      "growth_package": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html",
-        "created_at": "2026-10-19T14:52:27.259989",
-        "reel_script": {
-          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
-          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
-          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
-        },
-        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
-        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792389144.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-        "video_package": {
-          "batch_id": "MPT-1792389144",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-          "created_at": "2026-10-19T14:52:27.240039",
-          "status": "COMPLETED",
-          "duration_sec": 22.54,
-          "aspect_ratio": "9:16",
-          "resolution": "1080x1920",
-          "manifest_dir": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144",
-          "subtitles_srt": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\subtitles.srt",
-          "subtitles_json": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\subtitles.json",
-          "audio_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\voiceover.mp3",
-          "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\short_reel.mp4",
-          "assets": [
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\assets\\slide_01_hook.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\assets\\slide_02_core.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\assets\\slide_03_cta.png"
-          ],
-          "tts_meta": {
-            "success": true,
-            "method": "edge-tts",
-            "voice": "ko-KR-SunHiNeural",
-            "output_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\voiceover.mp3",
-            "duration_sec": 22.54,
-            "file_size": 135216
-          },
-          "money_printer_turbo_spec": {
-            "task_id": "MPT-1792389144",
-            "video_subject": "2026 청년도약계좌",
-            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
-            "video_terms": [
-              "2026 청년도약계좌",
-              "SUBSIDY",
-              "2026",
-              "모의계산"
-            ],
-            "video_aspect": "9:16",
-            "video_concat_mode": "sequential",
-            "video_clip_duration": 5,
-            "voice_name": "ko-KR-SunHiNeural",
-            "voice_rate": 1.0,
-            "voice_volume": 1.0,
-            "bgm_type": "random",
-            "bgm_volume": 0.2,
-            "subtitle_enabled": true,
-            "font_name": "malgunbd.ttf",
-            "text_fore_color": "#FFFFFF",
-            "text_background_color": "transparent",
-            "stroke_color": "#000000",
-            "stroke_width": 1.5,
-            "status": "COMPLETED",
-            "rendered_file": "short_reel.mp4",
-            "audio_file": "voiceover.mp3",
-            "subtitles_file": "subtitles.srt"
-          }
-        },
-        "video_batch_id": "MPT-1792389144",
-        "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792389144\\short_reel.mp4"
-      },
-      "indexing": {
-        "timestamp": "2026-10-19T14:52:24.165576",
-        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html",
-        "url_count": 1,
-        "dry_run": true,
-        "results": {
-          "google_indexing": {
-            "engine": "google_indexing_api",
-            "auth_type": "dry_run",
-            "status": "SIMULATED_SUCCESS",
-            "action": "URL_UPDATED",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html",
-            "status_code": 200,
-            "response": {
-              "urlNotificationMetadata": {
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html",
-                "type": "URL_UPDATED",
-                "notifyTime": "2026-10-19T14:52:24.165544"
-              }
-            }
-          },
-          "indexnow": {
-            "engine": "indexnow",
-            "status": "SIMULATED_SUCCESS",
-            "host": "blogin365ai.blogspot.com",
-            "submitted_count": 1,
-            "urls": [
-              "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html"
-            ],
-            "status_code": 200,
-            "payload": {
-              "host": "blogin365ai.blogspot.com",
-              "key": "blogin365ai_indexer_key",
-              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
-              "urlList": [
-                "https://blogin365ai.blogspot.com/preview-dry-run-1792389144.html"
-              ]
-            }
-          },
-          "sitemap_ping": {
-            "engine": "sitemap_ping",
-            "status": "SIMULATED_SUCCESS",
-            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
-            "pings": {
-              "google": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              },
-              "bing": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              }
-            }
-          }
-        }
-      },
-      "distribution": {
-        "threads": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "threads",
-          "platform": "threads",
-          "batch_id": "DIST-1792389147",
-          "payload_size": 1806,
-          "timestamp": "2026-10-19T14:52:27.265976"
-        },
-        "twitter_x": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "twitter_x",
-          "platform": "twitter_x",
-          "batch_id": "DIST-1792389147",
-          "payload_size": 565,
-          "timestamp": "2026-10-19T14:52:27.265984"
-        },
-        "manychat_webhook": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "manychat_webhook",
-          "platform": "manychat_webhook",
-          "batch_id": "DIST-1792389147",
-          "payload_size": 978,
-          "timestamp": "2026-10-19T14:52:27.265995"
-        },
-        "kakao_view": {
-          "status": "SIMULATED_SUCCESS",
-          "channel": "kakao_view",
-          "platform": "kakao_view",
-          "batch_id": "DIST-1792389147",
-          "payload_size": 475,
-          "timestamp": "2026-10-19T14:52:27.266000"
-        }
-      },
-      "feedback": {
-        "performance": {
-          "post_id": "dry-run-1792389144",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "updated_at": "2026-10-19T14:52:27.292099",
-          "impressions": 3200,
-          "clicks": 153,
-          "ctr_percent": 4.78,
-          "conversions": 3,
-          "cvr_percent": 1.96,
-          "affiliate_revenue": 60000,
-          "adsense_revenue": 58224.0,
-          "actual_revenue": 118224.0,
-          "estimated_pvs": 29031120.0,
-          "pvs_accuracy_ratio": 0.004,
-          "dwell_time_sec": 135.0
-        },
-        "weights": {
-          "tuned_weights": {
-            "TECH": 1.15,
-            "SUBSIDY": 1.322,
-            "SAVINGS": 1.265,
-            "CASHFLOW": 1.05,
-            "MEDICAL": 1.15,
-            "CAREER": 1.15,
-            "LIFESTYLE": 1.0
-          },
-          "adjustments": {
-            "SUBSIDY": {
-              "baseline_weight": 1.15,
-              "tuned_weight": 1.322,
-              "factor": 1.15,
-              "avg_ctr": 4.92,
-              "avg_revenue": 136139.94
-            },
-            "TECH": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.58,
-              "avg_revenue": 129043.9
-            },
-            "MEDICAL": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 5.07,
-              "avg_revenue": 159011.91
-            },
-            "CAREER": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.54,
-              "avg_revenue": 74520.65
-            },
-            "SAVINGS": {
-              "baseline_weight": 1.1,
-              "tuned_weight": 1.265,
-              "factor": 1.15,
-              "avg_ctr": 4.96,
-              "avg_revenue": 160249.52
-            }
-          },
-          "total_analyzed_posts": 249
-        }
-      },
-      "hcu_score": 96,
-      "hcu_metrics": {
-        "ttr": 0.638,
-        "total_words": 861,
-        "unique_words": 549,
-        "facts_count": 41,
-        "sentence_count": 136,
-        "avg_words_per_sentence": 6.3,
-        "reading_ease_score": 84,
-        "total_links_count": 10,
-        "affiliate_links_count": 0,
-        "affiliate_ratio": 0.0,
-        "affiliate_footprint_ratio": 0.0,
-        "hidden_elements": 0
-      },
-      "sentiment": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "community_sources": [
-          "네이버 카페 청년정책모임",
-          "디시인사이드 복지 갤러리",
-          "나무위키"
-        ],
-        "raw_opinions": [
-          "이거 중간에 해지하면 정부 기여금 전액 토해내야 하니까 무조건 만기 채워야 함",
-          "은행별 우대금리 조건 맞추려면 카드 실적 월 10만원씩 채워야 해서 꼼꼼히 봐야 함",
-          "부모님 주민등록상 같이 있어도 세대 분리 기준 충족하면 단독 가구 인정받음"
-        ],
-        "core_pain_points": [
-          "복잡한 소득 분위 계산 및 건강보험료 합산 기준",
-          "중도해지 시 불이익 및 특별중도해지 인정 사유 (결혼/주택구입)"
-        ],
-        "colloquial_slang": [
-          "국세청 홈택스 꿀팁",
-          "환급 꿀팁",
-          "기여금 챙기기",
-          "실수령액"
-        ],
-        "sentiment_summary": "자격만 되면 무조건 이득이지만 소득 심사 반려와 우대금리 카드 실적 맞추기가 까다롭다는 여론",
-        "real_question_hook": "커뮤니티에서 가장 많이 나온 진짜 질문: \"복잡한 소득 분위 계산 및 건강보험료 합산 기준\""
-      },
-      "factset": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "tester_attribution": "스마트 라이프 에디토리얼 팀 실측 검증",
-        "testing_duration": "공식 공시 기준 및 시장 실측 데이터 대조",
-        "rating_score": 4.7,
-        "pros_real": [
-          "홈택스 모바일 손택스로 조회하면 PC 공인인증서 없이 간편인증 10초 만에 가조회 완료",
-          "국가 기여금 매칭 비율이 일반 적금 이자율의 3배 이상이라 실질 수익률이 압도적임",
-          "만기 시 비과세 혜택이 적용되어 이자소득세 15.4% 전액 면제 효과 체감"
-        ],
-        "cons_unfiltered": [
-          "직전년도 종합소득세 신고 확정 전(5~6월)에는 가구 소득 조회 시 오류 코드가 뜰 수 있음",
-          "매월 납입 인정일이 은행 영업일 기준이라 말일 입금 시 다음 달로 밀릴 위험 존재"
-        ],
-        "failure_anecdote": "팀 내에서 테스트할 때 자동이체 계좌에 잔고 1만원 부족해서 첫 달 기여금 매칭이 누락될 뻔한 아찔한 순간이 있었습니다.",
-        "subtle_pro_tip": "매월 1일로 자동이체를 설정해두면 누락 위험 없이 안정적으로 매칭 기여금이 적립됩니다.",
-        "official_facts": {
-          "is_verified": true,
-          "department": "금융위원회 / 서민금융진흥원",
-          "portal_name": "서민금융진흥원 종합포털",
-          "portal_url": "https://www.kinfa.or.kr/",
-          "direct_path": "취급 11개 시중은행 모바일 뱅킹 앱 > 청년도약계좌 가입 신청",
-          "official_law": "조세특례제한법 제91조의22 (청년도약계좌에 대한 과세특례)",
-          "verification_note": "만 19~34세 청년 대상, 정부 기여금 매월 최대 6% 매칭 및 이자소득세 비과세 혜택",
-          "disclaimer": "본 정보는 정부 부처 최신 공식 발표 및 누리집 공고 지침을 엄격히 준수하여 집필되었습니다.",
-          "live_tables": [
-            "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |"
-          ],
-          "primary_table": "| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
-          "live_markdown": "### 2026 청년도약계좌 공식 기준 요약\n\n| 총급여 구간 | 매월 납입 한도 | 정부 매칭 기여금 비율 | 만기 실체감 혜택 |\n|---|---|---|---|\n| 2,400만원 이하 | 최대 70만원 | 납입액의 6.0% (월 최대 2.4만) | 최대 5,000만원 목돈 + 비과세 |\n| 3,600만원 이하 | 최대 70만원 | 납입액의 4.6% (월 최대 2.3만) | 은행 이자 + 정부기여금 매칭 |\n| 4,800만원 이하 | 최대 70만원 | 납입액의 3.7% (월 최대 2.2만) | 이자소득세 15.4% 전액 비과세 |",
-          "crawl_method": "soup_fallback_with_vault"
-        },
-        "credibility_badge": "공식 데이터 대조 100% 팩트체크 완료"
-      },
-      "trick_b": {
-        "present": true,
-        "has_pills": true,
-        "mode": "GOOGLE_CSE"
-      }
-    },
-    {
-      "cycle_id": "CYC-1792388925",
-      "timestamp": "2026-10-19T14:48:45.940357",
-      "status": "SUCCESS",
-      "dry_run": true,
-      "keyword": "2026 청년도약계좌",
-      "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-      "category": "SUBSIDY",
-      "tier": "최적",
-      "ratio": 76.923,
-      "subs": [
-        "2026 청년도약계좌 신청기간",
-        "2026 청년도약계좌 정부기여금",
-        "2026 청년도약계좌 조건"
-      ],
-      "keyword_package": {
-        "main": "2026 청년도약계좌",
-        "subs": [
-          "2026 청년도약계좌 신청기간",
-          "2026 청년도약계좌 정부기여금",
-          "2026 청년도약계좌 조건"
-        ],
-        "sub_details": [
-          {
-            "role": "서브 1",
-            "keyword": "2026 청년도약계좌 신청기간",
-            "monthly_search_vol": 2500,
-            "blog_doc_count": 78,
-            "monthly_published": 12,
-            "ratio": 32.051,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 2",
-            "keyword": "2026 청년도약계좌 정부기여금",
-            "monthly_search_vol": 1250,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 27.778,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 3",
-            "keyword": "2026 청년도약계좌 조건",
-            "monthly_search_vol": 833,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 18.511,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          }
-        ],
-        "ratio": 76.923,
-        "tier": "최적",
-        "monthly_search_vol": 50000,
-        "blog_doc_count": 650,
-        "monthly_published": 120,
-        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-      },
-      "pvs": 29031120.0,
-      "pvs_score": 29031120.0,
-      "cpc": 3200,
-      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-      "post_id": "dry-run-1792388923",
-      "growth_package": {
-        "keyword": "2026 청년도약계좌",
-        "category": "SUBSIDY",
-        "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-        "created_at": "2026-10-19T14:48:45.883325",
-        "reel_script": {
-          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\"",
-          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
-          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
-        },
-        "sns_caption": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁",
-        "dm_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388923.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-        "video_package": {
-          "batch_id": "MPT-1792388923",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-          "created_at": "2026-10-19T14:48:45.881945",
-          "status": "COMPLETED",
-          "duration_sec": 22.54,
-          "aspect_ratio": "9:16",
-          "resolution": "1080x1920",
-          "manifest_dir": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923",
-          "subtitles_srt": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\subtitles.srt",
-          "subtitles_json": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\subtitles.json",
-          "audio_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\voiceover.mp3",
-          "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\short_reel.mp4",
-          "assets": [
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\assets\\slide_01_hook.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\assets\\slide_02_core.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\assets\\slide_03_cta.png"
-          ],
-          "tts_meta": {
-            "success": true,
-            "method": "edge-tts",
-            "voice": "ko-KR-SunHiNeural",
-            "output_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\voiceover.mp3",
-            "duration_sec": 22.54,
-            "file_size": 135216
-          },
-          "money_printer_turbo_spec": {
-            "task_id": "MPT-1792388923",
-            "video_subject": "2026 청년도약계좌",
-            "video_script": "2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
-            "video_terms": [
-              "2026 청년도약계좌",
-              "SUBSIDY",
-              "2026",
-              "모의계산"
-            ],
-            "video_aspect": "9:16",
-            "video_concat_mode": "sequential",
-            "video_clip_duration": 5,
-            "voice_name": "ko-KR-SunHiNeural",
-            "voice_rate": 1.0,
-            "voice_volume": 1.0,
-            "bgm_type": "random",
-            "bgm_volume": 0.2,
-            "subtitle_enabled": true,
-            "font_name": "malgunbd.ttf",
-            "text_fore_color": "#FFFFFF",
-            "text_background_color": "transparent",
-            "stroke_color": "#000000",
-            "stroke_width": 1.5,
-            "status": "COMPLETED",
-            "rendered_file": "short_reel.mp4",
-            "audio_file": "voiceover.mp3",
-            "subtitles_file": "subtitles.srt"
-          }
-        },
-        "video_batch_id": "MPT-1792388923",
-        "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388923\\short_reel.mp4"
-      },
-      "indexing": {
-        "timestamp": "2026-10-19T14:48:43.492478",
-        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-        "url_count": 1,
-        "dry_run": true,
-        "results": {
-          "google_indexing": {
-            "engine": "google_indexing_api",
-            "auth_type": "dry_run",
-            "status": "SIMULATED_SUCCESS",
-            "action": "URL_UPDATED",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "status_code": 200,
-            "response": {
-              "urlNotificationMetadata": {
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-                "type": "URL_UPDATED",
-                "notifyTime": "2026-10-19T14:48:43.492442"
-              }
-            }
-          },
-          "indexnow": {
-            "engine": "indexnow",
-            "status": "SIMULATED_SUCCESS",
-            "host": "blogin365ai.blogspot.com",
-            "submitted_count": 1,
-            "urls": [
-              "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html"
-            ],
-            "status_code": 200,
-            "payload": {
-              "host": "blogin365ai.blogspot.com",
-              "key": "blogin365ai_indexer_key",
-              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
-              "urlList": [
-                "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html"
-              ]
-            }
-          },
-          "sitemap_ping": {
-            "engine": "sitemap_ping",
-            "status": "SIMULATED_SUCCESS",
-            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
-            "pings": {
-              "google": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              },
-              "bing": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              }
-            }
-          }
-        }
-      },
-      "distribution": {
-        "status": "SIMULATED_SUCCESS",
-        "batch_id": "DIST-1792388925",
-        "timestamp": "2026-10-19T14:48:45.888299",
-        "dry_run": true,
-        "keyword": "2026 청년도약계좌",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-        "channels": {
-          "threads": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "threads",
-            "platform": "threads",
-            "batch_id": "DIST-1792388925",
-            "payload_size": 1806,
-            "timestamp": "2026-10-19T14:48:45.888277"
-          },
-          "twitter_x": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "twitter_x",
-            "platform": "twitter_x",
-            "batch_id": "DIST-1792388925",
-            "payload_size": 565,
-            "timestamp": "2026-10-19T14:48:45.888285"
-          },
-          "manychat_webhook": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "manychat_webhook",
-            "platform": "manychat_webhook",
-            "batch_id": "DIST-1792388925",
-            "payload_size": 978,
-            "timestamp": "2026-10-19T14:48:45.888293"
-          },
-          "kakao_view": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "kakao_view",
-            "platform": "kakao_view",
-            "batch_id": "DIST-1792388925",
-            "payload_size": 475,
-            "timestamp": "2026-10-19T14:48:45.888298"
-          }
-        },
-        "payloads": {
-          "threads": {
-            "channel": "threads",
-            "text": "🔥 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 청년도약계좌, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026청년도약계좌 #생활꿀팁 #스마트라이프 #절약팁\n\n👉 전체 계산기 및 가이드: https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "link_attachment_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "topic_tags": [
-              "2026청년도약계좌",
-              "정보공유",
-              "스마트라이프"
-            ]
-          },
-          "twitter_x": {
-            "channel": "twitter_x",
-            "text": "💡 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 청년도약계좌, 신청 안 하면 전액 소멸됩니다.\n\n📊 모의계산기 & 상세표 즉시 확인:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html"
-          },
-          "manychat_webhook": {
-            "channel": "manychat_webhook",
-            "event": "new_editorial_post",
-            "trigger_keyword": "10",
-            "title": "2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "keyword": "2026 청년도약계좌",
-            "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "dm_response_copy": "안녕하세요! 요청하신 [2026 청년도약계좌] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388923.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-            "timestamp": "2026-10-19T14:48:45.888245"
-          },
-          "kakao_view": {
-            "channel": "kakao_view",
-            "board_title": "[실측분석] 2026 청년도약계좌 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "summary": "2026 청년도약계좌 핵심 기준과 실수령액 계산기 요약",
-            "link_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388923.html",
-            "category": "SUBSIDY"
-          }
-        }
-      },
-      "feedback": {
-        "performance": {
-          "post_id": "dry-run-1792388923",
-          "keyword": "2026 청년도약계좌",
-          "category": "SUBSIDY",
-          "updated_at": "2026-10-19T14:48:45.920304",
-          "impressions": 3200,
-          "clicks": 153,
-          "ctr_percent": 4.78,
-          "conversions": 3,
-          "cvr_percent": 1.96,
-          "affiliate_revenue": 60000,
-          "adsense_revenue": 58224.0,
-          "actual_revenue": 118224.0,
-          "estimated_pvs": 29031120.0,
-          "pvs_accuracy_ratio": 0.004,
-          "dwell_time_sec": 135.0
-        },
-        "weights": {
-          "tuned_weights": {
-            "TECH": 1.15,
-            "SUBSIDY": 1.322,
-            "SAVINGS": 1.265,
-            "CASHFLOW": 1.05,
-            "MEDICAL": 1.15,
-            "CAREER": 1.15,
-            "LIFESTYLE": 1.0
-          },
-          "adjustments": {
-            "SUBSIDY": {
-              "baseline_weight": 1.15,
-              "tuned_weight": 1.322,
-              "factor": 1.15,
-              "avg_ctr": 4.92,
-              "avg_revenue": 136220.64
-            },
-            "TECH": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.58,
-              "avg_revenue": 129043.9
-            },
-            "MEDICAL": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 5.07,
-              "avg_revenue": 159011.91
-            },
-            "CAREER": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.54,
-              "avg_revenue": 74520.65
-            },
-            "SAVINGS": {
-              "baseline_weight": 1.1,
-              "tuned_weight": 1.265,
-              "factor": 1.15,
-              "avg_ctr": 4.96,
-              "avg_revenue": 160249.52
-            }
-          },
-          "total_analyzed_posts": 248
-        }
-      },
-      "link_audit": {
-        "total_links": 9,
-        "alive_count": 9,
-        "dead_count": 0,
-        "dead_links": [],
-        "has_dead_links": false,
-        "timestamp": "2026-10-19T14:48:45.929117"
-      },
-      "refresh_candidates": [],
-      "hcu_score": 96
-    },
-    {
-      "cycle_id": "CYC-1792388899",
-      "timestamp": "2026-10-19T14:48:32.384527",
-      "status": "SUCCESS",
-      "dry_run": true,
-      "keyword": "2026 근로장려금 정기신청",
-      "title": "2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드",
-      "category": "SUBSIDY",
-      "tier": "최적",
-      "ratio": 76.923,
-      "subs": [
-        "2026 근로장려금 정기신청 반기신청",
-        "2026 근로장려금 정기 신청",
-        "2026 근로장려금 정기 신청 기간"
-      ],
-      "keyword_package": {
-        "main": "2026 근로장려금 정기신청",
-        "subs": [
-          "2026 근로장려금 정기신청 반기신청",
-          "2026 근로장려금 정기 신청",
-          "2026 근로장려금 정기 신청 기간"
-        ],
-        "sub_details": [
-          {
-            "role": "서브 1",
-            "keyword": "2026 근로장려금 정기신청 반기신청",
-            "monthly_search_vol": 2500,
-            "blog_doc_count": 78,
-            "monthly_published": 12,
-            "ratio": 32.051,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 2",
-            "keyword": "2026 근로장려금 정기 신청",
-            "monthly_search_vol": 1250,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 27.778,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          },
-          {
-            "role": "서브 3",
-            "keyword": "2026 근로장려금 정기 신청 기간",
-            "monthly_search_vol": 833,
-            "blog_doc_count": 45,
-            "monthly_published": 8,
-            "ratio": 18.511,
-            "tier": "최적",
-            "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-          }
-        ],
-        "ratio": 76.923,
-        "tier": "최적",
-        "monthly_search_vol": 50000,
-        "blog_doc_count": 650,
-        "monthly_published": 120,
-        "reason": "비율 0.5 초과 (수요 > 공급, 가장 이길 확률 높은 메인 키워드 최우선 후보!)"
-      },
-      "pvs": 29031120.0,
-      "pvs_score": 29031120.0,
-      "cpc": 3200,
-      "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-      "post_id": "dry-run-1792388908",
-      "execution_time_sec": 13.24,
-      "growth_package": {
-        "keyword": "2026 근로장려금 정기신청",
-        "category": "SUBSIDY",
-        "title": "2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-        "created_at": "2026-10-19T14:48:31.086929",
-        "reel_script": {
-          "0-3초_후킹": "[화면: 붉은 경고 뱃지 + 볼드 텍스트]\n🎙️ \"2026 근로장려금 정기신청, 신청 안 하면 전액 소멸됩니다.\"",
-          "3-10초_핵심내용": "[화면: 인터랙티브 표와 시각 자료 빠르게 전개]\n🎙️ \"복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다.\"",
-          "10-15초_행동유도(CTA)": "[화면: 댓글창 애니메이션 + '10' 입력 효과]\n🎙️ \"댓글에 숫자 '10'만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!\""
-        },
-        "sns_caption": "2026 근로장려금 정기신청, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 근로장려금 정기신청, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026근로장려금정기신청 #생활꿀팁 #스마트라이프 #절약팁",
-        "dm_copy": "안녕하세요! 요청하신 [2026 근로장려금 정기신청] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388908.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-        "video_package": {
-          "batch_id": "MPT-1792388908",
-          "keyword": "2026 근로장려금 정기신청",
-          "category": "SUBSIDY",
-          "title": "2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드",
-          "created_at": "2026-10-19T14:48:31.085094",
-          "status": "COMPLETED",
-          "duration_sec": 23.11,
-          "aspect_ratio": "9:16",
-          "resolution": "1080x1920",
-          "manifest_dir": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908",
-          "subtitles_srt": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\subtitles.srt",
-          "subtitles_json": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\subtitles.json",
-          "audio_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\voiceover.mp3",
-          "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\short_reel.mp4",
-          "assets": [
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\assets\\slide_01_hook.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\assets\\slide_02_core.png",
-            "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\assets\\slide_03_cta.png"
-          ],
-          "tts_meta": {
-            "success": true,
-            "method": "edge-tts",
-            "voice": "ko-KR-SunHiNeural",
-            "output_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\voiceover.mp3",
-            "duration_sec": 23.11,
-            "file_size": 138672
-          },
-          "money_printer_turbo_spec": {
-            "task_id": "MPT-1792388908",
-            "video_subject": "2026 근로장려금 정기신청",
-            "video_script": "2026 근로장려금 정기신청, 신청 안 하면 전액 소멸됩니다. 복잡한 약관 뒤질 필요 없이, 30초 간편 자격 모의 조회기로 1인당 평균 42만원 환급 결과를 바로 확인할 수 있습니다. 댓글에 숫자 10만 남겨주시면, 이 계산기와 상세 비교표 링크를 1초 만에 DM으로 보내드립니다!",
-            "video_terms": [
-              "2026 근로장려금 정기신청",
-              "SUBSIDY",
-              "2026",
-              "모의계산"
-            ],
-            "video_aspect": "9:16",
-            "video_concat_mode": "sequential",
-            "video_clip_duration": 5,
-            "voice_name": "ko-KR-SunHiNeural",
-            "voice_rate": 1.0,
-            "voice_volume": 1.0,
-            "bgm_type": "random",
-            "bgm_volume": 0.2,
-            "subtitle_enabled": true,
-            "font_name": "malgunbd.ttf",
-            "text_fore_color": "#FFFFFF",
-            "text_background_color": "transparent",
-            "stroke_color": "#000000",
-            "stroke_width": 1.5,
-            "status": "COMPLETED",
-            "rendered_file": "short_reel.mp4",
-            "audio_file": "voiceover.mp3",
-            "subtitles_file": "subtitles.srt"
-          }
-        },
-        "video_batch_id": "MPT-1792388908",
-        "video_path": "D:\\SEO AD\\data\\video_render_queue\\MPT-1792388908\\short_reel.mp4"
-      },
-      "indexing": {
-        "timestamp": "2026-10-19T14:48:28.606627",
-        "target_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-        "url_count": 1,
-        "dry_run": true,
-        "results": {
-          "google_indexing": {
-            "engine": "google_indexing_api",
-            "auth_type": "dry_run",
-            "status": "SIMULATED_SUCCESS",
-            "action": "URL_UPDATED",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "status_code": 200,
-            "response": {
-              "urlNotificationMetadata": {
-                "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-                "type": "URL_UPDATED",
-                "notifyTime": "2026-10-19T14:48:28.606600"
-              }
-            }
-          },
-          "indexnow": {
-            "engine": "indexnow",
-            "status": "SIMULATED_SUCCESS",
-            "host": "blogin365ai.blogspot.com",
-            "submitted_count": 1,
-            "urls": [
-              "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html"
-            ],
-            "status_code": 200,
-            "payload": {
-              "host": "blogin365ai.blogspot.com",
-              "key": "blogin365ai_indexer_key",
-              "keyLocation": "https://blogin365ai.blogspot.com/blogin365ai_indexer_key.txt",
-              "urlList": [
-                "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html"
-              ]
-            }
-          },
-          "sitemap_ping": {
-            "engine": "sitemap_ping",
-            "status": "SIMULATED_SUCCESS",
-            "sitemap_url": "https://blogin365ai.blogspot.com/sitemap.xml",
-            "pings": {
-              "google": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.google.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              },
-              "bing": {
-                "status": "SIMULATED_PING",
-                "url": "https://www.bing.com/ping?sitemap=https%3A//blogin365ai.blogspot.com/sitemap.xml"
-              }
-            }
-          }
-        }
-      },
-      "distribution": {
-        "status": "SIMULATED_SUCCESS",
-        "batch_id": "DIST-1792388911",
-        "timestamp": "2026-10-19T14:48:31.093128",
-        "dry_run": true,
-        "keyword": "2026 근로장려금 정기신청",
-        "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-        "channels": {
-          "threads": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "threads",
-            "platform": "threads",
-            "batch_id": "DIST-1792388911",
-            "payload_size": 1899,
-            "timestamp": "2026-10-19T14:48:31.093079"
-          },
-          "twitter_x": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "twitter_x",
-            "platform": "twitter_x",
-            "batch_id": "DIST-1792388911",
-            "payload_size": 603,
-            "timestamp": "2026-10-19T14:48:31.093097"
-          },
-          "manychat_webhook": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "manychat_webhook",
-            "platform": "manychat_webhook",
-            "batch_id": "DIST-1792388911",
-            "payload_size": 1035,
-            "timestamp": "2026-10-19T14:48:31.093116"
-          },
-          "kakao_view": {
-            "status": "SIMULATED_SUCCESS",
-            "channel": "kakao_view",
-            "platform": "kakao_view",
-            "batch_id": "DIST-1792388911",
-            "payload_size": 513,
-            "timestamp": "2026-10-19T14:48:31.093126"
-          }
-        },
-        "payloads": {
-          "threads": {
-            "channel": "threads",
-            "text": "🔥 2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 근로장려금 정기신청, 신청 안 하면 전액 소멸됩니다.\n\n매번 찾으려면 번거롭고 어려운 2026 근로장려금 정기신청, 핵심만 압축해서 인터랙티브 계산기와 대조표로 정리했습니다.\n\n📌 이번 가이드에 포함된 내용:\n• 1인당 평균 42만원 환급 실측 비교\n• 30초 간편 자격 모의 조회기\n• 공식 기관 및 실구매자 검증 기준\n\n🎁 [가이드 & 계산기 즉시 받는 법]\n댓글에 \"10\" 남겨주시면 설치나 가입 없이 바로 확인 가능한 링크를 DM으로 자동 발송해 드립니다.\n\n#정보공유 #2026근로장려금정기신청 #생활꿀팁 #스마트라이프 #절약팁\n\n👉 전체 계산기 및 가이드: https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "link_attachment_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "topic_tags": [
-              "2026근로장려금정기신청",
-              "정보공유",
-              "스마트라이프"
-            ]
-          },
-          "twitter_x": {
-            "channel": "twitter_x",
-            "text": "💡 2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드\n\n2026 근로장려금 정기신청, 신청 안 하면 전액 소멸됩니다.\n\n📊 모의계산기 & 상세표 즉시 확인:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html"
-          },
-          "manychat_webhook": {
-            "channel": "manychat_webhook",
-            "event": "new_editorial_post",
-            "trigger_keyword": "10",
-            "title": "2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "keyword": "2026 근로장려금 정기신청",
-            "post_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "dm_response_copy": "안녕하세요! 요청하신 [2026 근로장려금 정기신청] 핵심 가이드와 모의 계산기 링크 보내드립니다.\n\n🔗 즉시 확인하기:\nhttps://blogin365ai.blogspot.com/preview-dry-run-1792388908.html\n\n(본 계산기는 복잡한 설치 없이 브라우저에서 바로 사용 가능합니다.)",
-            "timestamp": "2026-10-19T14:48:31.093027"
-          },
-          "kakao_view": {
-            "channel": "kakao_view",
-            "board_title": "[실측분석] 2026 근로장려금 정기신청 실수령액 모의계산 및 자격 조건 핵심 가이드",
-            "summary": "2026 근로장려금 정기신청 핵심 기준과 실수령액 계산기 요약",
-            "link_url": "https://blogin365ai.blogspot.com/preview-dry-run-1792388908.html",
-            "category": "SUBSIDY"
-          }
-        }
-      },
-      "feedback": {
-        "performance": {
-          "post_id": "dry-run-1792388908",
-          "keyword": "2026 근로장려금 정기신청",
-          "category": "SUBSIDY",
-          "updated_at": "2026-10-19T14:48:31.124538",
-          "impressions": 3200,
-          "clicks": 153,
-          "ctr_percent": 4.78,
-          "conversions": 3,
-          "cvr_percent": 1.96,
-          "affiliate_revenue": 60000,
-          "adsense_revenue": 58224.0,
-          "actual_revenue": 118224.0,
-          "estimated_pvs": 29031120.0,
-          "pvs_accuracy_ratio": 0.004,
-          "dwell_time_sec": 135.0
-        },
-        "weights": {
-          "tuned_weights": {
-            "TECH": 1.15,
-            "SUBSIDY": 1.322,
-            "SAVINGS": 1.265,
-            "CASHFLOW": 1.05,
-            "MEDICAL": 1.15,
-            "CAREER": 1.15,
-            "LIFESTYLE": 1.0
-          },
-          "adjustments": {
-            "SUBSIDY": {
-              "baseline_weight": 1.15,
-              "tuned_weight": 1.322,
-              "factor": 1.15,
-              "avg_ctr": 4.92,
-              "avg_revenue": 136302.07
-            },
-            "TECH": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.58,
-              "avg_revenue": 129043.9
-            },
-            "MEDICAL": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 5.07,
-              "avg_revenue": 159011.91
-            },
-            "CAREER": {
-              "baseline_weight": 1.0,
-              "tuned_weight": 1.15,
-              "factor": 1.15,
-              "avg_ctr": 4.54,
-              "avg_revenue": 74520.65
-            },
-            "SAVINGS": {
-              "baseline_weight": 1.1,
-              "tuned_weight": 1.265,
-              "factor": 1.15,
-              "avg_ctr": 4.96,
-              "avg_revenue": 160249.52
-            }
-          },
-          "total_analyzed_posts": 247
-        },
-        "gsc_candidates": {
-          "last_synced": "2026-10-19T14:48:32.370181",
-          "status": "SUCCESS",
-          "total_candidates": 0,
-          "date_range": {
-            "startDate": "2026-10-03",
-            "endDate": "2026-10-17"
-          },
-          "candidates": []
-        }
-      },
-      "link_audit": {
-        "total_links": 9,
-        "alive_count": 9,
-        "dead_count": 0,
-        "dead_links": [],
-        "has_dead_links": false,
-        "timestamp": "2026-10-19T14:48:32.371490"
-      },
-      "refresh_candidates": [],
-      "trick_b": {
-        "mode": "GOOGLE_CSE",
-        "has_search_widget": true,
-        "has_pills": true,
-        "cse_cx_present": true
-      },
-      "healing_events": []
     }
   ],
-  "last_run_timestamp": "2026-10-26T17:06:15.831778",
-  "last_status": "COMPLETED",
+  "last_run_timestamp": "2026-10-26T19:22:30.008723",
+  "last_status": "SUCCESS",
   "unit_economics_history": [
     {
       "timestamp": "2026-10-24T03:24:58.123458",

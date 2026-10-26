@@ -49,8 +49,8 @@
     ],
     "trader_name": "해외 100만 퀀트 유튜버",
     "default_params": {
-      "bb_period": 14,
-      "bb_std": 2.0,
+      "st_period": 10,
+      "st_mult": 3.0,
       "vol_mult": 1.2,
       "rsi_threshold": 40,
       "tp_percent": 0.8,

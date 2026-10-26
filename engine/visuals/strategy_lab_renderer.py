@@ -64,15 +64,15 @@ class StrategyLabRenderer:
                 "symbol": "BTCUSDT",
                 "interval": "1m",
                 "default_params": {
-                    "bb_period": 14,
-                    "bb_std": 2.0,
+                    "st_period": 10,
+                    "st_mult": 3.0,
                     "vol_mult": 1.2,
                     "rsi_threshold": 40,
                     "tp_percent": 0.8,
                     "sl_percent": 0.5,
                     "leverage": 5
                 },
-                "strategy_description": "슈퍼트렌드 강세 전환 및 RSI 50 상향 돌파 시 롱 진입. 0.8% 익절, 0.5% 칼손절을 반복하는 초단타 스캘핑."
+                "strategy_description": "슈퍼트렌드 지표가 강세 전환(녹색)하고 RSI(14)가 40 이상으로 상향 돌파하며 거래량이 증가할 때 1분봉 롱 진입. 0.8% 익절, 0.5% 칼손절 초단타 스캘핑."
             },
             "larry_williams_breakout": {
                 "strategy_id": "larry_williams_breakout",
@@ -116,6 +116,33 @@ class StrategyLabRenderer:
         btn_1h_style = active_btn if interval == "1h" else inactive_btn
 
         interval_kor = "1분봉" if interval == "1m" else ("5분봉" if interval == "5m" else ("15분봉" if interval == "15m" else "1시간봉"))
+        is_supertrend = "supertrend" in strategy_id
+
+        # Dynamic Sliders by Strategy Type
+        if is_supertrend:
+            slider_1_title = "슈퍼트렌드 ATR 기간 (N)"
+            slider_1_val = p.get("st_period", 10)
+            slider_1_min, slider_1_max, slider_1_step = 5, 30, 1
+
+            slider_2_title = "슈퍼트렌드 승수 (Multiplier)"
+            slider_2_val = p.get("st_mult", 3.0)
+            slider_2_min, slider_2_max, slider_2_step = 1.0, 5.0, 0.1
+
+            slider_4_title = "RSI 필터 기준 (진입 하한선)"
+            slider_4_val = p.get("rsi_threshold", 40)
+            slider_4_label = f"{slider_4_val} 이상"
+        else:
+            slider_1_title = "볼린저 밴드 기간 (N)"
+            slider_1_val = p.get("bb_period", 20)
+            slider_1_min, slider_1_max, slider_1_step = 10, 50, 1
+
+            slider_2_title = "표준편차 배수 (σ)"
+            slider_2_val = p.get("bb_std", 2.0)
+            slider_2_min, slider_2_max, slider_2_step = 1.5, 3.0, 0.1
+
+            slider_4_title = "RSI 과매도 진입 기준"
+            slider_4_val = p.get("rsi_threshold", 35)
+            slider_4_label = f"{slider_4_val} 이하"
 
         html = f"""
 <!-- ============================================================================== -->
@@ -243,7 +270,7 @@ class StrategyLabRenderer:
     <div style="position: absolute; top: 12px; left: 16px; z-index: 10; display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; pointer-events: none;">
       <span style="color: #f8fafc; font-weight: 700;">{symbol}</span>
       <span id="chart-legend-price" style="color: #10b981; font-weight: 800;">Loading...</span>
-      <span style="color: #94a3b8;">BB(20,2): <span id="chart-legend-bb" style="color: #38bdf8;">--</span></span>
+      <span style="color: #94a3b8;">{"" if is_supertrend else "BB(20,2): "}<span id="chart-legend-bb" style="color: #38bdf8;">--</span></span>
       <span style="color: #94a3b8;">RSI: <span id="chart-legend-rsi" style="color: #c084fc;">--</span></span>
       <span style="color: #94a3b8;">거래량: <span id="chart-legend-vol" style="color: #f8fafc; font-weight: 700;">--</span></span>
       <span style="color: #94a3b8;">시그널: <span id="chart-legend-signals" style="color: #10b981; font-weight: 700;">▲ 0 / ▼ 0</span></span>
@@ -275,22 +302,22 @@ class StrategyLabRenderer:
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-      <!-- Slider 1: Bollinger Period -->
+      <!-- Slider 1: Parameter 1 (ATR Period / BB Period) -->
       <div>
         <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-          <span style="color: #94a3b8;">볼린저 밴드 기간 (N)</span>
-          <strong id="val-bb-period" style="color: #38bdf8;">{p['bb_period']}</strong>
+          <span style="color: #94a3b8;">{slider_1_title}</span>
+          <strong id="val-p1" style="color: #38bdf8;">{slider_1_val}</strong>
         </div>
-        <input type="range" id="slider-bb-period" min="10" max="50" step="1" value="{p['bb_period']}" style="width: 100%; accent-color: #38bdf8; cursor: pointer;">
+        <input type="range" id="slider-p1" min="{slider_1_min}" max="{slider_1_max}" step="{slider_1_step}" value="{slider_1_val}" style="width: 100%; accent-color: #38bdf8; cursor: pointer;">
       </div>
 
-      <!-- Slider 2: Bollinger StdDev -->
+      <!-- Slider 2: Parameter 2 (ST Mult / BB Std) -->
       <div>
         <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-          <span style="color: #94a3b8;">표준편차 배수 (σ)</span>
-          <strong id="val-bb-std" style="color: #38bdf8;">{p['bb_std']}</strong>
+          <span style="color: #94a3b8;">{slider_2_title}</span>
+          <strong id="val-p2" style="color: #38bdf8;">{slider_2_val}</strong>
         </div>
-        <input type="range" id="slider-bb-std" min="1.5" max="3.0" step="0.1" value="{p['bb_std']}" style="width: 100%; accent-color: #38bdf8; cursor: pointer;">
+        <input type="range" id="slider-p2" min="{slider_2_min}" max="{slider_2_max}" step="{slider_2_step}" value="{slider_2_val}" style="width: 100%; accent-color: #38bdf8; cursor: pointer;">
       </div>
 
       <!-- Slider 3: Volume Spike Multiplier -->
@@ -305,10 +332,10 @@ class StrategyLabRenderer:
       <!-- Slider 4: RSI Threshold -->
       <div>
         <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-          <span style="color: #94a3b8;">RSI 과매도 진입 기준</span>
-          <strong id="val-rsi-th" style="color: #c084fc;">{p['rsi_threshold']} 이하</strong>
+          <span style="color: #94a3b8;">{slider_4_title}</span>
+          <strong id="val-rsi-th" style="color: #c084fc;">{slider_4_label}</strong>
         </div>
-        <input type="range" id="slider-rsi-th" min="20" max="45" step="1" value="{p['rsi_threshold']}" style="width: 100%; accent-color: #c084fc; cursor: pointer;">
+        <input type="range" id="slider-rsi-th" min="20" max="60" step="1" value="{slider_4_val}" style="width: 100%; accent-color: #c084fc; cursor: pointer;">
       </div>
 
       <!-- Slider 5: Take Profit % -->
@@ -396,7 +423,7 @@ class StrategyLabRenderer:
   const STRATEGY_CONFIG = {json.dumps(cfg, ensure_ascii=False)};
   const SYMBOL = '{symbol}';
   const INTERVAL = '{interval}';
-  let chart, candleSeries, volumeSeries, upperBandSeries, middleBandSeries, lowerBandSeries;
+  let chart, candleSeries, volumeSeries, upperBandSeries, middleBandSeries, lowerBandSeries, supertrendSeries;
   let rawCandles = [];
   let isFollowing = false;
   let virtualBalance = 10000;
@@ -415,8 +442,8 @@ class StrategyLabRenderer:
   const kpiRoi = document.getElementById('kpi-roi');
 
   // Sliders
-  const sliderBbPeriod = document.getElementById('slider-bb-period');
-  const sliderBbStd = document.getElementById('slider-bb-std');
+  const sliderP1 = document.getElementById('slider-p1');
+  const sliderP2 = document.getElementById('slider-p2');
   const sliderVolMult = document.getElementById('slider-vol-mult');
   const sliderRsiTh = document.getElementById('slider-rsi-th');
   const sliderTp = document.getElementById('slider-tp');
@@ -424,8 +451,8 @@ class StrategyLabRenderer:
   const sliderLev = document.getElementById('slider-lev');
 
   // Values display
-  const valBbPeriod = document.getElementById('val-bb-period');
-  const valBbStd = document.getElementById('val-bb-std');
+  const valP1 = document.getElementById('val-p1');
+  const valP2 = document.getElementById('val-p2');
   const valVolMult = document.getElementById('val-vol-mult');
   const valRsiTh = document.getElementById('val-rsi-th');
   const valTp = document.getElementById('val-tp');
@@ -502,10 +529,11 @@ class StrategyLabRenderer:
       }}
     }});
 
-    // Bollinger Band Lines
+    // Indicator Series
     upperBandSeries = chart.addLineSeries({{ color: '#38bdf8', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed }});
     middleBandSeries = chart.addLineSeries({{ color: '#f59e0b', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Solid }});
     lowerBandSeries = chart.addLineSeries({{ color: '#c084fc', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed }});
+    supertrendSeries = chart.addLineSeries({{ lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid, color: '#10b981' }});
 
     // Candlestick series
     candleSeries = chart.addCandlestickSeries({{
@@ -574,7 +602,76 @@ class StrategyLabRenderer:
     }}
   }}
 
-  // 3. Technical Indicator Mathematics (Bollinger Bands + RSI + Volume SMA)
+  // 3-A. Supertrend Mathematics (Olivier Seban ATR-based Trend Engine)
+  function computeSupertrend(candles, period, mult) {{
+    const len = candles.length;
+    const tr = new Array(len).fill(0);
+    const atr = new Array(len).fill(0);
+    const upperBand = new Array(len).fill(0);
+    const lowerBand = new Array(len).fill(0);
+    const supertrend = new Array(len).fill(null);
+    const trend = new Array(len).fill(1); // 1 = Bullish, -1 = Bearish
+
+    for (let i = 0; i < len; i++) {{
+      if (i === 0) {{
+        tr[i] = candles[i].high - candles[i].low;
+      }} else {{
+        const hl = candles[i].high - candles[i].low;
+        const hc = Math.abs(candles[i].high - candles[i - 1].close);
+        const lc = Math.abs(candles[i].low - candles[i - 1].close);
+        tr[i] = Math.max(hl, hc, lc);
+      }}
+    }}
+
+    let sumTr = 0;
+    for (let i = 0; i < len; i++) {{
+      if (i < period) {{
+        sumTr += tr[i];
+        if (i === period - 1) {{
+          atr[i] = sumTr / period;
+        }}
+      }} else {{
+        atr[i] = (atr[i - 1] * (period - 1) + tr[i]) / period;
+      }}
+    }}
+
+    for (let i = period; i < len; i++) {{
+      const hl2 = (candles[i].high + candles[i].low) / 2.0;
+      const basicUpper = hl2 + mult * atr[i];
+      const basicLower = hl2 - mult * atr[i];
+
+      if (i === period) {{
+        upperBand[i] = basicUpper;
+        lowerBand[i] = basicLower;
+        trend[i] = candles[i].close > basicUpper ? 1 : -1;
+      }} else {{
+        if (basicLower > lowerBand[i - 1] || candles[i - 1].close < lowerBand[i - 1]) {{
+          lowerBand[i] = basicLower;
+        }} else {{
+          lowerBand[i] = lowerBand[i - 1];
+        }}
+
+        if (basicUpper < upperBand[i - 1] || candles[i - 1].close > upperBand[i - 1]) {{
+          upperBand[i] = basicUpper;
+        }} else {{
+          upperBand[i] = upperBand[i - 1];
+        }}
+
+        const prevTrend = trend[i - 1];
+        if (prevTrend === 1) {{
+          trend[i] = candles[i].close < lowerBand[i] ? -1 : 1;
+        }} else {{
+          trend[i] = candles[i].close > upperBand[i] ? 1 : -1;
+        }}
+      }}
+
+      supertrend[i] = trend[i] === 1 ? lowerBand[i] : upperBand[i];
+    }}
+
+    return {{ supertrend, trend, atr }};
+  }}
+
+  // 3-B. Bollinger Bands & RSI & Volume SMA
   function computeIndicators(candles, bbPeriod, bbStd) {{
     const closes = candles.map(c => c.close);
     const volumes = candles.map(c => c.volume);
@@ -638,12 +735,13 @@ class StrategyLabRenderer:
     return {{ upper, middle, lower, volSma, rsi }};
   }}
 
-  // 4. In-Browser Quantitative Backtester (Evaluates exact Buy/Sell Signals)
+  // 4. In-Browser Quantitative Backtester (Polymorphic Strategy Engine)
   function runBacktestAndRender() {{
     if (!rawCandles || rawCandles.length === 0 || !chart) return;
 
-    const bbPeriod = parseInt(params.bb_period);
-    const bbStd = parseFloat(params.bb_std);
+    const isSupertrend = (STRATEGY_CONFIG.strategy_id || '').indexOf('supertrend') !== -1;
+    const p1 = parseFloat(params.st_period || params.bb_period || (isSupertrend ? 10 : 20));
+    const p2 = parseFloat(params.st_mult || params.bb_std || (isSupertrend ? 3.0 : 2.0));
     const volMult = parseFloat(params.vol_mult);
     const rsiTh = parseFloat(params.rsi_threshold);
     const tpPct = parseFloat(params.tp_percent) / 100.0;
@@ -651,19 +749,29 @@ class StrategyLabRenderer:
     const lev = parseFloat(params.leverage);
     const feeRate = 0.0010; // Binance Futures 0.05% taker fee * 2 (roundtrip)
 
-    const ind = computeIndicators(rawCandles, bbPeriod, bbStd);
+    const ind = computeIndicators(rawCandles, isSupertrend ? 20 : Math.round(p1), isSupertrend ? 2.0 : p2);
+    const st = isSupertrend ? computeSupertrend(rawCandles, Math.round(p1), p2) : null;
 
     // Prepare chart line series data
     const upperData = [];
     const middleData = [];
     const lowerData = [];
+    const stData = [];
     const volData = [];
 
     for (let i = 0; i < rawCandles.length; i++) {{
       const t = rawCandles[i].time;
-      if (ind.upper[i] !== null) upperData.push({{ time: t, value: ind.upper[i] }});
-      if (ind.middle[i] !== null) middleData.push({{ time: t, value: ind.middle[i] }});
-      if (ind.lower[i] !== null) lowerData.push({{ time: t, value: ind.lower[i] }});
+      if (!isSupertrend) {{
+        if (ind.upper[i] !== null) upperData.push({{ time: t, value: ind.upper[i] }});
+        if (ind.middle[i] !== null) middleData.push({{ time: t, value: ind.middle[i] }});
+        if (ind.lower[i] !== null) lowerData.push({{ time: t, value: ind.lower[i] }});
+      }} else if (st && st.supertrend[i] !== null) {{
+        stData.push({{
+          time: t,
+          value: st.supertrend[i],
+          color: st.trend[i] === 1 ? '#10b981' : '#ef4444'
+        }});
+      }}
 
       volData.push({{
         time: t,
@@ -674,9 +782,17 @@ class StrategyLabRenderer:
 
     candleSeries.setData(rawCandles);
     volumeSeries.setData(volData);
-    upperBandSeries.setData(upperData);
-    middleBandSeries.setData(middleData);
-    lowerBandSeries.setData(lowerData);
+    if (isSupertrend) {{
+      supertrendSeries.setData(stData);
+      upperBandSeries.setData([]);
+      middleBandSeries.setData([]);
+      lowerBandSeries.setData([]);
+    }} else {{
+      supertrendSeries.setData([]);
+      upperBandSeries.setData(upperData);
+      middleBandSeries.setData(middleData);
+      lowerBandSeries.setData(lowerData);
+    }}
 
     // Simulate Trades (Dual-Directional: Long & Short)
     const markers = [];
@@ -688,25 +804,39 @@ class StrategyLabRenderer:
     let peakBalance = 10000;
     let maxDrawdown = 0;
 
-    for (let i = bbPeriod; i < rawCandles.length; i++) {{
+    const startIdx = isSupertrend ? Math.round(p1) + 1 : Math.round(p1);
+    for (let i = startIdx; i < rawCandles.length; i++) {{
       const c = rawCandles[i];
       const prevC = rawCandles[i - 1];
-      const lowerVal = ind.lower[i];
-      const upperVal = ind.upper[i];
       const avgVol = ind.volSma[i];
       const rsiVal = ind.rsi[i] || 50;
       const isVolSurge = avgVol ? (c.volume >= avgVol * volMult) : true;
 
       if (!position) {{
-        // LONG Condition: Lower band touch + Volume surge + RSI oversold
-        const isLowerTouch = c.low <= lowerVal || prevC.low <= ind.lower[i - 1];
-        const isRsiOversold = rsiVal <= rsiTh;
+        let enterLong = false;
+        let enterShort = false;
 
-        // SHORT Condition: Upper band touch + Volume surge + RSI overbought (100 - rsiTh)
-        const isUpperTouch = c.high >= upperVal || prevC.high >= ind.upper[i - 1];
-        const isRsiOverbought = rsiVal >= (100 - rsiTh);
+        if (isSupertrend) {{
+          // 본문 알고리즘: 슈퍼트렌드 강세 전환(녹색) + RSI 40 이상 상향 돌파 + 거래량 증가
+          const isBullFlip = (st.trend[i] === 1 && st.trend[i - 1] === -1);
+          const isBearFlip = (st.trend[i] === -1 && st.trend[i - 1] === 1);
+          const isRsiBull = rsiVal >= rsiTh; // 본문 설명 그대로 40 이상!
+          const isRsiBear = rsiVal <= (100 - rsiTh); // 60 이하!
 
-        if (isLowerTouch && isVolSurge && isRsiOversold) {{
+          enterLong = isBullFlip && isRsiBull && isVolSurge;
+          enterShort = isBearFlip && isRsiBear && isVolSurge;
+        }} else {{
+          // 볼린저 밴드 반등 알고리즘
+          const isLowerTouch = c.low <= ind.lower[i] || prevC.low <= ind.lower[i - 1];
+          const isUpperTouch = c.high >= ind.upper[i] || prevC.high >= ind.upper[i - 1];
+          const isRsiOversold = rsiVal <= rsiTh;
+          const isRsiOverbought = rsiVal >= (100 - rsiTh);
+
+          enterLong = isLowerTouch && isVolSurge && isRsiOversold;
+          enterShort = isUpperTouch && isVolSurge && isRsiOverbought;
+        }}
+
+        if (enterLong) {{
           position = 'LONG';
           entryPrice = c.close;
           entryTime = c.time;
@@ -717,7 +847,7 @@ class StrategyLabRenderer:
             shape: 'arrowUp',
             text: `BUY (롱) @ $${{entryPrice.toFixed(0)}}`
           }});
-        }} else if (isUpperTouch && isVolSurge && isRsiOverbought) {{
+        }} else if (enterShort) {{
           position = 'SHORT';
           entryPrice = c.close;
           entryTime = c.time;
@@ -885,7 +1015,15 @@ class StrategyLabRenderer:
       legendPrice.textContent = `$${{last.close.toLocaleString()}}`;
       const lastRsi = ind.rsi[ind.rsi.length - 1] || 50;
       legendRsi.textContent = lastRsi.toFixed(1);
-      legendBb.textContent = `$${{(ind.lower[ind.lower.length - 1] || 0).toFixed(0)}} ~ $${{(ind.upper[ind.upper.length - 1] || 0).toFixed(0)}}`;
+      if (isSupertrend && st) {{
+        const lastSt = st.supertrend[st.supertrend.length - 1] || 0;
+        const lastTr = st.trend[st.trend.length - 1] || 1;
+        legendBb.textContent = (lastTr === 1 ? '🟢 슈퍼트렌드 지지 $' : '🔴 슈퍼트렌드 저항 $') + lastSt.toFixed(0);
+        legendBb.style.color = lastTr === 1 ? '#10b981' : '#ef4444';
+      }} else {{
+        legendBb.textContent = `BB: $${{(ind.lower[ind.lower.length - 1] || 0).toFixed(0)}} ~ $${{(ind.upper[ind.upper.length - 1] || 0).toFixed(0)}}`;
+        legendBb.style.color = '#38bdf8';
+      }}
       if (legendVol) {{
         const lastVol = last.volume || 0;
         legendVol.textContent = lastVol >= 1000 ? (lastVol / 1000).toFixed(1) + 'k' : lastVol.toFixed(1);
@@ -929,7 +1067,7 @@ class StrategyLabRenderer:
       lineWidth: 2,
       lineStyle: LightweightCharts.LineStyle.Dashed,
       axisLabelVisible: true,
-      title: `🟢 익절선 (TP +${{(tpPct * 100 * lev).toFixed(1)}}%): $${{tpPrice.toFixed(1)}}`
+      title: `🟢 익절 (TP +${{(tpPct * 100).toFixed(1)}}% / ROE +${{(tpPct * 100 * lev).toFixed(1)}}%): $${{tpPrice.toFixed(1)}}`
     }});
     activePriceLines.push(tpLine);
 
@@ -940,7 +1078,7 @@ class StrategyLabRenderer:
       lineWidth: 2,
       lineStyle: LightweightCharts.LineStyle.Solid,
       axisLabelVisible: true,
-      title: `🚨 손절선 (SL -${{(slPct * 100 * lev).toFixed(1)}}%): $${{slPrice.toFixed(1)}}`
+      title: `🚨 손절 (SL -${{(slPct * 100).toFixed(1)}}% / ROE -${{(slPct * 100 * lev).toFixed(1)}}%): $${{slPrice.toFixed(1)}}`
     }});
     activePriceLines.push(slLine);
   }}
@@ -1024,18 +1162,27 @@ class StrategyLabRenderer:
     const slPct = parseFloat(params.sl_percent) / 100.0;
     const lev = parseFloat(params.leverage);
 
-    const isLowerTouch = candle.low <= lowerVal;
-    const isUpperTouch = candle.high >= upperVal;
+    const isSupertrend = (STRATEGY_CONFIG.strategy_id || '').indexOf('supertrend') !== -1;
+    const p1 = parseFloat(params.st_period || params.bb_period || (isSupertrend ? 10 : 20));
+    const p2 = parseFloat(params.st_mult || params.bb_std || (isSupertrend ? 3.0 : 2.0));
     const isVolSurge = avgVol ? (candle.volume >= avgVol * volMult) : true;
-    const isRsiOversold = rsiVal <= rsiTh;
-    const isRsiOverbought = rsiVal >= (100 - rsiTh);
 
     if (!currentPosition) {{
       let enterSide = null;
-      if (isLowerTouch && isVolSurge && isRsiOversold) {{
-        enterSide = 'LONG';
-      }} else if (isUpperTouch && isVolSurge && isRsiOverbought) {{
-        enterSide = 'SHORT';
+      if (isSupertrend) {{
+        const st = computeSupertrend(rawCandles, Math.round(p1), p2);
+        const lastIdx = rawCandles.length - 1;
+        const isBullFlip = (st.trend[lastIdx] === 1 && st.trend[lastIdx - 1] === -1);
+        const isBearFlip = (st.trend[lastIdx] === -1 && st.trend[lastIdx - 1] === 1);
+        if (isBullFlip && rsiVal >= rsiTh && isVolSurge) enterSide = 'LONG';
+        else if (isBearFlip && rsiVal <= (100 - rsiTh) && isVolSurge) enterSide = 'SHORT';
+      }} else {{
+        const isLowerTouch = candle.low <= lowerVal;
+        const isUpperTouch = candle.high >= upperVal;
+        const isRsiOversold = rsiVal <= rsiTh;
+        const isRsiOverbought = rsiVal >= (100 - rsiTh);
+        if (isLowerTouch && isVolSurge && isRsiOversold) enterSide = 'LONG';
+        else if (isUpperTouch && isVolSurge && isRsiOverbought) enterSide = 'SHORT';
       }}
 
       if (enterSide) {{
@@ -1157,19 +1304,25 @@ class StrategyLabRenderer:
       }});
     }});
 
+    const isSupertrend = (STRATEGY_CONFIG.strategy_id || '').indexOf('supertrend') !== -1;
     const update = () => {{
-      params.bb_period = sliderBbPeriod.value;
-      params.bb_std = sliderBbStd.value;
+      if (isSupertrend) {{
+        params.st_period = sliderP1.value;
+        params.st_mult = sliderP2.value;
+      }} else {{
+        params.bb_period = sliderP1.value;
+        params.bb_std = sliderP2.value;
+      }}
       params.vol_mult = sliderVolMult.value;
       params.rsi_threshold = sliderRsiTh.value;
       params.tp_percent = sliderTp.value;
       params.sl_percent = sliderSl.value;
       params.leverage = sliderLev.value;
 
-      valBbPeriod.textContent = params.bb_period;
-      valBbStd.textContent = params.bb_std;
+      valP1.textContent = isSupertrend ? params.st_period : params.bb_period;
+      valP2.textContent = isSupertrend ? params.st_mult : params.bb_std;
       valVolMult.textContent = `${{params.vol_mult}}x`;
-      valRsiTh.textContent = `${{params.rsi_threshold}} 이하`;
+      valRsiTh.textContent = isSupertrend ? `${{params.rsi_threshold}} 이상` : `${{params.rsi_threshold}} 이하`;
       valTp.textContent = `+${{params.tp_percent}}%`;
       valSl.textContent = `-${{params.sl_percent}}%`;
       valLev.textContent = `${{params.leverage}}x`;
@@ -1177,8 +1330,8 @@ class StrategyLabRenderer:
       runBacktestAndRender();
     }};
 
-    sliderBbPeriod.addEventListener('input', update);
-    sliderBbStd.addEventListener('input', update);
+    sliderP1.addEventListener('input', update);
+    sliderP2.addEventListener('input', update);
     sliderVolMult.addEventListener('input', update);
     sliderRsiTh.addEventListener('input', update);
     sliderTp.addEventListener('input', update);
@@ -1188,8 +1341,8 @@ class StrategyLabRenderer:
     // Reset button
     document.getElementById('btn-reset-params').addEventListener('click', () => {{
       params = {{ ...STRATEGY_CONFIG.default_params }};
-      sliderBbPeriod.value = params.bb_period;
-      sliderBbStd.value = params.bb_std;
+      sliderP1.value = isSupertrend ? (params.st_period || 10) : (params.bb_period || 20);
+      sliderP2.value = isSupertrend ? (params.st_mult || 3.0) : (params.bb_std || 2.0);
       sliderVolMult.value = params.vol_mult;
       sliderRsiTh.value = params.rsi_threshold;
       sliderTp.value = params.tp_percent;

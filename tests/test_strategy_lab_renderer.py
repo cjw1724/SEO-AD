@@ -43,9 +43,9 @@ class TestStrategyLabRenderer(unittest.TestCase):
         self.assertIn('id="kpi-mdd"', html)
         self.assertIn('id="kpi-pnl"', html)
 
-        # 2. Sliders
-        self.assertIn('id="slider-bb-period"', html)
-        self.assertIn('id="slider-bb-std"', html)
+        # 2. Polymorphic Parameter Sliders
+        self.assertIn('id="slider-p1"', html)
+        self.assertIn('id="slider-p2"', html)
         self.assertIn('id="slider-vol-mult"', html)
         self.assertIn('id="slider-rsi-th"', html)
         self.assertIn('id="slider-tp"', html)
@@ -100,6 +100,34 @@ class TestStrategyLabRenderer(unittest.TestCase):
         self.assertIn("ETHUSDT", html)
         self.assertIn("1m", html)
         self.assertIn("ETHUSDT 실시간 캔들 백테스트", html)
+
+    def test_render_supertrend_strategy(self):
+        supertrend_cfg = {
+            "strategy_id": "supertrend_rsi_scalping",
+            "title": "슈퍼트렌드 + RSI 1분봉 초단타 퀀트 팩트체크 랩",
+            "subtitle": "BTCUSDT 1분봉 실시간 캔들 백테스트 & 자동매매",
+            "symbol": "BTCUSDT",
+            "interval": "1m",
+            "default_params": {
+                "st_period": 10,
+                "st_mult": 3.0,
+                "vol_mult": 1.2,
+                "rsi_threshold": 40,
+                "tp_percent": 0.8,
+                "sl_percent": 0.5,
+                "leverage": 5
+            },
+            "strategy_description": "슈퍼트렌드 강세 전환 + RSI 40 상향 돌파 + 거래량 1.2배 조건 충족 시 롱 진입"
+        }
+        html = StrategyLabRenderer.render(supertrend_cfg)
+
+        self.assertIn("슈퍼트렌드 ATR 기간 (N)", html)
+        self.assertIn("슈퍼트렌드 승수 (Multiplier)", html)
+        self.assertIn("RSI 필터 기준 (진입 하한선)", html)
+        self.assertIn("슈퍼트렌드 지지", html)
+        self.assertIn("computeSupertrend", html)
+        self.assertIn("+0.8%", html)
+        self.assertIn("-0.5%", html)
 
 
 if __name__ == "__main__":
